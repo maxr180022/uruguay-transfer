@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>UruWay Transfer — TEST</title>
 
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
   <style>
     body {
       margin: 0;
@@ -34,6 +32,30 @@
       margin-top: 20px;
       border-radius: 12px;
       background: #eef8ff;
+      line-height: 1.5;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 15px;
+      border: 0;
+      border-radius: 12px;
+      background: #1593e8;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    pre {
+      margin-top: 20px;
+      padding: 15px;
+      background: #111820;
+      color: #fff;
+      border-radius: 12px;
+      overflow-x: auto;
+      white-space: pre-wrap;
     }
   </style>
 </head>
@@ -41,6 +63,7 @@
 <body>
 
 <div class="card">
+
   <h1>🚗 UruWay Transfer</h1>
 
   <p>
@@ -50,7 +73,50 @@
   <div class="status">
     🟢 TEST FRONTEND ЗАПУЩЕН
   </div>
+
+  <button onclick="testAPI()">
+    🔌 Проверить новый API
+  </button>
+
+  <pre id="result">Нажми кнопку для проверки API...</pre>
+
 </div>
+
+<script>
+
+const API_URL =
+  "https://uruway-api-test.uruway.workers.dev";
+
+async function testAPI() {
+
+  const result = document.getElementById("result");
+
+  result.textContent = "⏳ Подключаемся к Cloudflare API...";
+
+  try {
+
+    const response = await fetch(
+      API_URL + "/health"
+    );
+
+    const data = await response.json();
+
+    result.textContent =
+      "HTTP " + response.status +
+      "\n\n" +
+      JSON.stringify(data, null, 2);
+
+  } catch (error) {
+
+    result.textContent =
+      "❌ ОШИБКА ПОДКЛЮЧЕНИЯ\n\n" +
+      error.message;
+
+  }
+
+}
+
+</script>
 
 </body>
 </html>

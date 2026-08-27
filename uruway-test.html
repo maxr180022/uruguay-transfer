@@ -8,16 +8,16 @@
   <style>
     body {
       margin: 0;
-      padding: 30px 20px;
+      padding: 20px;
       font-family: Arial, sans-serif;
       background: #f4f6f8;
       color: #121820;
     }
 
     .card {
-      max-width: 600px;
+      max-width: 700px;
       margin: 0 auto;
-      padding: 25px;
+      padding: 24px;
       background: white;
       border-radius: 20px;
       box-shadow: 0 5px 20px rgba(0,0,0,.08);
@@ -28,16 +28,14 @@
     }
 
     .status {
-      padding: 15px;
-      margin-top: 20px;
+      padding: 14px;
+      margin: 15px 0;
       border-radius: 12px;
       background: #eef8ff;
-      line-height: 1.5;
     }
 
     button {
       width: 100%;
-      margin-top: 20px;
       padding: 15px;
       border: 0;
       border-radius: 12px;
@@ -46,16 +44,48 @@
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:disabled {
+      opacity: .5;
+    }
+
+    .tariff {
+      margin-top: 12px;
+      padding: 16px;
+      border: 1px solid #ddd;
+      border-radius: 14px;
+      cursor: pointer;
+    }
+
+    .tariff:hover {
+      background: #f7fbff;
+    }
+
+    .tariff-title {
+      font-weight: bold;
+      font-size: 17px;
+    }
+
+    .price {
+      margin-top: 8px;
+      font-size: 20px;
+      font-weight: bold;
     }
 
     pre {
       margin-top: 20px;
       padding: 15px;
       background: #111820;
-      color: #fff;
+      color: white;
       border-radius: 12px;
       overflow-x: auto;
       white-space: pre-wrap;
+    }
+
+    #tariffs {
+      margin-top: 20px;
     }
   </style>
 </head>
@@ -66,19 +96,17 @@
 
   <h1>🚗 UruWay Transfer</h1>
 
-  <p>
-    TEST-версия нового приложения
-  </p>
-
   <div class="status">
-    🟢 TEST FRONTEND ЗАПУЩЕН
+    🟢 TEST-приложение подключено к новому API
   </div>
 
-  <button onclick="testAPI()">
-    🔌 Проверить новый API
+  <button id="loadButton" onclick="loadTariffs()">
+    Загрузить тарифы
   </button>
 
-  <pre id="result">Нажми кнопку для проверки API...</pre>
+  <div id="tariffs"></div>
+
+  <pre id="result">Нажми «Загрузить тарифы»...</pre>
 
 </div>
 
@@ -87,32 +115,125 @@
 const API_URL =
   "https://uruway-api-test.uruway.workers.dev";
 
-async function testAPI() {
+async function loadTariffs() {
 
-  const result = document.getElementById("result");
+  const button =
+    document.getElementById("loadButton");
 
-  result.textContent = "⏳ Подключаемся к Cloudflare API...";
+  const tariffs =
+    document.getElementById("tariffs");
+
+  const result =
+    document.getElementById("result");
+
+  button.disabled = true;
+
+  tariffs.innerHTML = "";
+
+  result.textContent =
+    "⏳ Загружаем реальные тарифы из Supabase...";
 
   try {
 
     const response = await fetch(
-      API_URL + "/health"
+      API_URL + "/v1/tariffs"
     );
 
-    const data = await response.json();
+    const data =
+      await response.json();
+
+    if (!response.ok || !data.ok) {
+      throw new Error(
+        data.error || "API ERROR"
+      );
+    }
+
+    const list =
+      Array.isArray(data.data)
+        ? data.data
+        : [];
 
     result.textContent =
-      "HTTP " + response.status +
-      "\n\n" +
-      JSON.stringify(data, null, 2);
+      "✅ Получено тарифов: " +
+      list.length;
+
+    if (!list.length) {
+
+      tariffs.innerHTML =
+        "<p>Тарифов пока нет.</p>";
+
+      return;
+    }
+
+    list.forEach(tariff => {
+
+      const div =
+        document.createElement("div");
+
+      div.className = "tariff";
+
+      const route =
+        tariff.route || {};
+
+      const origin =
+        route.origin_name || "";
+
+      const destination =
+        route.destination_name || "";
+
+      const title =
+        route.name ||
+        `${origin} → ${destination}`;
+
+      const price =
+        tariff.price;
+
+      const currency =
+        tariff.currency || "";
+
+      const vehicle =
+        tariff.vehicle_class_id;
+
+      div.innerHTML = `
+        <div class="tariff-title">
+          ${escapeHtml(title)}
+        </div>
+
+        <div>
+          Класс автомобиля: ${vehicle ?? "—"}
+        </div>
+
+        <div class="price">
+          ${escapeHtml(String(price))}
+          ${escapeHtml(currency)}
+        </div>
+      `;
+
+      tariffs.appendChild(div);
+
+    });
 
   } catch (error) {
 
     result.textContent =
-      "❌ ОШИБКА ПОДКЛЮЧЕНИЯ\n\n" +
+      "❌ ОШИБКА\n\n" +
       error.message;
 
+  } finally {
+
+    button.disabled = false;
+
   }
+}
+
+function escapeHtml(value) {
+
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 
 }
 

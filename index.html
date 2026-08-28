@@ -1,0 +1,3941 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+
+<title>UruWay Transfer</title>
+
+<style>
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  min-height:100%;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  background:#f4f7fb;
+  color:#111827;
+}
+
+body{
+  min-height:100vh;
+}
+
+button,input,textarea{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.screen{
+  display:none;
+  min-height:100vh;
+}
+
+.screen.active{
+  display:block;
+}
+
+.container{
+  width:min(100%,720px);
+  margin:0 auto;
+  padding:
+    calc(20px + env(safe-area-inset-top))
+    16px
+    calc(30px + env(safe-area-inset-bottom));
+}
+
+.logo-wrap{
+  text-align:center;
+  padding-top:25px;
+}
+
+.logo{
+  width:190px;
+  max-width:58vw;
+  display:block;
+  margin:0 auto;
+}
+
+.hero{
+  text-align:center;
+  margin-top:28px;
+}
+
+.hero h1{
+  margin:0;
+  font-size:42px;
+  line-height:1.05;
+  font-weight:900;
+}
+
+.hero h2{
+  margin:24px 0 4px;
+  font-size:28px;
+}
+
+.hero p{
+  margin:6px 0 0;
+  color:#6b7280;
+  font-size:20px;
+}
+
+.role-client{
+  width:100%;
+  margin-top:42px;
+  border-radius:26px;
+  background:#fff;
+  box-shadow:0 12px 35px rgba(22,80,130,.12);
+  padding:24px;
+  text-align:left;
+  display:flex;
+  align-items:center;
+  gap:18px;
+  border:1px solid #d8e7f4;
+}
+
+.role-icon{
+  width:70px;
+  height:70px;
+  flex:0 0 70px;
+  border-radius:22px;
+  background:#e7f5ff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:35px;
+}
+
+.role-text strong{
+  display:block;
+  font-size:27px;
+  margin-bottom:5px;
+}
+
+.role-text span{
+  color:#6b7280;
+  font-size:17px;
+}
+
+.arrow{
+  margin-left:auto;
+  color:#0ea5e9;
+  font-size:40px;
+}
+
+.driver-small{
+  display:block;
+  margin:18px auto 0;
+  padding:12px 24px;
+  border-radius:16px;
+  border:1px solid #4ba8ff;
+  background:#eaf5ff;
+  color:#0877d1;
+  font-weight:800;
+  font-size:17px;
+}
+
+.version{
+  text-align:center;
+  margin-top:28px;
+  color:#9ca3af;
+  font-size:13px;
+}
+
+.back{
+  border:0;
+  background:transparent;
+  font-size:18px;
+  font-weight:800;
+  color:#2563eb;
+  padding:8px 0 18px;
+}
+
+.page-title{
+  font-size:31px;
+  font-weight:900;
+  text-align:center;
+  margin:3px 0 8px;
+}
+
+.page-subtitle{
+  font-size:18px;
+  line-height:1.45;
+  text-align:center;
+  color:#6b7280;
+  margin-bottom:28px;
+}
+
+.card{
+  width:100%;
+  background:#fff;
+  border:1px solid #dce4ec;
+  border-radius:25px;
+  margin:16px 0;
+  box-shadow:0 10px 28px rgba(17,24,39,.06);
+  overflow:hidden;
+}
+
+.card.click{
+  cursor:pointer;
+}
+
+.card-row{
+  min-height:135px;
+  padding:20px;
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+
+.card-icon{
+  width:80px;
+  height:80px;
+  flex:0 0 80px;
+  border-radius:23px;
+  background:#e8f7ff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:42px;
+}
+
+.card-body{
+  min-width:0;
+}
+
+.card-name{
+  font-size:27px;
+  font-weight:900;
+  margin-bottom:7px;
+}
+
+.card-info{
+  color:#73777f;
+  font-size:17px;
+  line-height:1.45;
+}
+
+.card-arrow{
+  margin-left:auto;
+  color:#0ea5e9;
+  font-size:42px;
+}
+
+.notice{
+  margin-top:16px;
+  border-radius:18px;
+  padding:15px 17px;
+  background:#eaf5ff;
+  color:#1667ad;
+  font-size:14px;
+  line-height:1.45;
+}
+
+.booking-screen{
+  position:relative;
+  background:#fff;
+  height:100vh;
+  overflow:hidden;
+}
+
+.booking-screen iframe{
+  border:0;
+  width:100%;
+  height:100vh;
+  display:block;
+}
+
+.booking-native-back{
+  position:fixed;
+  z-index:99999;
+  top:calc(12px + env(safe-area-inset-top));
+  left:14px;
+  border:0;
+  border-radius:13px;
+  padding:10px 14px;
+  background:rgba(17,24,32,.92);
+  color:#fff;
+  font-size:15px;
+  font-weight:850;
+}
+
+/* ============================================================
+   DRIVER V32
+============================================================ */
+
+.driver-exit{
+  border:0;
+  background:transparent;
+  color:#2563eb;
+  font-size:17px;
+  font-weight:800;
+  padding:5px 0 16px;
+}
+
+.driver-v32-head{
+  background:#101010;
+  color:#fff;
+  border-radius:24px;
+  padding:22px;
+  box-shadow:0 10px 30px rgba(0,0,0,.16);
+}
+
+.driver-v32-label{
+  color:#d1d5db;
+  font-size:13px;
+  font-weight:900;
+  letter-spacing:.7px;
+  text-transform:uppercase;
+}
+
+.driver-v32-head h2{
+  margin:8px 0 3px;
+  font-size:29px;
+}
+
+.driver-v32-sub{
+  margin:0;
+  color:#c7c7c7;
+  font-size:15px;
+}
+
+.calendar-ok{
+  margin-top:18px;
+  border-radius:14px;
+  padding:12px 14px;
+  background:#e7f8e8;
+  color:#176b2b;
+  font-weight:800;
+  font-size:14px;
+}
+
+.calendar-neutral{
+  margin-top:18px;
+  border-radius:14px;
+  padding:12px 14px;
+  background:#eef2f7;
+  color:#374151;
+  font-weight:800;
+  font-size:14px;
+}
+
+.driver-tabs{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:7px;
+  margin:18px 0;
+}
+
+.driver-tab{
+  border:1px solid #d7dde5;
+  border-radius:15px;
+  background:#fff;
+  color:#64748b;
+  min-height:48px;
+  font-weight:850;
+  padding:8px 5px;
+}
+
+.driver-tab.active{
+  background:#111827;
+  color:#fff;
+  border-color:#111827;
+}
+
+.driver-loading,
+.driver-empty,
+.driver-error{
+  background:#fff;
+  border:1px solid #e1e6ed;
+  border-radius:20px;
+  padding:28px 18px;
+  text-align:center;
+  color:#6b7280;
+  margin:12px 0;
+}
+
+.driver-error{
+  color:#b91c1c;
+}
+
+.order-card{
+  background:#fff;
+  border:1px solid #dde3ea;
+  border-radius:22px;
+  padding:18px;
+  margin:14px 0;
+  box-shadow:0 8px 24px rgba(15,23,42,.06);
+}
+
+.order-top{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.order-number{
+  font-size:19px;
+  font-weight:950;
+}
+
+.status-pill{
+  margin-left:auto;
+  border-radius:999px;
+  padding:6px 9px;
+  background:#f3f4f6;
+  color:#4b5563;
+  font-size:12px;
+  font-weight:850;
+  text-align:center;
+}
+
+.order-route{
+  font-size:20px;
+  line-height:1.3;
+  font-weight:900;
+  margin:5px 0 14px;
+  overflow-wrap:anywhere;
+}
+
+.order-line{
+  display:flex;
+  gap:8px;
+  margin:7px 0;
+  font-size:15px;
+  line-height:1.35;
+  color:#374151;
+}
+
+.order-price{
+  margin:15px 0 2px;
+  font-size:25px;
+  font-weight:950;
+}
+
+.action-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
+  margin-top:15px;
+}
+
+.action-btn{
+  min-height:47px;
+  border:0;
+  border-radius:14px;
+  padding:10px 8px;
+  font-weight:850;
+  font-size:14px;
+}
+
+.btn-primary{
+  background:#111827;
+  color:#fff;
+}
+
+.btn-green{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.btn-red{
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.btn-blue{
+  background:#dbeafe;
+  color:#1d4ed8;
+}
+
+.btn-orange{
+  background:#ffedd5;
+  color:#9a3412;
+}
+
+.btn-gray{
+  background:#f3f4f6;
+  color:#374151;
+}
+
+.nav-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
+  margin-top:9px;
+}
+
+.nav-btn{
+  min-height:48px;
+  border:1px solid #d7dde5;
+  border-radius:14px;
+  background:#fff;
+  color:#111827;
+  font-weight:850;
+  font-size:14px;
+}
+
+.chat-overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:999999;
+  background:rgba(0,0,0,.52);
+  padding:
+    calc(18px + env(safe-area-inset-top))
+    12px
+    calc(18px + env(safe-area-inset-bottom));
+}
+
+.chat-overlay.open{
+  display:flex;
+  align-items:flex-end;
+}
+
+.chat-sheet{
+  width:min(100%,720px);
+  max-height:88%;
+  margin:0 auto;
+  background:#fff;
+  border-radius:24px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+
+.chat-head{
+  padding:16px;
+  border-bottom:1px solid #e5e7eb;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.chat-head strong{
+  font-size:18px;
+}
+
+.chat-close{
+  margin-left:auto;
+  border:0;
+  width:40px;
+  height:40px;
+  border-radius:12px;
+  background:#f3f4f6;
+  font-size:21px;
+}
+
+.chat-messages{
+  overflow:auto;
+  padding:15px;
+  min-height:260px;
+  background:#f7f8fa;
+}
+
+.chat-empty{
+  text-align:center;
+  color:#9ca3af;
+  padding:35px 10px;
+}
+
+.bubble{
+  max-width:84%;
+  padding:10px 12px;
+  margin:7px 0;
+  border-radius:16px;
+  font-size:15px;
+  line-height:1.4;
+  overflow-wrap:anywhere;
+}
+
+.bubble.driver{
+  margin-left:auto;
+  background:#111827;
+  color:#fff;
+  border-bottom-right-radius:5px;
+}
+
+.bubble.client{
+  margin-right:auto;
+  background:#fff;
+  color:#111827;
+  border:1px solid #e2e6eb;
+  border-bottom-left-radius:5px;
+}
+
+.bubble-time{
+  margin-top:5px;
+  font-size:10px;
+  opacity:.65;
+}
+
+.chat-compose{
+  padding:12px;
+  border-top:1px solid #e5e7eb;
+  display:flex;
+  gap:8px;
+  align-items:flex-end;
+}
+
+.chat-compose textarea{
+  flex:1;
+  min-height:48px;
+  max-height:120px;
+  border:1px solid #d1d5db;
+  border-radius:14px;
+  padding:12px;
+  resize:none;
+  font-size:16px;
+}
+
+.chat-send{
+  border:0;
+  border-radius:14px;
+  min-width:52px;
+  height:48px;
+  background:#111827;
+  color:#fff;
+  font-size:20px;
+  font-weight:900;
+}
+
+@media(max-width:520px){
+
+  .logo{
+    width:155px;
+  }
+
+  .hero h1{
+    font-size:38px;
+  }
+
+  .card-row{
+    padding:17px;
+    gap:13px;
+  }
+
+  .card-icon{
+    width:69px;
+    height:69px;
+    flex-basis:69px;
+    font-size:36px;
+  }
+
+  .card-name{
+    font-size:23px;
+  }
+
+  .action-grid,
+  .nav-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+
+<section id="home" class="screen active">
+
+  <div class="container">
+
+    <div class="logo-wrap">
+      <img
+        class="logo"
+        src="uruway_logo_full_official.png"
+        alt="UruWay Transfer">
+    </div>
+
+    <div class="hero">
+      <h1>UruWay</h1>
+      <h2>Добро пожаловать</h2>
+      <p>Выберите способ входа</p>
+    </div>
+
+    <button class="role-client" onclick="openScreen('clientClass')">
+
+      <div class="role-icon">👤</div>
+
+      <div class="role-text">
+        <strong>Я клиент</strong>
+        <span>Заказать трансфер для себя или близких</span>
+      </div>
+
+      <div class="arrow">›</div>
+
+    </button>
+
+    <button class="driver-small" onclick="openScreen('driverClass')">
+      🚘 Я водитель
+    </button>
+
+    <div class="version">
+      UruWay Transfer Android · V35
+    </div>
+
+  </div>
+
+</section>
+
+
+<section id="clientClass" class="screen">
+
+  <div class="container">
+
+    <button class="back" onclick="openScreen('home')">
+      ‹ Назад
+    </button>
+
+    <div class="page-title">Выберите класс авто</div>
+
+    <div class="page-subtitle">
+      После выбора откроется форма бронирования.
+    </div>
+
+
+    <div class="card click" onclick="openBooking('standard')">
+
+      <div class="card-row">
+
+        <div class="card-icon">🚗</div>
+
+        <div class="card-body">
+          <div class="card-name">STANDARD</div>
+          <div class="card-info">
+            Renault Kwid<br>
+            До 3 пассажиров
+          </div>
+        </div>
+
+        <div class="card-arrow">›</div>
+
+      </div>
+
+    </div>
+
+
+    <div class="card click" onclick="openBooking('business')">
+
+      <div class="card-row">
+
+        <div class="card-icon">🚐</div>
+
+        <div class="card-body">
+          <div class="card-name">BUSINESS</div>
+          <div class="card-info">
+            Hyundai H-1<br>
+            До 8 пассажиров · до 10 чемоданов
+          </div>
+        </div>
+
+        <div class="card-arrow">›</div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<section id="booking" class="screen booking-screen">
+
+  <button class="booking-native-back" onclick="goBackFromBooking()">
+    ‹ Назад
+  </button>
+
+  <iframe id="bookingFrame" title="UruWay booking"></iframe>
+
+</section>
+
+
+<section id="driverClass" class="screen">
+
+  <div class="container">
+
+    <button class="back" onclick="openScreen('home')">
+      ‹ Назад
+    </button>
+
+    <div class="page-title">Вход водителя</div>
+
+    <div class="page-subtitle">
+      Выберите автомобиль, на котором вы работаете.
+    </div>
+
+
+    <div class="card click" onclick="openDriver('standard')">
+
+      <div class="card-row">
+
+        <div class="card-icon">🚗</div>
+
+        <div class="card-body">
+          <div class="card-name">Водитель STANDARD</div>
+          <div class="card-info">
+            Renault Kwid<br>
+            Заявки класса Standard
+          </div>
+        </div>
+
+        <div class="card-arrow">›</div>
+
+      </div>
+
+    </div>
+
+
+    <div class="card click" onclick="openDriver('business')">
+
+      <div class="card-row">
+
+        <div class="card-icon">🚐</div>
+
+        <div class="card-body">
+          <div class="card-name">Водитель BUSINESS</div>
+          <div class="card-info">
+            Hyundai H-1<br>
+            Заявки класса Business
+          </div>
+        </div>
+
+        <div class="card-arrow">›</div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<section id="driverPanel" class="screen">
+
+  <div class="container">
+
+    <button class="driver-exit" onclick="leaveDriver()">
+      ‹ Выйти из кабинета
+    </button>
+
+    <div id="driverV32Header" class="driver-v32-head"></div>
+
+    <div class="driver-tabs">
+
+      <button
+        id="newTab"
+        class="driver-tab active"
+        onclick="switchDriverTab('new')">
+        Новые
+      </button>
+
+      <button
+        id="acceptedTab"
+        class="driver-tab"
+        onclick="switchDriverTab('accepted')">
+        Принятые
+      </button>
+
+      <button
+        id="historyTab"
+        class="driver-tab"
+        onclick="switchDriverTab('history')">
+        История
+      </button>
+
+    </div>
+
+    <div id="driverOrders"></div>
+
+    <div class="version">
+      UruWay Transfer Android · Driver V35
+    </div>
+
+  </div>
+
+</section>
+
+
+<div id="chatOverlay" class="chat-overlay">
+
+  <div class="chat-sheet">
+
+    <div class="chat-head">
+      <strong id="chatTitle">Чат заказа</strong>
+
+      <button class="chat-close" onclick="closeDriverChat()">
+        ×
+      </button>
+    </div>
+
+    <div id="chatMessages" class="chat-messages"></div>
+
+    <div class="chat-compose">
+
+      <textarea
+        id="chatInput"
+        placeholder="Сообщение клиенту..."
+        maxlength="1000"></textarea>
+
+      <button class="chat-send" onclick="sendDriverChatMessage()">
+        ➤
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+let currentScreen = 'home';
+
+let driverClass =
+  localStorage.getItem('uruway_driver_class') ||
+  'standard';
+
+let driverTab = 'new';
+
+let driverOrders = [];
+
+let currentChatOrder = null;
+
+let chatPollTimer = null;
+
+let ordersPollTimer = null;
+
+window.UruWayApp = window.UruWayApp || {};
+
+
+function escHtml(value){
+
+  return String(value == null ? '' : value)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
+
+}
+
+
+function openScreen(id){
+
+  currentScreen = id;
+
+  document
+    .querySelectorAll('.screen')
+    .forEach(function(screen){
+      screen.classList.remove('active');
+    });
+
+  const target =
+    document.getElementById(id);
+
+  if(target){
+    target.classList.add('active');
+  }
+
+  window.scrollTo(0,0);
+
+}
+
+
+function openBooking(type){
+
+  localStorage.setItem(
+    'uruway_vehicle_class',
+    type
+  );
+
+  const frame =
+    document.getElementById('bookingFrame');
+
+  frame.src =
+    'booking.html?vehicle_class=' +
+    encodeURIComponent(type);
+
+  openScreen('booking');
+
+}
+
+
+function goBackFromBooking(){
+
+  document.getElementById('bookingFrame').src = '';
+
+  openScreen('clientClass');
+
+}
+
+
+function driverCarName(){
+
+  return driverClass === 'business'
+    ? 'Hyundai H-1'
+    : 'Renault Kwid';
+
+}
+
+
+function renderDriverHeader(){
+
+  const box =
+    document.getElementById('driverV32Header');
+
+  const cls =
+    driverClass === 'business'
+      ? 'BUSINESS'
+      : 'STANDARD';
+
+  const calendar =
+    driverClass === 'standard'
+      ? '<div class="calendar-ok">✓ Google Calendar · подключён для Standard</div>'
+      : '<div class="calendar-neutral">Google Calendar · BUSINESS</div>';
+
+  box.innerHTML =
+    '<div class="driver-v32-label">' +
+      'ВОДИТЕЛЬ ' + cls +
+    '</div>' +
+
+    '<h2>' +
+      escHtml(driverCarName()) +
+    '</h2>' +
+
+    '<p class="driver-v32-sub">' +
+      'Отображаются только заявки ' +
+      cls +
+    '</p>' +
+
+    calendar;
+
+}
+
+
+function openDriver(type){
+
+  driverClass =
+    type === 'business'
+      ? 'business'
+      : 'standard';
+
+  localStorage.setItem(
+    'uruway_driver_class',
+    driverClass
+  );
+
+  driverTab = 'new';
+
+  renderDriverHeader();
+
+  updateDriverTabs();
+
+  openScreen('driverPanel');
+
+  loadDriverOrders();
+
+  startOrdersPolling();
+
+}
+
+
+function leaveDriver(){
+
+  stopOrdersPolling();
+
+  closeDriverChat();
+
+  openScreen('driverClass');
+
+}
+
+
+function updateDriverTabs(){
+
+  document
+    .getElementById('newTab')
+    .classList
+    .toggle('active',driverTab === 'new');
+
+  document
+    .getElementById('acceptedTab')
+    .classList
+    .toggle('active',driverTab === 'accepted');
+
+  document
+    .getElementById('historyTab')
+    .classList
+    .toggle('active',driverTab === 'history');
+
+}
+
+
+function switchDriverTab(tab){
+
+  driverTab = tab;
+
+  updateDriverTabs();
+
+  renderDriverOrders();
+
+}
+
+
+function startOrdersPolling(){
+
+  stopOrdersPolling();
+
+  ordersPollTimer =
+    setInterval(function(){
+
+      if(currentScreen === 'driverPanel'){
+        loadDriverOrders(true);
+      }
+
+    },15000);
+
+}
+
+
+function stopOrdersPolling(){
+
+  if(ordersPollTimer){
+    clearInterval(ordersPollTimer);
+    ordersPollTimer = null;
+  }
+
+}
+
+
+function loadDriverOrders(silent){
+
+  const box =
+    document.getElementById('driverOrders');
+
+  if(!silent){
+
+    box.innerHTML =
+      '<div class="driver-loading">' +
+        'Загружаю реальные заявки…' +
+      '</div>';
+
+  }
+
+  if(
+    window.UruWayAndroid &&
+    typeof window.UruWayAndroid.loadDriverOrders === 'function'
+  ){
+
+    window.UruWayAndroid.loadDriverOrders(
+      driverClass
+    );
+
+    return;
+  }
+
+  box.innerHTML =
+    '<div class="driver-error">' +
+      'Android API недоступен.' +
+    '</div>';
+
+}
+
+
+window.UruWayApp.onDriverOrders =
+  function(payload){
+
+    try{
+
+      const data =
+        typeof payload === 'string'
+          ? JSON.parse(payload)
+          : payload;
+
+      if(!data || data.ok !== true){
+        throw new Error(
+          data && data.error
+            ? data.error
+            : 'Ошибка загрузки'
+        );
+      }
+
+      driverOrders =
+        Array.isArray(data.orders)
+          ? data.orders
+          : [];
+
+      renderDriverOrders();
+
+    }catch(error){
+
+      document.getElementById('driverOrders').innerHTML =
+        '<div class="driver-error">' +
+          escHtml(error.message || error) +
+        '</div>';
+
+    }
+
+  };
+
+
+function isNewStatus(status){
+
+  return [
+    'pending',
+    'awaiting_prepayment',
+    'receipt_uploaded'
+  ].indexOf(status) !== -1;
+
+}
+
+
+function isAcceptedStatus(status){
+
+  return [
+    'confirmed',
+    'confirmed_corporate',
+    'driver_enroute',
+    'trip_started'
+  ].indexOf(status) !== -1;
+
+}
+
+
+function isHistoryStatus(status){
+
+  return [
+    'completed',
+    'cancelled_client',
+    'cancelled_admin',
+    'cancelled_auto_no_receipt',
+    'rejected_operator'
+  ].indexOf(status) !== -1;
+
+}
+
+
+function filteredOrders(){
+
+  return driverOrders.filter(function(order){
+
+    const status =
+      String(order.status || '');
+
+    if(driverTab === 'new'){
+      return isNewStatus(status);
+    }
+
+    if(driverTab === 'accepted'){
+      return isAcceptedStatus(status);
+    }
+
+    return isHistoryStatus(status);
+
+  });
+
+}
+
+
+function statusText(order){
+
+  if(order.status_text){
+    return String(order.status_text);
+  }
+
+  const map = {
+    pending:'Новая заявка',
+    awaiting_prepayment:'Ожидается предоплата',
+    receipt_uploaded:'Чек загружен',
+    confirmed:'Подтверждена',
+    confirmed_corporate:'Подтверждена',
+    driver_enroute:'Водитель выехал',
+    trip_started:'Поездка начата',
+    completed:'Поездка завершена',
+    cancelled_client:'Отменена клиентом',
+    cancelled_admin:'Отменена водителем',
+    cancelled_auto_no_receipt:'Отменена автоматически',
+    rejected_operator:'Отклонена'
+  };
+
+  return map[order.status] || String(order.status || '');
+
+}
+
+
+function formatOrderDate(order){
+
+  const date =
+    String(order.date || '').trim();
+
+  const time =
+    String(order.time || '').trim();
+
+  if(!date && !time){
+    return 'Время не указано';
+  }
+
+  return date + (time ? ' · ' + time : '');
+
+}
+
+
+function orderPrice(order){
+
+  const price =
+    String(order.price || '').trim();
+
+  const currency =
+    String(order.currency || '').trim();
+
+  if(!price){
+    return '';
+  }
+
+  return price +
+    (currency ? ' ' + currency : '');
+
+}
+
+
+function renderDriverOrders(){
+
+  const box =
+    document.getElementById('driverOrders');
+
+  const orders =
+    filteredOrders();
+
+  if(!orders.length){
+
+    const text =
+      driverTab === 'new'
+        ? 'Новых заявок сейчас нет.'
+        : driverTab === 'accepted'
+          ? 'Принятых заказов сейчас нет.'
+          : 'История пока пуста.';
+
+    box.innerHTML =
+      '<div class="driver-empty">' +
+        escHtml(text) +
+      '</div>';
+
+    return;
+
+  }
+
+  box.innerHTML =
+    orders
+      .map(renderOrderCard)
+      .join('');
+
+}
+
+
+function renderOrderCard(order){
+
+  const id =
+    String(order.id || '');
+
+  const number =
+    String(order.number || id || '');
+
+  const from =
+    String(order.from || '');
+
+  const to =
+    String(order.to || '');
+
+  const name =
+    String(
+      order.name ||
+      order.client_name ||
+      order.clientName ||
+      ''
+    );
+
+  const passengers =
+    String(order.passengers || '');
+
+  const bags =
+    String(order.bags || '');
+
+  const phone =
+    String(order.phone || '');
+
+  const status =
+    String(order.status || '');
+
+  const price =
+    orderPrice(order);
+
+  let actions = '';
+
+  if(driverTab === 'new'){
+
+    actions +=
+      '<div class="action-grid">' +
+
+        '<button class="action-btn btn-green" ' +
+          'onclick="driverAction(\'' +
+          escHtml(id) +
+          '\',\'confirm\')">' +
+          '✓ Принять' +
+        '</button>' +
+
+        '<button class="action-btn btn-red" ' +
+          'onclick="driverAction(\'' +
+          escHtml(id) +
+          '\',\'reject\')">' +
+          '✕ Отказать' +
+        '</button>' +
+
+      '</div>';
+
+  }
+
+
+  if(driverTab === 'accepted'){
+
+    actions += '<div class="action-grid">';
+
+    if(
+      status === 'confirmed' ||
+      status === 'confirmed_corporate'
+    ){
+
+      actions +=
+        '<button class="action-btn btn-green" ' +
+          'onclick="driverAction(\'' +
+          escHtml(id) +
+          '\',\'enroute\')">' +
+          '🚗 Выехал к клиенту' +
+        '</button>';
+
+    }
+
+
+    if(status === 'driver_enroute'){
+
+      actions +=
+        '<button class="action-btn btn-primary" ' +
+          'onclick="driverAction(\'' +
+          escHtml(id) +
+          '\',\'start_trip\')">' +
+          '▶ Начать поездку' +
+        '</button>';
+
+    }
+
+
+    if(status === 'trip_started'){
+
+      actions +=
+        '<button class="action-btn btn-green" ' +
+          'onclick="driverAction(\'' +
+          escHtml(id) +
+          '\',\'complete\')">' +
+          '✓ Завершить поездку' +
+        '</button>';
+
+    }
+
+
+    actions +=
+      '<button class="action-btn btn-red" ' +
+        'onclick="driverAction(\'' +
+        escHtml(id) +
+        '\',\'cancel\')">' +
+        'Отменить' +
+      '</button>' +
+
+    '</div>';
+
+  }
+
+
+  if(driverTab !== 'history'){
+
+    actions +=
+      '<div class="action-grid">' +
+
+        (
+          phone
+            ? '<button class="action-btn btn-blue" ' +
+                'onclick="openPhone(\'' +
+                encodeURIComponent(phone) +
+                '\')">☎ Позвонить</button>'
+            : ''
+        ) +
+
+        '<button class="action-btn btn-blue" ' +
+          'onclick="openDriverChat(\'' +
+          escHtml(id) +
+          '\')">' +
+          '💬 Написать' +
+        '</button>' +
+
+      '</div>';
+
+  }
+
+
+  if(driverTab === 'accepted'){
+
+    actions +=
+      '<div class="nav-grid">' +
+
+        '<button class="nav-btn" ' +
+          'onclick="openNavigation(\'' +
+          escHtml(id) +
+          '\',\'waze\')">' +
+          '🧭 Waze' +
+        '</button>' +
+
+        '<button class="nav-btn" ' +
+          'onclick="openNavigation(\'' +
+          escHtml(id) +
+          '\',\'google\')">' +
+          '📍 Google Maps' +
+        '</button>' +
+
+      '</div>';
+
+  }
+
+
+  return (
+    '<div class="order-card">' +
+
+      '<div class="order-top">' +
+
+        '<div class="order-number">' +
+          '№' + escHtml(number) +
+        '</div>' +
+
+        '<div class="status-pill">' +
+          escHtml(statusText(order)) +
+        '</div>' +
+
+      '</div>' +
+
+      '<div class="order-route">' +
+        escHtml(from || 'Точка A') +
+        ' → ' +
+        escHtml(to || 'Точка B') +
+      '</div>' +
+
+      (
+        name
+          ? '<div class="order-line">👤 ' +
+              escHtml(name) +
+            '</div>'
+          : ''
+      ) +
+
+      '<div class="order-line">🕘 ' +
+        escHtml(formatOrderDate(order)) +
+      '</div>' +
+
+      (
+        passengers
+          ? '<div class="order-line">👥 ' +
+              escHtml(passengers) +
+              ' пассажиров</div>'
+          : ''
+      ) +
+
+      (
+        bags
+          ? '<div class="order-line">🧳 ' +
+              escHtml(bags) +
+              ' багажа</div>'
+          : ''
+      ) +
+
+      (
+        price
+          ? '<div class="order-price">' +
+              escHtml(price) +
+            '</div>'
+          : ''
+      ) +
+
+      actions +
+
+    '</div>'
+  );
+
+}
+
+
+function getOrderById(id){
+
+  return driverOrders.find(function(order){
+    return String(order.id || '') === String(id);
+  }) || null;
+
+}
+
+
+/*
+ * НАВИГАЦИЯ:
+ *
+ * confirmed / confirmed_corporate / driver_enroute
+ * -> ТОЧКА A
+ *
+ * trip_started
+ * -> ТОЧКА B
+ */
+
+function navigationTarget(order){
+
+  if(!order){
+    return '';
+  }
+
+  if(String(order.status) === 'trip_started'){
+    return String(order.to || '').trim();
+  }
+
+  return String(order.from || '').trim();
+
+}
+
+
+function openNavigation(orderId,provider){
+
+  const order =
+    getOrderById(orderId);
+
+  if(!order){
+    alert('Заказ не найден.');
+    return;
+  }
+
+  const target =
+    navigationTarget(order);
+
+  if(!target){
+    alert('В заявке нет точки маршрута.');
+    return;
+  }
+
+  let url;
+
+  if(provider === 'waze'){
+
+    url =
+      'https://waze.com/ul?q=' +
+      encodeURIComponent(target) +
+      '&navigate=yes';
+
+  }else{
+
+    url =
+      'https://www.google.com/maps/dir/?api=1' +
+      '&destination=' +
+      encodeURIComponent(target) +
+      '&travelmode=driving';
+
+  }
+
+  openExternal(url);
+
+}
+
+
+function openPhone(encodedPhone){
+
+  const phone =
+    decodeURIComponent(encodedPhone || '');
+
+  if(!phone){
+    return;
+  }
+
+  openExternal('tel:' + phone);
+
+}
+
+
+function openExternal(url){
+
+  if(
+    window.UruWayAndroid &&
+    typeof window.UruWayAndroid.openExternal === 'function'
+  ){
+
+    window.UruWayAndroid.openExternal(url);
+    return;
+
+  }
+
+  window.location.href = url;
+
+}
+
+
+function driverAction(orderId,action){
+
+  if(
+    !window.UruWayAndroid ||
+    typeof window.UruWayAndroid.driverAction !== 'function'
+  ){
+
+    alert('Android API действия недоступен.');
+    return;
+
+  }
+
+  window.UruWayAndroid.driverAction(
+    driverClass,
+    orderId,
+    action
+  );
+
+}
+
+
+window.UruWayApp.onDriverAction =
+  function(payload){
+
+    try{
+
+      const data =
+        typeof payload === 'string'
+          ? JSON.parse(payload)
+          : payload;
+
+      if(!data || data.ok !== true){
+
+        throw new Error(
+          data && data.error
+            ? data.error
+            : 'Действие не выполнено'
+        );
+
+      }
+
+      loadDriverOrders();
+
+    }catch(error){
+
+      alert(
+        'Ошибка: ' +
+        (error.message || error)
+      );
+
+    }
+
+  };
+
+
+function openDriverChat(orderId){
+
+  const order =
+    getOrderById(orderId);
+
+  if(!order){
+    return;
+  }
+
+  currentChatOrder = order;
+
+  document.getElementById('chatTitle').textContent =
+    'Чат · заказ №' +
+    String(order.number || order.id || '');
+
+  document.getElementById('chatMessages').innerHTML =
+    '<div class="chat-empty">Загружаю сообщения…</div>';
+
+  document.getElementById('chatOverlay')
+    .classList.add('open');
+
+  loadDriverChat();
+
+  if(chatPollTimer){
+    clearInterval(chatPollTimer);
+  }
+
+  chatPollTimer =
+    setInterval(loadDriverChat,5000);
+
+}
+
+
+function closeDriverChat(){
+
+  document.getElementById('chatOverlay')
+    .classList.remove('open');
+
+  currentChatOrder = null;
+
+  if(chatPollTimer){
+    clearInterval(chatPollTimer);
+    chatPollTimer = null;
+  }
+
+}
+
+
+function loadDriverChat(){
+
+  if(!currentChatOrder){
+    return;
+  }
+
+  if(
+    window.UruWayAndroid &&
+    typeof window.UruWayAndroid.loadDriverChat === 'function'
+  ){
+
+    window.UruWayAndroid.loadDriverChat(
+      driverClass,
+      String(currentChatOrder.id || '')
+    );
+
+  }
+
+}
+
+
+window.UruWayApp.onDriverChat =
+  function(payload){
+
+    try{
+
+      const data =
+        typeof payload === 'string'
+          ? JSON.parse(payload)
+          : payload;
+
+      if(!data || data.ok !== true){
+
+        throw new Error(
+          data && data.error
+            ? data.error
+            : 'Ошибка чата'
+        );
+
+      }
+
+      renderChatMessages(
+        Array.isArray(data.messages)
+          ? data.messages
+          : []
+      );
+
+    }catch(error){
+
+      document.getElementById('chatMessages').innerHTML =
+        '<div class="driver-error">' +
+          escHtml(error.message || error) +
+        '</div>';
+
+    }
+
+  };
+
+
+function renderChatMessages(messages){
+
+  const box =
+    document.getElementById('chatMessages');
+
+  if(!messages.length){
+
+    box.innerHTML =
+      '<div class="chat-empty">' +
+        'Сообщений пока нет.' +
+      '</div>';
+
+    return;
+
+  }
+
+  box.innerHTML =
+    messages
+      .map(function(message){
+
+        const sender =
+          message.sender === 'client'
+            ? 'client'
+            : 'driver';
+
+        let time = '';
+
+        try{
+
+          if(message.at){
+
+            const d =
+              new Date(message.at);
+
+            time =
+              d.toLocaleString(
+                'ru-RU',
+                {
+                  day:'2-digit',
+                  month:'2-digit',
+                  hour:'2-digit',
+                  minute:'2-digit'
+                }
+              );
+
+          }
+
+        }catch(ignore){}
+
+        return (
+          '<div class="bubble ' +
+            sender +
+          '">' +
+
+            escHtml(message.text || '') +
+
+            (
+              time
+                ? '<div class="bubble-time">' +
+                    escHtml(time) +
+                  '</div>'
+                : ''
+            ) +
+
+          '</div>'
+        );
+
+      })
+      .join('');
+
+  box.scrollTop = box.scrollHeight;
+
+}
+
+
+function sendDriverChatMessage(){
+
+  if(!currentChatOrder){
+    return;
+  }
+
+  const input =
+    document.getElementById('chatInput');
+
+  const text =
+    String(input.value || '').trim();
+
+  if(!text){
+    return;
+  }
+
+  if(
+    !window.UruWayAndroid ||
+    typeof window.UruWayAndroid.sendDriverMessage !== 'function'
+  ){
+
+    alert('Android API сообщений недоступен.');
+    return;
+
+  }
+
+  input.disabled = true;
+
+  window.UruWayAndroid.sendDriverMessage(
+    driverClass,
+    String(currentChatOrder.id || ''),
+    text
+  );
+
+}
+
+
+window.UruWayApp.onDriverMessageSent =
+  function(payload){
+
+    const input =
+      document.getElementById('chatInput');
+
+    input.disabled = false;
+
+    try{
+
+      const data =
+        typeof payload === 'string'
+          ? JSON.parse(payload)
+          : payload;
+
+      if(!data || data.ok !== true){
+
+        throw new Error(
+          data && data.error
+            ? data.error
+            : 'Сообщение не отправлено'
+        );
+
+      }
+
+      input.value = '';
+
+      loadDriverChat();
+
+    }catch(error){
+
+      alert(
+        'Ошибка отправки: ' +
+        (error.message || error)
+      );
+
+    }
+
+  };
+
+
+function handleAndroidBack(){
+
+  if(
+    document.getElementById('chatOverlay')
+      .classList.contains('open')
+  ){
+
+    closeDriverChat();
+    return true;
+
+  }
+
+  if(currentScreen === 'booking'){
+
+    goBackFromBooking();
+    return true;
+
+  }
+
+  if(currentScreen === 'clientClass'){
+
+    openScreen('home');
+    return true;
+
+  }
+
+  if(currentScreen === 'driverPanel'){
+
+    leaveDriver();
+    return true;
+
+  }
+
+  if(currentScreen === 'driverClass'){
+
+    openScreen('home');
+    return true;
+
+  }
+
+  return false;
+
+}
+
+
+const CapacitorApp =
+  window.Capacitor &&
+  window.Capacitor.Plugins &&
+  window.Capacitor.Plugins.App;
+
+
+if(CapacitorApp){
+
+  CapacitorApp.addListener(
+    'backButton',
+    function(){
+
+      if(currentScreen === 'home'){
+        CapacitorApp.exitApp();
+        return;
+      }
+
+      handleAndroidBack();
+
+    }
+  );
+
+}
+
+
+window.addEventListener(
+  'popstate',
+  function(){
+
+    if(currentScreen !== 'home'){
+      handleAndroidBack();
+    }
+
+  }
+);
+
+</script>
+
+<script id="URUWAY_V35_CHAT_OVERRIDE">
+(function(){
+  window.uruwayDriverMessageSending = false;
+  window.uruwayPendingDriverMessage = null;
+
+  function uruwaySendButton(){
+    return document.querySelector('[onclick*="sendDriverChatMessage"]');
+  }
+
+  window.renderChatMessages = function(messages){
+    const box = document.getElementById('chatMessages');
+    if(!box) return;
+
+    let all = Array.isArray(messages) ? messages.slice() : [];
+    if(window.uruwayPendingDriverMessage){
+      all.push(window.uruwayPendingDriverMessage);
+    }
+
+    if(!all.length){
+      box.innerHTML = '<div class="chat-empty">Сообщений пока нет.</div>';
+      return;
+    }
+
+    box.innerHTML = all.map(function(message){
+      const sender = message.sender === 'client' ? 'client' : 'driver';
+      let time = '';
+      try{
+        if(message.at){
+          const d = new Date(message.at);
+          time = d.toLocaleString('ru-RU', {
+            day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'
+          });
+        }
+      }catch(ignore){}
+
+      let delivery = '';
+      if(sender === 'driver'){
+        const st = String(message.delivery_status || '');
+        if(st === 'delivered'){
+          delivery = '<span style="margin-left:8px;color:#79d89a;font-weight:800">Доставлено ✓✓</span>';
+        }else if(st === 'failed'){
+          delivery = '<span style="margin-left:8px;color:#ff9b9b;font-weight:800">Не доставлено ⚠</span>';
+        }else{
+          delivery = '<span style="margin-left:8px;opacity:.72;font-weight:700">Отправлено ✓</span>';
+        }
+      }
+
+      const safe = (typeof escHtml === 'function') ? escHtml : function(v){
+        return String(v == null ? '' : v)
+          .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+          .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+      };
+
+      return '<div class="bubble ' + sender + '">' +
+        safe(message.text || '') +
+        '<div class="bubble-time">' + safe(time) + delivery + '</div>' +
+      '</div>';
+    }).join('');
+
+    box.scrollTop = box.scrollHeight;
+  };
+
+  window.sendDriverChatMessage = function(){
+    if(!window.currentChatOrder && typeof currentChatOrder === 'undefined') return;
+    const order = (typeof currentChatOrder !== 'undefined') ? currentChatOrder : window.currentChatOrder;
+    if(!order || window.uruwayDriverMessageSending) return;
+
+    const input = document.getElementById('chatInput');
+    if(!input) return;
+    const text = String(input.value || '').trim();
+    if(!text) return;
+
+    if(!window.UruWayAndroid || typeof window.UruWayAndroid.sendDriverMessage !== 'function'){
+      alert('Android API сообщений недоступен.');
+      return;
+    }
+
+    window.uruwayDriverMessageSending = true;
+    input.disabled = true;
+    const btn = uruwaySendButton();
+    if(btn) btn.disabled = true;
+
+    window.uruwayPendingDriverMessage = {
+      id:'pending-' + Date.now(),
+      at:new Date().toISOString(),
+      sender:'driver',
+      text:text,
+      delivery_status:'sent'
+    };
+
+    if(typeof loadDriverChat === 'function'){
+      loadDriverChat();
+    }else{
+      window.renderChatMessages([]);
+    }
+
+    const cls = (typeof driverClass !== 'undefined') ? driverClass : 'standard';
+    window.UruWayAndroid.sendDriverMessage(
+      cls,
+      String(order.id || ''),
+      text
+    );
+  };
+
+  window.UruWayApp = window.UruWayApp || {};
+  window.UruWayApp.onDriverMessageSent = function(payload){
+    const input = document.getElementById('chatInput');
+    const btn = uruwaySendButton();
+    if(input) input.disabled = false;
+    if(btn) btn.disabled = false;
+    window.uruwayDriverMessageSending = false;
+
+    try{
+      const data = typeof payload === 'string' ? JSON.parse(payload) : payload;
+      if(!data || data.ok !== true){
+        if(window.uruwayPendingDriverMessage){
+          window.uruwayPendingDriverMessage.delivery_status = 'failed';
+          window.renderChatMessages([]);
+        }
+        throw new Error(
+          data && (data.detail || data.error)
+            ? (data.detail || data.error)
+            : 'Сообщение не доставлено'
+        );
+      }
+
+      if(input) input.value = '';
+      window.uruwayPendingDriverMessage = null;
+      if(typeof loadDriverChat === 'function') loadDriverChat();
+    }catch(error){
+      alert('Ошибка отправки: ' + (error.message || error));
+    }
+  };
+})();
+
+/* ============================================================
+   URUWAY_V35_TELEGRAM_AUTH
+   Единый вход: CLIENT / DRIVER STANDARD / DRIVER BUSINESS
+============================================================ */
+
+(function(){
+
+  let authTimerV35=null;
+  let authChallengeV35='';
+
+  function authParseV35(raw){
+    try{
+      return typeof raw==='string'
+        ? JSON.parse(raw)
+        : raw;
+    }catch(e){
+      return null;
+    }
+  }
+
+  function authStatusNodeV35(){
+
+    let node=
+      document.getElementById(
+        'uruwayAuthStatusV35'
+      );
+
+    if(!node){
+
+      node=
+        document.createElement('div');
+
+      node.id=
+        'uruwayAuthStatusV35';
+
+      node.style.cssText=
+        'margin:16px auto 0;max-width:560px;padding:13px 16px;border-radius:15px;'+
+        'background:#eef6ff;color:#155b9d;text-align:center;font-size:14px;line-height:1.4;display:none;';
+
+      const button=
+        document.querySelector(
+          '.role-client'
+        );
+
+      if(button&&button.parentNode){
+        button.parentNode.insertBefore(
+          node,
+          button.nextSibling
+        );
+      }
+    }
+
+    return node;
+  }
+
+  function setAuthStatusV35(text,isError){
+
+    const node=
+      authStatusNodeV35();
+
+    if(!node)return;
+
+    node.style.display=
+      text?'block':'none';
+
+    node.style.background=
+      isError
+        ?'#fff1f2'
+        :'#eef6ff';
+
+    node.style.color=
+      isError
+        ?'#9f1239'
+        :'#155b9d';
+
+    node.textContent=
+      text||'';
+  }
+
+  function authSaveV35(data){
+
+    if(!data)return;
+
+    if(data.session_token){
+      localStorage.setItem(
+        'uruway_auth_session',
+        String(data.session_token)
+      );
+    }
+
+    if(data.role){
+      localStorage.setItem(
+        'uruway_auth_role',
+        String(data.role)
+      );
+    }
+
+    localStorage.setItem(
+      'uruway_auth_vehicle_class',
+      String(
+        data.vehicle_class||''
+      )
+    );
+
+    localStorage.setItem(
+      'uruway_auth_telegram_user_id',
+      String(
+        data.telegram_user_id||''
+      )
+    );
+
+    const user=
+      data.user||{};
+
+    localStorage.setItem(
+      'uruway_auth_first_name',
+      String(
+        user.first_name||''
+      )
+    );
+
+    localStorage.setItem(
+      'uruway_auth_last_name',
+      String(
+        user.last_name||''
+      )
+    );
+
+    localStorage.setItem(
+      'uruway_auth_username',
+      String(
+        user.username||''
+      )
+    );
+
+    localStorage.setItem(
+      'uruway_auth_verified_at',
+      String(Date.now())
+    );
+  }
+
+  function authOpenRoleV35(data){
+
+    if(!data)return;
+
+    authSaveV35(data);
+    setAuthStatusV35('');
+
+    const role=
+      String(
+        data.role||'client'
+      );
+
+    if(role==='driver_business'){
+      openDriver('business');
+      return;
+    }
+
+    if(role==='driver_standard'){
+      openDriver('standard');
+      return;
+    }
+
+    openScreen('clientClass');
+  }
+
+  window.beginTelegramAuthV35=function(){
+
+    if(
+      !window.UruWayAndroid ||
+      typeof window.UruWayAndroid.beginTelegramAuthV35!=='function'
+    ){
+      setAuthStatusV35(
+        'Авторизация Telegram доступна в Android-приложении.',
+        true
+      );
+      return;
+    }
+
+    setAuthStatusV35(
+      'Создаю безопасную ссылку входа…'
+    );
+
+    window.UruWayAndroid
+      .beginTelegramAuthV35();
+  };
+
+  window.UruWayApp=
+    window.UruWayApp||{};
+
+  window.UruWayApp
+    .onAppAuthBeginV35=
+    function(raw){
+
+      const data=
+        authParseV35(raw);
+
+      if(
+        !data||
+        !data.ok||
+        !data.challenge||
+        !data.bot_url
+      ){
+        setAuthStatusV35(
+          'Не удалось начать вход через Telegram.',
+          true
+        );
+        return;
+      }
+
+      authChallengeV35=
+        String(data.challenge);
+
+      setAuthStatusV35(
+        'Подтвердите вход в Telegram. После подтверждения вернитесь в UruWay.'
+      );
+
+      if(
+        window.UruWayAndroid &&
+        typeof window.UruWayAndroid.openExternal==='function'
+      ){
+        window.UruWayAndroid.openExternal(
+          String(data.bot_url)
+        );
+      }
+
+      if(authTimerV35){
+        clearInterval(
+          authTimerV35
+        );
+      }
+
+      authTimerV35=
+        setInterval(
+          function(){
+
+            if(
+              authChallengeV35 &&
+              window.UruWayAndroid &&
+              typeof window.UruWayAndroid.checkTelegramAuthV35==='function'
+            ){
+              window.UruWayAndroid
+                .checkTelegramAuthV35(
+                  authChallengeV35
+                );
+            }
+
+          },
+          2000
+        );
+    };
+
+  window.UruWayApp
+    .onAppAuthStatusV35=
+    function(raw){
+
+      const data=
+        authParseV35(raw);
+
+      if(!data)return;
+
+      if(
+        data.ok &&
+        data.status==='pending'
+      ){
+        return;
+      }
+
+      if(
+        data.ok &&
+        data.status==='authorized'
+      ){
+
+        if(authTimerV35){
+          clearInterval(
+            authTimerV35
+          );
+          authTimerV35=null;
+        }
+
+        authChallengeV35='';
+        authOpenRoleV35(data);
+        return;
+      }
+
+      if(
+        data.error==='auth_expired' ||
+        data.error==='auth_not_found'
+      ){
+        if(authTimerV35){
+          clearInterval(
+            authTimerV35
+          );
+          authTimerV35=null;
+        }
+
+        authChallengeV35='';
+
+        setAuthStatusV35(
+          'Ссылка входа истекла. Нажмите «Войти через Telegram» ещё раз.',
+          true
+        );
+      }
+    };
+
+  window.UruWayApp
+    .onAppAuthMeV35=
+    function(raw){
+
+      const data=
+        authParseV35(raw);
+
+      if(
+        data &&
+        data.ok &&
+        data.status==='authorized'
+      ){
+        authOpenRoleV35(data);
+        localStorage.setItem(
+          'uruway_auth_verified_at',
+          String(Date.now())
+        );
+        return;
+      }
+
+      const error=
+        String(
+          data && data.error || ''
+        );
+
+      // V35 FINAL:
+      // Сетевой сбой / timeout / временная ошибка НЕ разлогинивают пользователя.
+      // Сессия удаляется только когда сервер явно сказал, что она недействительна.
+      const hardInvalid=
+        error==='unauthorized' ||
+        error==='auth_expired' ||
+        error==='auth_not_found' ||
+        error==='revoked';
+
+      if(!hardInvalid){
+        setAuthStatusV35('');
+        return;
+      }
+
+      localStorage.removeItem(
+        'uruway_auth_session'
+      );
+
+      localStorage.removeItem(
+        'uruway_auth_role'
+      );
+
+      localStorage.removeItem(
+        'uruway_auth_vehicle_class'
+      );
+
+      localStorage.removeItem(
+        'uruway_auth_verified_at'
+      );
+
+      openScreen('home');
+
+      setAuthStatusV35(
+        'Срок авторизации истёк. Войдите через Telegram ещё раз.',
+        true
+      );
+    };
+
+  // История: всегда новая заявка сверху.
+  const originalOrdersHandlerV35=
+    window.UruWayApp.onDriverOrders;
+
+  if(
+    typeof originalOrdersHandlerV35==='function'
+  ){
+
+    window.UruWayApp
+      .onDriverOrders=
+      function(raw){
+
+        let data=
+          authParseV35(raw);
+
+        if(
+          data &&
+          data.ok &&
+          Array.isArray(data.orders)
+        ){
+
+          data.orders=
+            data.orders
+              .slice()
+              .sort(
+                function(a,b){
+
+                  const an=
+                    parseInt(
+                      String(
+                        a.number||''
+                      ).replace(
+                        /\D/g,
+                        ''
+                      ),
+                      10
+                    )||0;
+
+                  const bn=
+                    parseInt(
+                      String(
+                        b.number||''
+                      ).replace(
+                        /\D/g,
+                        ''
+                      ),
+                      10
+                    )||0;
+
+                  if(an!==bn){
+                    return bn-an;
+                  }
+
+                  return String(
+                    b.created_at||''
+                  ).localeCompare(
+                    String(
+                      a.created_at||''
+                    )
+                  );
+                }
+              );
+
+          raw=
+            JSON.stringify(data);
+        }
+
+        return originalOrdersHandlerV35(
+          raw
+        );
+      };
+  }
+
+  function prepareAuthHomeV35(){
+
+    // V35 FINAL RECOVERY:
+    // Telegram Mini App / обычный браузер НЕ должны попадать в Android-авторизацию.
+    // Авторизация через Telegram-бота здесь нужна только нативному Android shell.
+    const isAndroidShellV35 = !!(
+      window.UruWayAndroid &&
+      typeof window.UruWayAndroid.beginTelegramAuthV35 === 'function'
+    );
+
+    if(!isAndroidShellV35){
+      openScreen('clientClass');
+      return;
+    }
+
+    const mainButton=
+      document.querySelector(
+        '.role-client'
+      );
+
+    if(mainButton){
+
+      mainButton.onclick=
+        window.beginTelegramAuthV35;
+
+      const strong=
+        mainButton.querySelector(
+          '.role-text strong'
+        );
+
+      const span=
+        mainButton.querySelector(
+          '.role-text span'
+        );
+
+      const icon=
+        mainButton.querySelector(
+          '.role-icon'
+        );
+
+      if(strong){
+        strong.textContent=
+          'Войти через Telegram';
+      }
+
+      if(span){
+        span.textContent=
+          'Один вход для клиента и водителя';
+      }
+
+      if(icon){
+        icon.textContent='✈️';
+      }
+    }
+
+    const driverButton=
+      document.querySelector(
+        '.driver-small'
+      );
+
+    if(driverButton){
+      driverButton.style.display=
+        'none';
+    }
+
+    const session=
+      String(
+        localStorage.getItem(
+          'uruway_auth_session'
+        )||''
+      ).trim();
+
+    const cachedRole=
+      String(
+        localStorage.getItem(
+          'uruway_auth_role'
+        )||''
+      ).trim();
+
+    const cachedVehicle=
+      String(
+        localStorage.getItem(
+          'uruway_auth_vehicle_class'
+        )||''
+      ).trim();
+
+    const verifiedAt=
+      Number(
+        localStorage.getItem(
+          'uruway_auth_verified_at'
+        )||'0'
+      );
+
+    // V35 FINAL:
+    // Авторизация фиксируется локально.
+    // На каждом запуске приложение НЕ заставляет пользователя ждать проверку.
+    if(session && cachedRole){
+
+      if(cachedRole==='driver_business'){
+        openDriver('business');
+      }else if(cachedRole==='driver_standard'){
+        openDriver('standard');
+      }else{
+        openScreen('clientClass');
+      }
+
+      setAuthStatusV35('');
+
+      // Серверную сессию проверяем тихо не чаще раза в 7 дней.
+      // Даже если сеть временно недоступна, локальная авторизация сохраняется.
+      const weekMs=
+        7*24*60*60*1000;
+
+      if(
+        Date.now()-verifiedAt>weekMs &&
+        window.UruWayAndroid &&
+        typeof window.UruWayAndroid.restoreTelegramAuthV35==='function'
+      ){
+        window.UruWayAndroid
+          .restoreTelegramAuthV35(
+            session
+          );
+      }
+
+      return;
+    }
+
+    if(
+      session &&
+      window.UruWayAndroid &&
+      typeof window.UruWayAndroid.restoreTelegramAuthV35==='function'
+    ){
+      window.UruWayAndroid
+        .restoreTelegramAuthV35(
+          session
+        );
+    }
+  }
+
+  setTimeout(
+    prepareAuthHomeV35,
+    150
+  );
+
+})();
+
+</script>
+
+<script>
+/* ============================================================
+   URUWAY_V35_AUTH_BOOKING_BRIDGE_FINAL
+   Передача авторизованного Telegram-профиля клиента
+   из Android shell в booking.html.
+============================================================ */
+(function(){
+
+  window.openBooking = function(type){
+
+    const cls =
+      String(type||'standard')
+        .toLowerCase()==='business'
+          ? 'business'
+          : 'standard';
+
+    localStorage.setItem(
+      'uruway_vehicle_class',
+      cls
+    );
+
+    const frame =
+      document.getElementById(
+        'bookingFrame'
+      );
+
+    if(!frame){
+      return;
+    }
+
+    const qs =
+      new URLSearchParams({
+        vehicle_class:cls,
+        app_session:String(
+          localStorage.getItem(
+            'uruway_auth_session'
+          )||''
+        ),
+        telegram_user_id:String(
+          localStorage.getItem(
+            'uruway_auth_telegram_user_id'
+          )||''
+        ),
+        telegram_first_name:String(
+          localStorage.getItem(
+            'uruway_auth_first_name'
+          )||''
+        ),
+        telegram_last_name:String(
+          localStorage.getItem(
+            'uruway_auth_last_name'
+          )||''
+        ),
+        telegram_username:String(
+          localStorage.getItem(
+            'uruway_auth_username'
+          )||''
+        )
+      });
+
+    frame.src =
+      'booking.html?' +
+      qs.toString();
+
+    openScreen('booking');
+  };
+
+})();
+</script>
+
+<style id="URUWAY_V35_CLIENT_HOME_HISTORY_FINAL_STYLE">
+#clientHomeHubV35{
+  margin-top:22px;
+}
+.client-active-wrap-v35{
+  margin-bottom:14px;
+}
+.client-active-title-v35{
+  font-size:17px;
+  font-weight:900;
+  margin:0 0 10px 3px;
+}
+.client-active-card-v35,
+.client-history-card-v35{
+  background:#fff;
+  border:1px solid #dce4ec;
+  border-radius:22px;
+  padding:17px;
+  box-shadow:0 8px 24px rgba(15,23,42,.06);
+}
+.client-active-card-v35{
+  border-color:#b8daf5;
+  background:#fbfdff;
+}
+.client-order-top-v35{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:11px;
+}
+.client-order-number-v35{
+  font-size:18px;
+  font-weight:950;
+}
+.client-order-status-v35{
+  margin-left:auto;
+  border-radius:999px;
+  padding:6px 9px;
+  background:#eaf5ff;
+  color:#1667ad;
+  font-size:12px;
+  font-weight:850;
+  text-align:center;
+}
+.client-order-route-v35{
+  font-size:18px;
+  line-height:1.35;
+  font-weight:900;
+  margin:4px 0 10px;
+  overflow-wrap:anywhere;
+}
+.client-order-meta-v35{
+  color:#64748b;
+  font-size:14px;
+  line-height:1.55;
+}
+.client-order-price-v35{
+  margin-top:10px;
+  font-size:20px;
+  font-weight:950;
+}
+.client-order-actions-v35{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
+  margin-top:14px;
+}
+.client-order-actions-v35.one{
+  grid-template-columns:1fr;
+}
+.client-action-v35{
+  min-height:47px;
+  border:0;
+  border-radius:14px;
+  padding:10px 9px;
+  font-weight:850;
+  font-size:14px;
+}
+.client-chat-button-v35{
+  background:#dbeafe;
+  color:#1d4ed8;
+}
+.client-cancel-button-v35{
+  background:#fee2e2;
+  color:#991b1b;
+}
+.client-history-entry-v35{
+  width:100%;
+  min-height:68px;
+  border:1px solid #d8e7f4;
+  border-radius:18px;
+  background:#fff;
+  padding:15px 17px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  text-align:left;
+  box-shadow:0 7px 22px rgba(22,80,130,.07);
+}
+.client-history-entry-v35 .ico{
+  width:45px;
+  height:45px;
+  flex:0 0 45px;
+  border-radius:14px;
+  background:#eaf5ff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:23px;
+}
+.client-history-entry-v35 strong{
+  display:block;
+  font-size:17px;
+}
+.client-history-entry-v35 span{
+  display:block;
+  margin-top:2px;
+  color:#6b7280;
+  font-size:13px;
+}
+.client-history-entry-v35 .arr{
+  margin-left:auto;
+  color:#0ea5e9;
+  font-size:31px;
+}
+.client-home-loading-v35{
+  color:#6b7280;
+  text-align:center;
+  font-size:13px;
+  margin:8px 0 12px;
+}
+#clientOrdersV35 .container{
+  width:min(100%,720px);
+}
+.client-history-card-v35{
+  margin:12px 0;
+}
+.client-history-empty-v35,
+.client-history-error-v35{
+  background:#fff;
+  border:1px solid #e1e6ed;
+  border-radius:20px;
+  padding:28px 18px;
+  text-align:center;
+  color:#6b7280;
+  margin:12px 0;
+}
+.client-history-error-v35{
+  color:#b91c1c;
+}
+#clientChatModalV35{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:1000000;
+  background:rgba(0,0,0,.52);
+  padding:
+    calc(18px + env(safe-area-inset-top))
+    12px
+    calc(18px + env(safe-area-inset-bottom));
+}
+#clientChatModalV35.open{
+  display:flex;
+  align-items:flex-end;
+}
+.client-chat-sheet-v35{
+  width:min(100%,720px);
+  max-height:88%;
+  margin:0 auto;
+  background:#fff;
+  border-radius:24px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+.client-chat-head-v35{
+  padding:16px;
+  border-bottom:1px solid #e5e7eb;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.client-chat-head-v35 strong{
+  font-size:18px;
+}
+.client-chat-close-v35{
+  margin-left:auto;
+  border:0;
+  width:40px;
+  height:40px;
+  border-radius:12px;
+  background:#f3f4f6;
+  font-size:21px;
+}
+#clientChatMessagesV35{
+  overflow:auto;
+  padding:15px;
+  min-height:260px;
+  background:#f7f8fa;
+}
+.client-chat-empty-v35{
+  text-align:center;
+  color:#9ca3af;
+  padding:35px 10px;
+}
+.client-bubble-v35{
+  max-width:84%;
+  padding:10px 12px;
+  margin:7px 0;
+  border-radius:16px;
+  font-size:15px;
+  line-height:1.4;
+  overflow-wrap:anywhere;
+}
+.client-bubble-v35.client{
+  margin-left:auto;
+  background:#1593e8;
+  color:#fff;
+  border-bottom-right-radius:5px;
+}
+.client-bubble-v35.driver{
+  margin-right:auto;
+  background:#fff;
+  color:#111827;
+  border:1px solid #e2e6eb;
+  border-bottom-left-radius:5px;
+}
+.client-bubble-time-v35{
+  margin-top:5px;
+  font-size:10px;
+  opacity:.72;
+}
+.client-chat-compose-v35{
+  padding:12px;
+  border-top:1px solid #e5e7eb;
+  display:flex;
+  gap:8px;
+  align-items:flex-end;
+}
+#clientChatInputV35{
+  flex:1;
+  min-height:48px;
+  max-height:120px;
+  border:1px solid #d1d5db;
+  border-radius:14px;
+  padding:12px;
+  resize:none;
+  font-size:16px;
+}
+#clientChatSendV35{
+  border:0;
+  border-radius:14px;
+  min-width:52px;
+  height:48px;
+  background:#1593e8;
+  color:#fff;
+  font-size:18px;
+  font-weight:900;
+}
+@media(max-width:520px){
+  .client-order-actions-v35{
+    grid-template-columns:1fr 1fr;
+  }
+}
+</style>
+
+<section id="clientOrdersV35" class="screen">
+  <div class="container">
+    <button class="back" onclick="openScreen('clientClass')">‹ Назад</button>
+    <div class="page-title">История заказов</div>
+    <div class="page-subtitle">
+      Все ваши поездки из Telegram и приложения.
+    </div>
+    <div id="clientOrdersListV35">
+      <div class="client-history-empty-v35">Загрузка истории…</div>
+    </div>
+  </div>
+</section>
+
+<div id="clientChatModalV35">
+  <div class="client-chat-sheet-v35">
+    <div class="client-chat-head-v35">
+      <strong id="clientChatTitleV35">Чат с водителем</strong>
+      <button class="client-chat-close-v35" onclick="closeClientChatV35()">×</button>
+    </div>
+    <div id="clientChatMessagesV35"></div>
+    <div class="client-chat-compose-v35">
+      <textarea
+        id="clientChatInputV35"
+        maxlength="1000"
+        placeholder="Сообщение водителю..."></textarea>
+      <button id="clientChatSendV35" onclick="sendClientChatV35()">➤</button>
+    </div>
+  </div>
+</div>
+
+<script id="URUWAY_V35_CLIENT_HOME_HISTORY_FINAL">
+(function(){
+
+  let clientOrdersCacheV35=[];
+  let currentClientOrderV35=null;
+  let clientChatTimerV35=null;
+  let clientSendBusyV35=false;
+
+  function safeV35(v){
+    return String(v==null?'':v)
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;')
+      .replace(/'/g,'&#039;');
+  }
+
+  function sessionV35(){
+    return String(
+      localStorage.getItem('uruway_auth_session')||''
+    ).trim();
+  }
+
+  function apiV35(mode,id,message){
+    if(
+      !window.UruWayAndroid ||
+      typeof window.UruWayAndroid.clientAppApiV35!=='function'
+    ){
+      clientErrorV35('Клиентский API недоступен.');
+      return;
+    }
+
+    window.UruWayAndroid.clientAppApiV35(
+      String(mode||'list'),
+      sessionV35(),
+      String(id||''),
+      String(message||'')
+    );
+  }
+
+  function installClientHomeV35(){
+    const screen=document.getElementById('clientClass');
+    if(!screen)return;
+
+    const container=screen.querySelector('.container');
+    if(!container)return;
+
+    let hub=document.getElementById('clientHomeHubV35');
+
+    if(!hub){
+      hub=document.createElement('div');
+      hub.id='clientHomeHubV35';
+      hub.innerHTML=
+        '<div id="clientActiveOrderV35"></div>'+
+        '<button id="clientHistoryButtonV35" class="client-history-entry-v35" onclick="openClientOrdersV35()">'+
+          '<div class="ico">📋</div>'+
+          '<div><strong>История заказов</strong><span>Все ваши поездки</span></div>'+
+          '<div class="arr">›</div>'+
+        '</button>';
+
+      container.appendChild(hub);
+    }
+  }
+
+  function statusIsHistoryV35(status){
+    return [
+      'completed',
+      'cancelled_client',
+      'cancelled_admin',
+      'cancelled_auto_no_receipt',
+      'rejected_operator'
+    ].indexOf(String(status||''))!==-1;
+  }
+
+  function activeOrderV35(){
+    for(let i=0;i<clientOrdersCacheV35.length;i++){
+      if(!statusIsHistoryV35(clientOrdersCacheV35[i].status)){
+        return clientOrdersCacheV35[i];
+      }
+    }
+    return null;
+  }
+
+  function vehicleTextV35(order){
+    return String(order.vehicle_class||'')==='business'
+      ? 'BUSINESS · Hyundai H-1'
+      : 'STANDARD · Renault Kwid';
+  }
+
+  function dateTextV35(order){
+    return [order.date,order.time].filter(Boolean).join(' · ');
+  }
+
+  function priceTextV35(order){
+    return [order.price,order.currency].filter(Boolean).join(' ');
+  }
+
+  function clientCanChatV35(order){
+    const status=String(order&&order.status||'').trim();
+
+    return [
+      'completed',
+      'cancelled_client',
+      'cancelled_admin',
+      'cancelled_auto_no_receipt',
+      'rejected_operator'
+    ].indexOf(status)===-1;
+  }
+
+  function clientCanCancelV35(order){
+    const status=String(order&&order.status||'').trim();
+
+    return [
+      'completed',
+      'trip_started',
+      'cancelled_client',
+      'cancelled_admin',
+      'cancelled_auto_no_receipt',
+      'rejected_operator'
+    ].indexOf(status)===-1;
+  }
+
+  function actionHtmlV35(order){
+    const buttons=[];
+
+    /*
+     * V35 FIX:
+     * Показываем действия по реальному статусу заказа.
+     * Серверные can_chat/can_cancel остаются дополнительной защитой,
+     * но отсутствие/ошибка этих флагов больше не прячет кнопки
+     * у активной заявки.
+     */
+    const canChat=clientCanChatV35(order);
+    const canCancel=clientCanCancelV35(order);
+
+    if(canChat){
+      buttons.push(
+        '<button class="client-action-v35 client-chat-button-v35" '+
+        'onclick="openClientChatV35(\''+
+        safeV35(order.id)+
+        '\',\''+
+        safeV35(order.number||'')+
+        '\')">💬 Чат с водителем</button>'
+      );
+    }
+
+    if(canCancel){
+      buttons.push(
+        '<button class="client-action-v35 client-cancel-button-v35" '+
+        'onclick="cancelClientOrderV35(\''+
+        safeV35(order.id)+
+        '\',\''+
+        safeV35(order.number||'')+
+        '\')">Отменить заказ</button>'
+      );
+    }
+
+    if(!buttons.length)return '';
+
+    return '<div class="client-order-actions-v35 '+(buttons.length===1?'one':'')+'">'+
+      buttons.join('')+
+    '</div>';
+  }
+
+  function renderClientHomeV35(){
+    installClientHomeV35();
+
+    const box=document.getElementById('clientActiveOrderV35');
+    if(!box)return;
+
+    const order=activeOrderV35();
+
+    if(!order){
+      box.innerHTML='';
+      return;
+    }
+
+    box.innerHTML=
+      '<div class="client-active-wrap-v35">'+
+        '<div class="client-active-title-v35">Текущий заказ</div>'+
+        '<div class="client-active-card-v35">'+
+          '<div class="client-order-top-v35">'+
+            '<div class="client-order-number-v35">№'+safeV35(order.number||'—')+'</div>'+
+            '<div class="client-order-status-v35">'+safeV35(order.status_text||order.status||'')+'</div>'+
+          '</div>'+
+          '<div class="client-order-route-v35">'+
+            safeV35(order.from||'Точка A')+
+            ' → '+
+            safeV35(order.to||'Точка B')+
+          '</div>'+
+          '<div class="client-order-meta-v35">'+
+            safeV35(vehicleTextV35(order))+
+            (dateTextV35(order)?'<br>'+safeV35(dateTextV35(order)):'')+
+          '</div>'+
+          (priceTextV35(order)
+            ?'<div class="client-order-price-v35">'+safeV35(priceTextV35(order))+'</div>'
+            :'')+
+          actionHtmlV35(order)+
+        '</div>'+
+      '</div>';
+  }
+
+  function renderHistoryV35(){
+    const box=document.getElementById('clientOrdersListV35');
+    if(!box)return;
+
+    const rows=clientOrdersCacheV35.slice();
+
+    if(!rows.length){
+      box.innerHTML=
+        '<div class="client-history-empty-v35">'+
+          'Поездок пока нет.<br>После первого бронирования заказ появится здесь.'+
+        '</div>';
+      return;
+    }
+
+    box.innerHTML=rows.map(function(order){
+      return (
+        '<div class="client-history-card-v35">'+
+          '<div class="client-order-top-v35">'+
+            '<div class="client-order-number-v35">№'+safeV35(order.number||'—')+'</div>'+
+            '<div class="client-order-status-v35">'+safeV35(order.status_text||order.status||'')+'</div>'+
+          '</div>'+
+          '<div class="client-order-route-v35">'+
+            safeV35(order.from||'Точка A')+
+            ' → '+
+            safeV35(order.to||'Точка B')+
+          '</div>'+
+          '<div class="client-order-meta-v35">'+
+            safeV35(vehicleTextV35(order))+
+            (dateTextV35(order)?'<br>'+safeV35(dateTextV35(order)):'')+
+          '</div>'+
+          (priceTextV35(order)
+            ?'<div class="client-order-price-v35">'+safeV35(priceTextV35(order))+'</div>'
+            :'')+
+          actionHtmlV35(order)+
+        '</div>'
+      );
+    }).join('');
+  }
+
+  function clientErrorV35(text){
+    if(currentScreen==='clientOrdersV35'){
+      const box=document.getElementById('clientOrdersListV35');
+      if(box){
+        box.innerHTML=
+          '<div class="client-history-error-v35">'+
+          safeV35(text||'Ошибка загрузки')+
+          '</div>';
+      }
+    }
+  }
+
+  window.loadClientSummaryV35=function(){
+    installClientHomeV35();
+
+    if(!sessionV35()){
+      clientOrdersCacheV35=[];
+      renderClientHomeV35();
+      return;
+    }
+
+    apiV35('list','','');
+  };
+
+  window.openClientOrdersV35=function(){
+    installClientHomeV35();
+    openScreen('clientOrdersV35');
+
+    const box=document.getElementById('clientOrdersListV35');
+    if(box){
+      box.innerHTML=
+        '<div class="client-history-empty-v35">Загрузка истории…</div>';
+    }
+
+    apiV35('list','','');
+  };
+
+  window.openClientChatV35=function(id,number){
+    currentClientOrderV35={
+      id:String(id||''),
+      number:String(number||'')
+    };
+
+    const title=document.getElementById('clientChatTitleV35');
+    if(title){
+      title.textContent=
+        'Чат с водителем · заказ №'+String(number||'');
+    }
+
+    const modal=document.getElementById('clientChatModalV35');
+    if(modal)modal.classList.add('open');
+
+    const box=document.getElementById('clientChatMessagesV35');
+    if(box){
+      box.innerHTML=
+        '<div class="client-chat-empty-v35">Загрузка сообщений…</div>';
+    }
+
+    apiV35('chat',currentClientOrderV35.id,'');
+
+    if(clientChatTimerV35){
+      clearInterval(clientChatTimerV35);
+    }
+
+    clientChatTimerV35=setInterval(function(){
+      if(currentClientOrderV35){
+        apiV35('chat',currentClientOrderV35.id,'');
+      }
+    },5000);
+  };
+
+  window.closeClientChatV35=function(){
+    const modal=document.getElementById('clientChatModalV35');
+    if(modal)modal.classList.remove('open');
+
+    currentClientOrderV35=null;
+
+    if(clientChatTimerV35){
+      clearInterval(clientChatTimerV35);
+      clientChatTimerV35=null;
+    }
+  };
+
+  function renderClientChatV35(messages){
+    const box=document.getElementById('clientChatMessagesV35');
+    if(!box)return;
+
+    const rows=Array.isArray(messages)?messages:[];
+
+    if(!rows.length){
+      box.innerHTML=
+        '<div class="client-chat-empty-v35">Сообщений пока нет.</div>';
+      return;
+    }
+
+    box.innerHTML=rows.map(function(m){
+      const sender=m.sender==='client'?'client':'driver';
+
+      let time='';
+      try{
+        if(m.at){
+          time=new Date(m.at).toLocaleString('ru-RU',{
+            day:'2-digit',
+            month:'2-digit',
+            hour:'2-digit',
+            minute:'2-digit'
+          });
+        }
+      }catch(e){}
+
+      let delivery='';
+      if(sender==='client'){
+        const st=String(m.delivery_status||'');
+        if(st==='delivered')delivery=' · Доставлено ✓✓';
+        else delivery=' · Отправлено ✓';
+      }
+
+      return (
+        '<div class="client-bubble-v35 '+sender+'">'+
+          safeV35(m.text||'')+
+          '<div class="client-bubble-time-v35">'+
+            safeV35(time+delivery)+
+          '</div>'+
+        '</div>'
+      );
+    }).join('');
+
+    box.scrollTop=box.scrollHeight;
+  }
+
+  window.sendClientChatV35=function(){
+    if(!currentClientOrderV35 || clientSendBusyV35)return;
+
+    const input=document.getElementById('clientChatInputV35');
+    const button=document.getElementById('clientChatSendV35');
+    if(!input)return;
+
+    const text=String(input.value||'').trim();
+    if(!text)return;
+
+    clientSendBusyV35=true;
+    input.disabled=true;
+    if(button)button.disabled=true;
+
+    apiV35('send',currentClientOrderV35.id,text);
+  };
+
+  window.cancelClientOrderV35=function(id,number){
+    const ok=confirm(
+      'Отменить заказ №'+String(number||'')+'?'
+    );
+
+    if(!ok)return;
+
+    apiV35('cancel',String(id||''),'');
+  };
+
+  window.UruWayApp=window.UruWayApp||{};
+
+  window.UruWayApp.onClientAppApiV35=function(raw){
+    let data=null;
+
+    try{
+      data=typeof raw==='string'?JSON.parse(raw):raw;
+    }catch(e){
+      data=null;
+    }
+
+    if(!data || data.ok!==true){
+      const error=
+        data && (data.detail||data.error)
+          ? String(data.detail||data.error)
+          : 'Ошибка соединения';
+
+      clientSendBusyV35=false;
+
+      const input=document.getElementById('clientChatInputV35');
+      const button=document.getElementById('clientChatSendV35');
+      if(input)input.disabled=false;
+      if(button)button.disabled=false;
+
+      clientErrorV35(error);
+
+      if(currentClientOrderV35 && document.getElementById('clientChatModalV35').classList.contains('open')){
+        const chatBox=document.getElementById('clientChatMessagesV35');
+        if(chatBox && !chatBox.innerHTML.trim()){
+          chatBox.innerHTML=
+            '<div class="client-history-error-v35">'+safeV35(error)+'</div>';
+        }
+      }
+      return;
+    }
+
+    if(Array.isArray(data.orders)){
+      clientOrdersCacheV35=data.orders.slice();
+      renderClientHomeV35();
+
+      if(currentScreen==='clientOrdersV35'){
+        renderHistoryV35();
+      }
+      return;
+    }
+
+    if(Array.isArray(data.messages)){
+      renderClientChatV35(data.messages);
+      return;
+    }
+
+    if(data.cancelled){
+      clientOrdersCacheV35=
+        clientOrdersCacheV35.map(function(o){
+          return String(o.id||'')===String(data.order&&data.order.id||'')
+            ? data.order
+            : o;
+        });
+
+      renderClientHomeV35();
+
+      if(currentScreen==='clientOrdersV35'){
+        renderHistoryV35();
+      }
+
+      apiV35('list','','');
+      return;
+    }
+
+    if(data.message){
+      clientSendBusyV35=false;
+
+      const input=document.getElementById('clientChatInputV35');
+      const button=document.getElementById('clientChatSendV35');
+
+      if(input){
+        input.value='';
+        input.disabled=false;
+      }
+      if(button)button.disabled=false;
+
+      if(currentClientOrderV35){
+        apiV35('chat',currentClientOrderV35.id,'');
+      }
+    }
+  };
+
+  installClientHomeV35();
+
+  const originalOpenScreenV35=window.openScreen;
+
+  window.openScreen=function(id){
+    originalOpenScreenV35(id);
+
+    if(id==='clientClass'){
+      setTimeout(function(){
+        window.loadClientSummaryV35();
+      },80);
+    }
+  };
+
+  const originalHandleBackV35=window.handleAndroidBack;
+
+  window.handleAndroidBack=function(){
+    const modal=document.getElementById('clientChatModalV35');
+
+    if(modal && modal.classList.contains('open')){
+      closeClientChatV35();
+      return true;
+    }
+
+    if(currentScreen==='clientOrdersV35'){
+      openScreen('clientClass');
+      return true;
+    }
+
+    return originalHandleBackV35();
+  };
+
+  setTimeout(function(){
+    if(currentScreen==='clientClass'){
+      window.loadClientSummaryV35();
+    }
+  },300);
+
+})();
+</script>
+
+
+<style id="URUWAY_V35_DRIVER_HEALTH_FINAL_STYLE">
+.driver-health-final-v35{
+  margin-top:12px;
+  border-radius:14px;
+  padding:11px 13px;
+  font-size:13px;
+  line-height:1.4;
+  font-weight:800;
+}
+.driver-health-final-v35.ok{
+  background:#e7f8e8;
+  color:#176b2b;
+}
+.driver-health-final-v35.warn{
+  background:#fff7ed;
+  color:#9a3412;
+}
+.driver-health-final-v35.fail{
+  background:#fee2e2;
+  color:#991b1b;
+}
+</style>
+
+<script id="URUWAY_V35_DRIVER_HEALTH_FINAL">
+(function(){
+
+  let healthTimerV35=null;
+  let healthTimeoutV35=null;
+
+  function healthNodeV35(){
+    let node=document.getElementById('driverHealthFinalV35');
+
+    if(!node){
+      const header=document.getElementById('driverV32Header');
+      if(!header)return null;
+
+      node=document.createElement('div');
+      node.id='driverHealthFinalV35';
+      node.className='driver-health-final-v35 warn';
+      node.textContent='🟠 Проверяю состояние системы…';
+      header.appendChild(node);
+    }
+
+    return node;
+  }
+
+  function healthTimeV35(raw){
+    try{
+      return new Date(raw).toLocaleTimeString('ru-RU',{
+        hour:'2-digit',
+        minute:'2-digit'
+      });
+    }catch(e){
+      return '';
+    }
+  }
+
+  window.UruWayApp=window.UruWayApp||{};
+
+  window.UruWayApp.onDriverHealthJsonpV35=function(data){
+    if(healthTimeoutV35){
+      clearTimeout(healthTimeoutV35);
+      healthTimeoutV35=null;
+    }
+
+    const node=healthNodeV35();
+    if(!node)return;
+
+    if(data&&data.ok===true){
+      node.className='driver-health-final-v35 ok';
+      node.textContent=
+        '🟢 Система работает стабильно · проверено '+
+        healthTimeV35(data.checked_at);
+      return;
+    }
+
+    const issues=
+      data&&Array.isArray(data.issues)
+        ?data.issues
+        :[];
+
+    node.className='driver-health-final-v35 fail';
+    node.textContent=
+      '🔴 Обнаружена проблема'+
+      (issues.length?' · '+issues.map(function(x){return x.name;}).join(', '):'')+
+      (data&&data.checked_at?' · '+healthTimeV35(data.checked_at):'');
+  };
+
+  window.loadDriverHealthFinalV35=function(){
+    if(currentScreen!=='driverPanel')return;
+
+    const node=healthNodeV35();
+
+    if(node&&!node.textContent){
+      node.className='driver-health-final-v35 warn';
+      node.textContent='🟠 Проверяю состояние системы…';
+    }
+
+    const old=document.getElementById('uruwayHealthJsonpV35');
+    if(old)old.remove();
+
+    const script=document.createElement('script');
+    script.id='uruwayHealthJsonpV35';
+
+    const cls=
+      String(
+        typeof driverClass!=='undefined'
+          ?driverClass
+          :'standard'
+      )==='business'
+        ?'business'
+        :'standard';
+
+    script.src=
+      'https://script.google.com/macros/s/AKfycbzWkerEeWR-3EjY1QW44Az6pj1TjJK9_ktfnrdcgFILlD6Cnqb4z2X97zSknKRJw-i3jw/exec'+
+      '?action=app_driver_health'+
+      '&vehicle_class='+encodeURIComponent(cls)+
+      '&callback=UruWayApp.onDriverHealthJsonpV35'+
+      '&_='+Date.now();
+
+    script.onerror=function(){
+      const n=healthNodeV35();
+      if(!n)return;
+
+      n.className='driver-health-final-v35 warn';
+      n.textContent='🟠 Нет свежей проверки системы';
+    };
+
+    document.head.appendChild(script);
+
+    if(healthTimeoutV35){
+      clearTimeout(healthTimeoutV35);
+    }
+
+    healthTimeoutV35=setTimeout(function(){
+      const n=healthNodeV35();
+      if(!n)return;
+
+      if(n.classList.contains('warn')){
+        n.textContent='🟠 Нет свежей проверки системы';
+      }
+    },20000);
+  };
+
+  function startHealthV35(){
+    if(healthTimerV35){
+      clearInterval(healthTimerV35);
+    }
+
+    setTimeout(window.loadDriverHealthFinalV35,300);
+
+    healthTimerV35=setInterval(function(){
+      if(currentScreen==='driverPanel'){
+        window.loadDriverHealthFinalV35();
+      }
+    },60000);
+  }
+
+  const originalOpenDriverHealthV35=window.openDriver;
+
+  window.openDriver=function(type){
+    const result=originalOpenDriverHealthV35(type);
+    setTimeout(startHealthV35,200);
+    return result;
+  };
+
+  const originalLeaveDriverHealthV35=window.leaveDriver;
+
+  window.leaveDriver=function(){
+    if(healthTimerV35){
+      clearInterval(healthTimerV35);
+      healthTimerV35=null;
+    }
+
+    return originalLeaveDriverHealthV35();
+  };
+
+  if(currentScreen==='driverPanel'){
+    startHealthV35();
+  }
+
+})();
+</script>
+
+
+<script id="URUWAY_V35_CLIENT_STOPS_DRIVER_MODE_FINAL">
+(function(){
+  function stopDriverBackgroundForClientV35(){
+    try{
+      if(
+        window.UruWayAndroid &&
+        typeof window.UruWayAndroid.setClientModeV35==='function'
+      ){
+        window.UruWayAndroid.setClientModeV35();
+      }
+    }catch(e){}
+  }
+
+  window.stopDriverBackgroundForClientV35=
+    stopDriverBackgroundForClientV35;
+
+  const originalOpenScreenClientModeV35=window.openScreen;
+
+  window.openScreen=function(name){
+    const result=originalOpenScreenClientModeV35(name);
+
+    if(
+      name==='clientClass' ||
+      name==='clientHistory' ||
+      name==='clientChat'
+    ){
+      stopDriverBackgroundForClientV35();
+    }
+
+    return result;
+  };
+
+  // Если приложение уже восстановило клиентскую сессию при запуске.
+  setTimeout(function(){
+    const role=String(
+      localStorage.getItem('uruway_auth_role')||''
+    );
+
+    if(role==='client'){
+      stopDriverBackgroundForClientV35();
+    }
+  },500);
+})();
+</script>
+
+</body>
+</html>

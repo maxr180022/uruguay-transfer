@@ -112,7 +112,7 @@ button{font:inherit;cursor:pointer}
   .picon{width:48px;height:48px}
 }
 
-/* V39.12 splash */
+/* Android V43 · base 39.12 splash */
 :root{--uruway-splash-bg:#eaf7ff;--uruway-splash-ink:#103d78;--uruway-splash-sub:#5d7a95;}
 .splash-screen{position:fixed;inset:0;z-index:9999;background:
 linear-gradient(180deg,rgba(255,255,255,.78),rgba(255,255,255,.78)),
@@ -140,9 +140,63 @@ background:linear-gradient(135deg,#1db4ff,#1d73ff);opacity:.28;animation:dotPuls
 @keyframes dotPulse{0%,100%{opacity:.28;transform:scale(.95)}50%{opacity:1;transform:scale(1.12)}}
 body.splash-lock{overflow:hidden;}
 
+
+.android-driver-entry{display:none;margin-top:12px}
+.android-driver-entry button{width:100%;border:1px solid #cfe5f3;border-radius:16px;background:#f7fbff;color:#45677f;padding:11px 14px;font-weight:800;font-size:12px}
+body.is-android .android-driver-entry{display:block}
+
+/* Android auth gate V41 */
+.android-auth-gate{position:fixed;inset:0;z-index:10050;background:linear-gradient(180deg,#edf8ff,#f8fcff);display:none;align-items:center;justify-content:center;padding:24px}
+body.is-android .android-auth-gate{display:flex}
+.android-auth-gate.authorized{display:none!important}
+.android-auth-card{width:min(100%,390px);background:#fff;border:1px solid #d5e9f6;border-radius:28px;padding:26px 22px;box-shadow:0 22px 60px rgba(6,60,105,.18);text-align:center}
+.android-auth-icon{width:132px;height:110px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center}.android-auth-icon img{display:block;width:100%;height:100%;object-fit:contain}
+.android-auth-title{font-size:23px;font-weight:950;color:#123e6a;letter-spacing:-.02em}
+.android-auth-text{margin:10px 0 18px;color:#668198;font-size:13.5px;line-height:1.5}
+.android-auth-btn{width:100%;border:0;border-radius:17px;padding:14px 16px;background:linear-gradient(135deg,#169ee7,#087bcd);color:#fff;font-weight:900;font-size:14px;box-shadow:0 10px 24px rgba(8,126,205,.20)}
+.android-auth-btn:disabled{opacity:.55}
+.android-auth-status{margin-top:13px;min-height:18px;color:#6a8298;font-size:12px;line-height:1.4}
+.android-auth-status.error{color:#bd3047}
+body.is-android.auth-pending #appRoot{visibility:hidden}
+
+
+/* Android Client Hub V43 */
+.client-account-bar-v43{display:none;align-items:center;justify-content:space-between;gap:10px;margin:0 2px 10px;padding:10px 12px;border:1px solid #d8eaf7;border-radius:16px;background:rgba(255,255,255,.84)}
+body.is-android .client-account-bar-v43{display:flex}
+.client-account-name-v43{font-size:12px;color:#57738e;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.client-switch-v43{border:1px solid #cfe3f2;border-radius:12px;background:#fff;color:#1766a4;padding:8px 10px;font-size:11px;font-weight:900;white-space:nowrap}
+.client-dashboard-v43{display:none;margin:0 0 14px}
+body.is-android .client-dashboard-v43{display:block}
+.client-order-v43{border:1px solid #d5e8f5;border-radius:21px;background:#fff;padding:14px;box-shadow:0 8px 22px rgba(10,71,120,.08)}
+.client-order-head-v43{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.client-order-num-v43{font-size:18px;font-weight:1000;color:#0b3469}
+.client-status-v43{font-size:10px;font-weight:900;border-radius:999px;padding:6px 8px;background:#fff5d8;color:#936400;text-align:right}
+.client-route-v43{font-size:14px;font-weight:900;color:#143b67;margin-top:10px;line-height:1.35}
+.client-meta-v43{font-size:11px;color:#6c849c;margin-top:6px}
+.client-actions-v43{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.client-actions-v43 button,.client-history-btn-v43{border:0;border-radius:14px;padding:11px 10px;font-weight:900;font-size:12px}
+.client-chat-btn-v43{background:#e8f5ff;color:#0879c9;position:relative}.client-unread-v43{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;margin-left:5px;border-radius:999px;background:#e53935;color:#fff;font-size:10px;font-weight:1000;vertical-align:middle}.client-cancel-btn-v43{background:#fff0f1;color:#b33e4a}.client-history-btn-v43{width:100%;margin-top:8px;background:#fff;border:1px solid #d7e8f4;color:#174f7f;text-align:left}
+.client-empty-v43{border:1px dashed #cfe2f0;border-radius:18px;background:rgba(255,255,255,.62);padding:13px;color:#6a8198;font-size:12px;text-align:center}
+.client-modal-v43{position:fixed;inset:0;z-index:12000;background:rgba(8,28,49,.38);display:none;align-items:flex-end;justify-content:center}.client-modal-v43.open{display:flex}
+.client-sheet-v43{width:min(100%,720px);max-height:82vh;background:#f9fcff;border-radius:24px 24px 0 0;padding:16px 14px calc(18px + env(safe-area-inset-bottom));overflow:auto;box-shadow:0 -18px 40px rgba(0,0,0,.16)}
+.client-sheet-head-v43{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.client-sheet-head-v43 strong{font-size:19px;color:#0a376b}.client-close-v43{border:0;background:#eaf3fa;border-radius:12px;width:38px;height:38px;font-size:22px}
+.client-history-card-v43{border:1px solid #d8e8f3;border-radius:16px;background:#fff;padding:12px;margin:8px 0}.client-history-card-v43 strong{color:#123f70}.client-history-card-v43 div{font-size:11px;color:#6d8398;margin-top:4px}
+.client-chat-messages-v43{min-height:180px;max-height:52vh;overflow:auto;display:grid;gap:8px;padding:4px}.client-msg-v43{max-width:84%;border-radius:15px;padding:10px 12px;font-size:13px;line-height:1.35}.client-msg-v43.client{justify-self:end;background:#0b7fe0;color:#fff}.client-msg-v43.driver{justify-self:start;background:#fff;border:1px solid #d9e8f2;color:#193c60}.client-msg-time-v43{display:block;font-size:9px;opacity:.72;margin-top:5px}
+.client-chat-compose-v43{display:grid;grid-template-columns:1fr 48px;gap:8px;margin-top:10px}.client-chat-compose-v43 textarea{border:1px solid #cfe1ee;border-radius:14px;padding:11px;min-height:48px;max-height:110px;resize:none;font:inherit}.client-chat-compose-v43 button{border:0;border-radius:14px;background:#087fe0;color:#fff;font-size:18px;font-weight:900}
+
 </style>
 </head>
 <body>
+<div class="android-auth-gate" id="androidAuthGate">
+  <div class="android-auth-card">
+    <div class="android-auth-icon"><img src="uruway_logo_compact_official.png" alt="UruWay"></div>
+    <div class="android-auth-title">Вход в UruWay</div>
+    <div class="android-auth-text">Авторизуйтесь через Telegram. После подтверждения приложение автоматически определит ваш профиль: клиент или водитель STANDARD.</div>
+    <button class="android-auth-btn" id="androidAuthButton" type="button">Войти через Telegram</button>
+    <div class="android-auth-status" id="androidAuthStatus">Проверяем сохранённую авторизацию…</div>
+  </div>
+</div>
+
 
 <div class="splash-screen" id="splashScreen" aria-hidden="false">
   <div class="splash-card">
@@ -158,6 +212,15 @@ body.splash-lock{overflow:hidden;}
 <section id="hub" class="screen active">
 <div class="container">
   <div class="top"><div class="brand">Uru<span>Way</span> Transfer</div></div>
+<div class="client-account-bar-v43" id="clientAccountBarV43">
+  <div class="client-account-name-v43" id="clientAccountNameV43">Личный кабинет клиента</div>
+  <button class="client-switch-v43" type="button" onclick="logoutClientV43()">Сменить кабинет</button>
+</div>
+<div class="client-dashboard-v43" id="clientDashboardV43">
+  <div id="clientActiveV43"><div class="client-empty-v43">Проверяем текущий заказ…</div></div>
+  <button class="client-history-btn-v43" type="button" onclick="openClientHistoryV43()">📋 История заказов</button>
+</div>
+
 
   <div class="hero-card">
     <div class="kicker">🚗&nbsp; Основная услуга UruWay</div>
@@ -201,9 +264,33 @@ body.splash-lock{overflow:hidden;}
       </button>
     </div>
   </div>
-  <div class="version">UruWay Telegram Mini App · V39.12.3.2</div>
+  <div class="version">UruWay · V44</div>
 </div>
 </section>
+
+<div class="client-modal-v43" id="clientHistoryModalV43" aria-hidden="true">
+  <div class="client-sheet-v43">
+    <div class="client-sheet-head-v43">
+      <strong>История заказов</strong>
+      <button class="client-close-v43" type="button" onclick="closeClientHistoryV43()">×</button>
+    </div>
+    <div id="clientHistoryListV43"><div class="client-empty-v43">Загрузка истории…</div></div>
+  </div>
+</div>
+
+<div class="client-modal-v43" id="clientChatModalV43" aria-hidden="true">
+  <div class="client-sheet-v43">
+    <div class="client-sheet-head-v43">
+      <strong id="clientChatTitleV43">Чат с водителем</strong>
+      <button class="client-close-v43" type="button" onclick="closeClientChatV43()">×</button>
+    </div>
+    <div class="client-chat-messages-v43" id="clientChatMessagesV43"><div class="client-empty-v43">Загрузка сообщений…</div></div>
+    <div class="client-chat-compose-v43">
+      <textarea id="clientChatInputV43" maxlength="1000" placeholder="Сообщение водителю…"></textarea>
+      <button type="button" onclick="sendClientChatV43()">➤</button>
+    </div>
+  </div>
+</div>
 
 <section id="booking" class="screen booking">
   <iframe id="bookingFrame" title="Бронирование UruWay"></iframe>
@@ -221,7 +308,13 @@ function show(id){
 
 function tgUser(){
   const u=(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user)||{};
-  return {id:String(u.id||''),username:String(u.username||''),first:String(u.first_name||''),last:String(u.last_name||'')};
+  const androidId=String(localStorage.getItem('uruway_auth_telegram_user_id')||'');
+  return {
+    id:String(u.id||androidId||''),
+    username:String(u.username||localStorage.getItem('uruway_auth_username')||''),
+    first:String(u.first_name||localStorage.getItem('uruway_auth_first_name')||''),
+    last:String(u.last_name||localStorage.getItem('uruway_auth_last_name')||'')
+  };
 }
 
 function stableClientId(){
@@ -299,6 +392,7 @@ function openBooking(){
 function backToHub(){
   document.getElementById('bookingFrame').src='';
   show('hub');
+  try{if(window.UruWayClientV43)window.UruWayClientV43.refresh();}catch(e){}
   try{if(tg&&tg.BackButton)tg.BackButton.hide();}catch(e){}
 }
 
@@ -328,6 +422,244 @@ try{
     document.body.classList.add('splash-lock');
     setTimeout(hideSplash, DURATION);
   });
+})();
+</script>
+
+
+<script>
+(function(){
+  const isAndroid=!!(window.UruWayAndroid&&typeof window.UruWayAndroid.getPlatform==='function');
+  if(isAndroid){document.body.classList.add('is-android');}
+  window.openAndroidDriver=function(){ location.href='driver.html'; };
+  window.uruwayOpenExternal=function(url){
+    try{
+      if(isAndroid&&typeof window.UruWayAndroid.openExternal==='function'){
+        window.UruWayAndroid.openExternal(String(url||'')); return true;
+      }
+    }catch(e){}
+    return false;
+  };
+})();
+</script>
+
+
+<script>
+(function(){
+  const isAndroid=!!(window.UruWayAndroid&&typeof window.UruWayAndroid.getPlatform==='function');
+  if(!isAndroid)return;
+
+  document.body.classList.add('is-android','auth-pending');
+
+  const gate=document.getElementById('androidAuthGate');
+  const btn=document.getElementById('androidAuthButton');
+  const status=document.getElementById('androidAuthStatus');
+  let timer=null;
+  let challenge='';
+
+  window.UruWayApp=window.UruWayApp||{};
+
+  function parse(raw){
+    try{return typeof raw==='string'?JSON.parse(raw):raw||{}}catch(e){return {ok:false,error:'bad_json'}}
+  }
+
+  function setStatus(text,error){
+    if(!status)return;
+    status.textContent=String(text||'');
+    status.classList.toggle('error',!!error);
+  }
+
+  function saveAuth(data){
+    const u=data.user||{};
+    if(data.session_token)localStorage.setItem('uruway_auth_session',String(data.session_token));
+    localStorage.setItem('uruway_auth_role',String(data.role||'client'));
+    localStorage.setItem('uruway_auth_vehicle_class',String(data.vehicle_class||''));
+    localStorage.setItem('uruway_auth_telegram_user_id',String(data.telegram_user_id||u.id||''));
+    localStorage.setItem('uruway_auth_first_name',String(u.first_name||''));
+    localStorage.setItem('uruway_auth_last_name',String(u.last_name||''));
+    localStorage.setItem('uruway_auth_username',String(u.username||'').replace(/^@/,''));
+  }
+
+  function clearAuth(){
+    ['uruway_auth_session','uruway_auth_role','uruway_auth_vehicle_class',
+     'uruway_auth_telegram_user_id','uruway_auth_first_name',
+     'uruway_auth_last_name','uruway_auth_username'].forEach(k=>localStorage.removeItem(k));
+  }
+
+  function enter(data){
+    saveAuth(data);
+    if(timer){clearInterval(timer);timer=null}
+    challenge='';
+    const role=String(data.role||'client');
+    if(role==='driver_standard'){
+      location.href='driver.html';
+      return;
+    }
+    if(role!=='client'){
+      clearAuth();
+      setStatus('Этот профиль не поддерживается текущей версией приложения.',true);
+      btn.disabled=false;
+      return;
+    }
+    document.body.classList.remove('auth-pending');
+    if(gate)gate.classList.add('authorized');
+  }
+
+  window.UruWayApp.onAppAuthBeginV35=function(raw){
+    const data=parse(raw);
+    if(!data.ok||!data.challenge||!data.bot_url){
+      setStatus('Не удалось начать вход через Telegram.',true);
+      btn.disabled=false;
+      return;
+    }
+    challenge=String(data.challenge);
+    setStatus('Подтвердите вход в Telegram и вернитесь в UruWay.');
+    try{window.UruWayAndroid.openExternal(String(data.bot_url))}catch(e){
+      setStatus('Не удалось открыть Telegram.',true);
+      btn.disabled=false;
+      return;
+    }
+    if(timer)clearInterval(timer);
+    timer=setInterval(()=>{
+      if(challenge&&window.UruWayAndroid&&typeof window.UruWayAndroid.checkTelegramAuthV35==='function'){
+        window.UruWayAndroid.checkTelegramAuthV35(challenge);
+      }
+    },1500);
+  };
+
+  window.UruWayApp.onAppAuthStatusV35=function(raw){
+    const data=parse(raw);
+    if(data.ok&&data.status==='authorized'){
+      enter(data);
+      return;
+    }
+    if(data.error==='auth_expired'||data.error==='auth_not_found'){
+      if(timer){clearInterval(timer);timer=null}
+      challenge='';
+      setStatus('Ссылка входа истекла. Нажмите «Войти через Telegram» ещё раз.',true);
+      btn.disabled=false;
+    }
+  };
+
+  window.UruWayApp.onAppAuthMeV35=function(raw){
+    const data=parse(raw);
+    if(data.ok&&data.status==='authorized'){
+      enter(data);
+      return;
+    }
+    clearAuth();
+    document.body.classList.add('auth-pending');
+    setStatus('Войдите через Telegram.');
+    btn.disabled=false;
+  };
+
+  btn.addEventListener('click',()=>{
+    btn.disabled=true;
+    setStatus('Создаём ссылку входа…');
+    if(window.UruWayAndroid&&typeof window.UruWayAndroid.beginTelegramAuthV35==='function'){
+      window.UruWayAndroid.beginTelegramAuthV35();
+    }else{
+      setStatus('Android-мост авторизации недоступен.',true);
+      btn.disabled=false;
+    }
+  });
+
+  const session=String(localStorage.getItem('uruway_auth_session')||'').trim();
+  if(session&&window.UruWayAndroid&&typeof window.UruWayAndroid.restoreTelegramAuthV35==='function'){
+    setStatus('Проверяем сохранённую авторизацию…');
+    window.UruWayAndroid.restoreTelegramAuthV35(session);
+  }else{
+    setStatus('Войдите через Telegram.');
+    btn.disabled=false;
+  }
+})();
+</script>
+
+
+<script>
+(function(){
+  window.UruWayApp=window.UruWayApp||{};
+  window.UruWayApp.handleNativeBack=function(){
+    try{
+      const chat=document.getElementById('clientChatModalV43');
+      if(chat&&chat.classList.contains('open')){ if(typeof closeClientChatV43==='function')closeClientChatV43(); return true; }
+      const hist=document.getElementById('clientHistoryModalV43');
+      if(hist&&hist.classList.contains('open')){ if(typeof closeClientHistoryV43==='function')closeClientHistoryV43(); return true; }
+      const booking=document.getElementById('booking');
+      if(booking&&booking.classList.contains('active')){ if(typeof backToHub==='function')backToHub(); return true; }
+    }catch(e){}
+    return false;
+  };
+})();
+</script>
+
+
+<script id="URUWAY_CLIENT_HUB_V43">
+(function(){
+  const isAndroid=!!(window.UruWayAndroid&&typeof window.UruWayAndroid.clientAppApiV35==='function');
+  if(!isAndroid)return;
+  let orders=[]; let currentChatId=''; let refreshTimer=null; let chatTimer=null;
+  const $=id=>document.getElementById(id);
+  const esc=v=>String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+  function session(){return String(localStorage.getItem('uruway_auth_session')||'').trim()}
+  function api(mode,id,msg){ if(!session())return; window.UruWayAndroid.clientAppApiV35(String(mode||'list'),session(),String(id||''),String(msg||'')); }
+  function historyStatus(s){return ['completed','cancelled_client','cancelled_admin','cancelled_auto_no_receipt','rejected_operator'].includes(String(s||''))}
+  function current(){return orders.find(o=>!historyStatus(o.status))||null}
+  function fmtDate(v){try{return new Date(v).toLocaleString('ru-RU')}catch(e){return String(v||'')}}
+  function seenKey(id){return 'uruway_chat_seen_driver_count_'+String(id||'')}
+  function unreadFor(o){const total=Number(o.driver_message_count||0);const seen=Number(localStorage.getItem(seenKey(o.id))||0);return Math.max(0,total-seen)}
+  function markSeen(id,total){localStorage.setItem(seenKey(id),String(Number(total||0)));render()}
+  function chatLabel(o){const n=unreadFor(o);return '💬 Написать'+(n>0?' <span class="client-unread-v43">'+n+'</span>':'')}
+  function render(){
+    const u=[localStorage.getItem('uruway_auth_first_name'),localStorage.getItem('uruway_auth_last_name')].filter(Boolean).join(' ').trim();
+    if($('clientAccountNameV43'))$('clientAccountNameV43').textContent=u?('Клиент · '+u):'Личный кабинет клиента';
+    const o=current(),box=$('clientActiveV43'); if(!box)return;
+    if(!o){
+      box.innerHTML='<div class="client-empty-v43"><strong>Активных заказов нет.</strong><br><span style="display:block;margin:6px 0 12px">Можно оформить новую поездку.</span><button type="button" class="client-chat-btn-v43" style="width:100%;padding:12px" onclick="openBooking()">🗓️ Оформить заказ</button></div>';
+      return;
+    }
+    box.innerHTML='<div class="client-order-v43"><div class="client-order-head-v43"><div class="client-order-num-v43">Заказ №'+esc(o.number||'')+'</div><div class="client-status-v43">'+esc(o.status_text||o.status||'')+'</div></div><div class="client-route-v43">'+esc(o.from||'')+' → '+esc(o.to||'')+'</div><div class="client-meta-v43">'+esc([o.date,o.time].filter(Boolean).join(' · '))+'</div><div class="client-actions-v43">'+(o.can_chat?'<button class="client-chat-btn-v43" onclick="openClientChatV43(\''+esc(o.id)+'\')">'+chatLabel(o)+'</button>':'<button class="client-chat-btn-v43" disabled>💬 Чат закрыт</button>')+(o.can_cancel?'<button class="client-cancel-btn-v43" onclick="cancelClientOrderV43(\''+esc(o.id)+'\')">✕ Отменить</button>':'<button class="client-cancel-btn-v43" disabled>Отмена недоступна</button>')+'</div></div>';
+  }
+  function historySort(a,b){
+    const ax=Date.parse(String(a.created_at||a.date+'T'+(a.time||'00:00')))||0;
+    const bx=Date.parse(String(b.created_at||b.date+'T'+(b.time||'00:00')))||0;
+    return bx-ax;
+  }
+  function renderHistory(){
+    const box=$('clientHistoryListV43');if(!box)return;
+    const list=orders.filter(o=>historyStatus(o.status)).slice().sort(historySort);
+    if(!list.length){box.innerHTML='<div class="client-empty-v43">История пока пуста.</div>';return}
+    box.innerHTML=list.map(o=>'<div class="client-history-card-v43"><strong>№'+esc(o.number||'')+' · '+esc(o.status_text||o.status||'')+'</strong><div>'+esc(o.from||'')+' → '+esc(o.to||'')+'</div><div>'+esc([o.date,o.time].filter(Boolean).join(' · '))+'</div></div>').join('');
+  }
+  window.openClientHistoryV43=function(){const m=$('clientHistoryModalV43');if(!m)return;m.classList.add('open');m.setAttribute('aria-hidden','false');renderHistory();api('list')}
+  window.closeClientHistoryV43=function(){const m=$('clientHistoryModalV43');if(m){m.classList.remove('open');m.setAttribute('aria-hidden','true')}}
+  window.openClientChatV43=function(id){
+    currentChatId=String(id||'');const m=$('clientChatModalV43');if(!m)return;
+    const o=orders.find(x=>String(x.id)===currentChatId);if(o&&$('clientChatTitleV43'))$('clientChatTitleV43').textContent='Чат · заказ №'+String(o.number||'');
+    m.classList.add('open');m.setAttribute('aria-hidden','false');api('chat',currentChatId);clearInterval(chatTimer);chatTimer=setInterval(()=>api('chat',currentChatId),1800)
+  }
+  window.closeClientChatV43=function(){currentChatId='';clearInterval(chatTimer);chatTimer=null;const m=$('clientChatModalV43');if(m){m.classList.remove('open');m.setAttribute('aria-hidden','true')}}
+  window.sendClientChatV43=function(){const input=$('clientChatInputV43');const text=String(input&&input.value||'').trim();if(!text||!currentChatId)return;input.disabled=true;api('send',currentChatId,text)}
+  window.cancelClientOrderV43=function(id){if(!confirm('Отменить этот заказ?'))return;api('cancel',id)}
+  window.logoutClientV43=function(){clearInterval(refreshTimer);clearInterval(chatTimer);['uruway_auth_session','uruway_auth_role','uruway_auth_vehicle_class','uruway_auth_telegram_user_id','uruway_auth_first_name','uruway_auth_last_name','uruway_auth_username'].forEach(k=>localStorage.removeItem(k));location.reload()}
+  function renderMessages(messages,order){
+    const box=$('clientChatMessagesV43');if(!box)return;
+    box.innerHTML=(messages||[]).map(m=>'<div class="client-msg-v43 '+(String(m.sender)==='client'?'client':'driver')+'">'+esc(m.text||'')+'<span class="client-msg-time-v43">'+esc(fmtDate(m.at))+'</span></div>').join('')||'<div class="client-empty-v43">Сообщений пока нет.</div>';box.scrollTop=box.scrollHeight;
+    if(order&&order.id)markSeen(order.id,order.driver_message_count||0);
+  }
+  window.UruWayApp=window.UruWayApp||{};
+  const previous=window.UruWayApp.onClientAppApiV35;
+  window.UruWayApp.onClientAppApiV35=function(raw){
+    let d;try{d=typeof raw==='string'?JSON.parse(raw):raw}catch(e){d={ok:false,error:'bad_json'}};
+    if(!d||d.ok!==true){console.error('Client API',d);const input=$('clientChatInputV43');if(input)input.disabled=false;return}
+    if(Array.isArray(d.orders)){orders=d.orders.slice();render();renderHistory();return}
+    if(Array.isArray(d.messages)){renderMessages(d.messages,d.order||null);return}
+    if(d.mode==='client_send'){const input=$('clientChatInputV43');if(input){input.value='';input.disabled=false}if(currentChatId)api('chat',currentChatId);return}
+    if(d.mode==='client_cancel'&&d.order){api('list');return}
+    if(typeof previous==='function')try{previous(raw)}catch(e){}
+  };
+  function refresh(){api('list')}
+  window.UruWayClientV43={refresh};
+  refresh(); refreshTimer=setInterval(refresh,3000);
 })();
 </script>
 

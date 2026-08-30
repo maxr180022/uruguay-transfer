@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Гид по Уругваю · RusWeo</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;color:#082f52;background:linear-gradient(180deg,#e9f7ff 0%,#f7fbfe 55%,#edf7fc 100%);min-height:100vh}.wrap{max-width:760px;margin:0 auto;padding:calc(18px + env(safe-area-inset-top)) 16px calc(38px + env(safe-area-inset-bottom))}.top{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-top:4px}.back{width:42px;height:42px;border:0;border-radius:16px;background:#fff;font-size:24px;color:#0d4f79;box-shadow:0 5px 16px rgba(19,70,106,.15);cursor:pointer}h1{font-size:22px;line-height:1.12;margin:0;color:#062f55}.welcome,.acc{background:#fff;border:1px solid rgba(15,73,110,.22);border-radius:22px;box-shadow:0 7px 20px rgba(18,72,108,.10)}.welcome{padding:18px;margin-bottom:16px}.welcome h2{margin:0 0 8px;font-size:21px;color:#07365e}.welcome p{margin:0;font-weight:500;color:#405f76;line-height:1.55;font-size:14px}.section-title{font-size:18px;font-weight:900;margin:22px 2px 10px;color:#07375f}.section-sub{font-size:14px;font-weight:500;color:#4f6d82;margin:0 2px 12px;line-height:1.45}.acc{overflow:hidden;margin-bottom:10px}.acc-btn{width:100%;border:0;background:#fff;color:#07375f;min-height:64px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;cursor:pointer;font:inherit}.acc-left{display:flex;align-items:center;gap:11px;min-width:0}.acc-icon{font-size:24px;flex:0 0 auto}.acc-title{font-weight:900;font-size:15px}.acc-arrow{font-size:22px;color:#557388;transition:transform .2s ease}.acc.open .acc-arrow{transform:rotate(90deg)}.acc-content{display:none;font-weight:500;padding:4px 16px 16px;color:#36566d;font-size:14px;line-height:1.55;border-top:1px solid #dce8ef}.acc.open .acc-content{display:block}.card{background:#ffffff;border:1px solid #d5e4ec;border-radius:16px;padding:13px;margin-top:12px}.card h3{font-size:15px;color:#07375f;margin:0 0 6px}.card p{margin:5px 0;color:#36566d}.muted{color:#566f82}.coord{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;background:#e7f2f8;padding:6px 8px;border-radius:9px;display:inline-block;margin-top:5px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.mini-btn,.consult{border:0;border-radius:12px;min-height:42px;padding:10px 13px;font:inherit;font-weight:800;cursor:pointer}.mini-btn{background:#dceef8;color:#073f68}.consult{width:100%;margin-top:12px;background:#073e68;color:#fff}.warning{background:#fff8e7;border:1px solid #f2dda3;border-radius:14px;padding:12px;margin-top:12px;color:#6f5a28}.tip{background:#e2f3fc;border-radius:14px;padding:12px;margin-top:12px}.soon{opacity:.88}.partner{border:2px solid rgba(8,99,154,.46);box-shadow:0 10px 26px rgba(10,76,117,.16)}.partner .acc-btn{background:linear-gradient(135deg,#eef9ff 0%,#dff2fc 100%);min-height:82px}.partner .acc-title{font-size:16px}.partner-tag{display:block;margin-top:5px;font-size:11px;font-weight:900;color:#065984;line-height:1.35}.partner-zone{background:linear-gradient(135deg,#dff3fd 0%,#f5fbff 100%);border:2px solid rgba(10,98,151,.30);border-radius:22px;padding:14px;margin:10px 0 14px}.partner-zone h3{margin:0 0 6px;font-size:17px;color:#07365e}.partner-zone p{margin:0;color:#3f6178;font-size:13px;line-height:1.5}.note{font-size:12px;color:#617b8e;margin-top:8px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.quick{
+  position:relative;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.58);
+  border-radius:18px;
+  padding:16px 17px;
+  min-height:112px;
+  box-shadow:0 10px 24px rgba(15,48,78,.18),inset 0 1px 0 rgba(255,255,255,.35);
+  font:inherit;
+  font-weight:1000;
+  font-size:17px;
+  line-height:1.22;
+  color:#fff;
+  text-align:left;
+  cursor:pointer;
+  -webkit-text-stroke:.85px rgba(0,0,0,.82);
+  paint-order:stroke fill;
+  text-shadow:0 2px 2px rgba(0,0,0,.28),0 0 1px rgba(0,0,0,.9);
+  transition:transform .16s ease,box-shadow .16s ease,filter .16s ease
+}
+.quick::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(115deg,rgba(255,255,255,.28) 0%,rgba(255,255,255,.05) 38%,rgba(255,255,255,0) 64%);
+  pointer-events:none
+}
+.quick:hover{transform:translateY(-1px);filter:saturate(1.08);box-shadow:0 13px 28px rgba(15,48,78,.22),inset 0 1px 0 rgba(255,255,255,.42)}
+.quick:active{transform:translateY(1px)}
+.quick.primary{
+  background:linear-gradient(135deg,#0a78c4 0%,#075d9d 46%,#063f73 100%);
+  color:#fff
+}
+.quick:not(.primary):not(.wide){
+  background:linear-gradient(135deg,#6b63d9 0%,#3b7bc8 52%,#176aa5 100%);
+  color:#fff
+}
+.quick.wide{
+  grid-column:1/-1;
+  min-height:96px;
+  background:linear-gradient(120deg,#0e887f 0%,#1876a8 50%,#334f9d 100%);
+  color:#fff
+}
+.quick .muted{
+  display:inline-block;
+  margin-top:4px;
+  color:#fff;
+  font-size:14px;
+  font-weight:900;
+  opacity:1;
+  -webkit-text-stroke:.7px rgba(0,0,0,.8);
+  paint-order:stroke fill;
+  text-shadow:0 1px 2px rgba(0,0,0,.32)
+}.pill{display:inline-block;font-size:11px;font-weight:900;padding:4px 8px;border-radius:999px;background:#dceef8;color:#073f68;margin-bottom:8px}.news-status{font-size:12px;color:#566f82;margin:3px 0 10px}.news-list{display:grid;gap:9px;max-height:430px;overflow:auto;padding-right:2px}.news-item{background:#ffffff;border:1px solid #d5e4ec;border-radius:15px;overflow:hidden}.news-head{width:100%;border:0;background:transparent;padding:12px 13px;text-align:left;color:#07375f;font:inherit;cursor:pointer}.news-date{font-size:11px;color:#5a7487;margin-bottom:5px}.news-title{font-weight:900;font-size:14px;line-height:1.35}.news-body{display:none;padding:0 13px 13px;color:#36566d;line-height:1.55;white-space:pre-line}.news-item.open .news-body{display:block}.news-source{margin-top:10px;font-size:12px}.news-source a{color:#0b527e;font-weight:800}.news-more{width:100%;border:0;border-radius:12px;padding:11px 13px;margin-top:10px;background:#dceef8;color:#073f68;font:inherit;font-weight:900;cursor:pointer}.news-error{background:#fff8e7;border:1px solid #f2dda3;border-radius:14px;padding:12px;color:#6f5a28}@media(max-width:520px){.wrap{padding:calc(16px + env(safe-area-inset-top)) 13px calc(32px + env(safe-area-inset-bottom))}.top{padding-top:6px}h1{font-size:19px}.grid2{grid-template-columns:1fr}.quick{min-height:92px;font-size:16px;-webkit-text-stroke:.7px rgba(0,0,0,.82)}.quick.wide{min-height:92px}.quick .muted{font-size:13px;-webkit-text-stroke:.55px rgba(0,0,0,.82)}}
+
+.support-top{margin-left:auto;border:1px solid #e7bd38;background:linear-gradient(135deg,#ffe27a 0%,#ffc928 100%);color:#4a3500;border-radius:13px;min-height:38px;padding:8px 10px;font:inherit;font-size:11px;font-weight:900;cursor:pointer;box-shadow:0 5px 16px rgba(188,135,0,.28);white-space:nowrap}.support-top:active{transform:translateY(1px)}
+.support-section{margin-top:26px;background:linear-gradient(145deg,#fff8d8 0%,#fff 55%);border:2px solid #efcf65;border-radius:22px;padding:18px;box-shadow:0 8px 22px rgba(132,96,0,.10)}.support-section h2{margin:0 0 7px;color:#493900;font-size:20px}.support-section p{margin:0 0 14px;color:#5a5133;line-height:1.5}.support-main-btn{width:100%;border:0;border-radius:14px;min-height:48px;background:linear-gradient(135deg,#ffdb56,#ffc21f);color:#3d2e00;font:inherit;font-weight:900;font-size:15px;cursor:pointer;box-shadow:0 6px 16px rgba(188,135,0,.22)}
+.support-modal{position:fixed;inset:0;z-index:9999;background:rgba(5,24,40,.60);display:none;align-items:flex-end;justify-content:center;padding:18px}.support-modal.open{display:flex}.support-sheet{width:min(720px,100%);max-height:88vh;overflow:auto;background:#f8fcff;border-radius:24px;padding:18px;box-shadow:0 24px 70px rgba(0,0,0,.35)}.support-head{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;margin-bottom:14px}.support-head h2{margin:0;color:#07375f;font-size:21px}.support-close{border:0;background:#e6eef3;color:#173e59;width:38px;height:38px;border-radius:12px;font-size:24px;cursor:pointer}.support-choice{background:#fff;border:1px solid #d7e3eb;border-radius:18px;padding:14px;margin-top:10px}.support-choice h3{margin:0 0 6px;color:#07375f;font-size:16px}.support-choice p{margin:5px 0;color:#47657a;font-size:13px;line-height:1.45}.support-btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}.support-pay-btn,.support-copy-btn,.support-qr-btn{border:0;border-radius:12px;min-height:42px;padding:10px 13px;font:inherit;font-weight:900;cursor:pointer}.support-pay-btn{background:#ffcf36;color:#3a2b00}.support-copy-btn,.support-qr-btn{background:#dfeef7;color:#073f68}.support-address{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#edf5f9;border-radius:12px;padding:10px;overflow-wrap:anywhere;color:#143f5d;font-size:12px;margin-top:9px}.support-net{font-size:12px;font-weight:900;color:#725700}.support-warning{margin-top:12px;background:#fff5dc;border:1px solid #f0d487;border-radius:14px;padding:11px;color:#6a5215;font-size:12px;line-height:1.45}.support-qr-wrap{display:none;margin-top:12px;text-align:center}.support-qr-wrap.open{display:block}.support-qr-wrap img{width:220px;max-width:80%;height:auto;border-radius:16px;border:8px solid #fff;box-shadow:0 4px 14px rgba(0,0,0,.08)}.copy-toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:10001;background:#0a3f66;color:white;border-radius:999px;padding:10px 16px;font-size:13px;font-weight:800;display:none}.copy-toast.show{display:block}@media(max-width:520px){.support-top{font-size:10px;padding:7px 9px;min-height:36px}.support-modal{padding:10px}.support-sheet{border-radius:22px}.support-btn-row>*{flex:1 1 auto}}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><button class="back" type="button" onclick="history.back()">‹</button><h1>🇺🇾 Гид по Уругваю</h1><button class="support-top" type="button" onclick="openSupport()">❤️ Поддержать</button></div>
+
+  <section class="welcome">
+    <h2>Добро пожаловать в Уругвай</h2>
+    <p>Практический гид RusWeo для поездки и жизни в Уругвае: связь, деньги, транспорт, медицина, места для поездок и проверенные специалисты. Начните с общего полезного раздела или выберите нужное направление.</p>
+  </section>
+
+  <div class="grid2">
+    <button class="quick primary" onclick="jumpTo('arrival')">⭐ Полезно всем<br><span class="muted">связь, деньги, транспорт, покупки, медицина</span></button>
+    <button class="quick" onclick="jumpTo('tourist')">✈️ Куда съездить<br><span class="muted">места, пляжи, маршруты</span></button>
+    <button class="quick wide" onclick="jumpTo('living')">🏠 Переезжаете в Уругвай?<br><span class="muted">документы · ПМЖ · недвижимость · бесплатные консультации</span></button>
+  </div>
+
+  <div id="arrival" class="section-title">⭐ Полезно всем</div>
+  <div class="section-sub">Самое нужное и туристу, и тому, кто приехал надолго: связь, деньги, транспорт, покупки, медицина и первые бытовые шаги.</div>
+
+  <div class="acc"><button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-left"><span class="acc-icon">📄</span><span class="acc-title">Первые шаги после приезда</span></span><span class="acc-arrow">›</span></button><div class="acc-content">
+    <p>1. Оформить местную SIM-карту.<br>2. Получить немного наличных UYU и разобраться с оплатой.<br>3. Если остаётесь — оформить Prex Uruguay.<br>4. Если пользуетесь автобусами — оформить STM и установить Moovit.<br>5. Найти рядом supermercado, farmacia, Abitab/RedPagos и ближайшую Emergencia.<br>6. Если остаётесь надолго — переходить к разделу «Остаюсь жить».</p>
+  </div></div>
+
+  <div class="acc"><button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-left"><span class="acc-icon">📱</span><span class="acc-title">SIM-карта и интернет</span></span><span class="acc-arrow">›</span></button><div class="acc-content">
+    <div class="card"><span class="pill">Рекомендация RusWeo</span><h3>1. Tigo · бывший Movistar</h3><p>Удобный вариант для нового человека в стране, простая активация и хорошие предложения.</p><p><b>200 UYU — 50 GB</b><br><b>300 UYU — 100 GB</b></p><p class="muted">На контрактных тарифах периодически бывают специальные предложения и акции.</p></div>
+    <div class="card"><h3>2. Claro</h3><p>Крупный мобильный оператор с prepaid и контрактными тарифами. Конкретные пакеты и цены могут меняться.</p></div>
+    <div class="card"><h3>3. Antel</h3><p>Государственный оператор с prepaid, eSIM и контрактами. RusWeo ставит его третьим, поскольку для нового человека оформление может быть менее удобным.</p></div>
+  </div></div>
+
+  <div class="acc"><button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-left"><span class="acc-icon">💵</span><span class="acc-title">Деньги и обмен валюты</span></span><span class="acc-arrow">›</span></button><div class="acc-content">
+    <p>Основная валюта страны — уругвайский песо (UYU). Карты принимают очень широко, но небольшую сумму наличных иметь удобно.</p>
+    <div class="tip"><b>Совет RusWeo:</b> для обычного обмена валюты мы рекомендуем <b>Abitab</b>. Это личная рекомендация владельца проекта на основе собственного опыта и выгодного курса обмена.</div>
+  </div></div>
+
+  <div class="acc"><button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-left"><span class="acc-icon">💳</span><span class="acc-title">Prex Uruguay</span></span><span class="acc-arrow">›</span></button><div class="acc-content">
+    <p>Если вы планируете оставаться в Уругвае, RusWeo рекомендует скачать приложение <b>Prex Uruguay</b> и оформить карту.</p>
+    <div class="card"><h3>Как удобно пользоваться</h3><p>1. Пополнить карту долларами.<br>2. В приложении Prex обменять USD на UYU.<br>3. Пользоваться песо для оплаты местных покупок, услуг, счетов и государственных платежей.<br>4. При необходимости снять наличные через Abitab.</p></div>
+    <div class="tip"><b>Совет RusWeo:</b> перед обменом наличных всегда стоит посмотреть курс USD → UYU внутри Prex — по нашему опыту он очень выгодный.</div>
+    <p class="muted">Для нерезидента лимиты зависят от статуса аккаунта и проверки документов; ориентир базового накопительного лимита — около 10 000 USD. Актуальные лимиты лучше проверять в самом приложении.</p>
+  </div></div>
+
+  <div class="acc"><button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-left"><span class="acc-icon">🚌</span><span class="acc-title">Транспорт</span></span><span class="acc-arrow">›</span></button><div class="acc-content">
+    <div class="card"><h3>STM · городской транспорт</h3><p>Для поездок по Монтевидео удобно оформить карту STM.</p><p><b>1 час: 52 UYU по STM</b><br><b>64 UYU наличными</b></p><p>Карту можно получить в точках, где есть услуга выдачи STM, в том числе в некоторых Abitab. Пополнить можно в <b>Abitab, RedPagos</b> и во многих небольших магазинах с услугой STM.</p></div>
+    <div class="card"><h3>Terminal Tres Cruces</h3><p>Главный междугородний автобусный терминал Монтевидео.</p><p><b>Адрес:</b> Bvar. Artigas 1825, Montevideo</p><span class="coord">-34.8938, -56.1686</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.8938,-56.1686)">🗺 Построить маршрут</button></div></div>
+    <div class="card"><h3>Moovit</h3><p>RusWeo рекомендует приложение <b>Moovit</b> для построения маршрутов, поиска остановок, пересадок и просмотра движения многих автобусов онлайн.</p></div>
+  </div></div>
+
+  <div class="acc"><button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-left"><span class="acc-icon">🛒</span><span class="acc-title">Где покупать продукты</span></span><span class="acc-arrow">›</span></button><div class="acc-content">
+    <p><b>Ta-Ta и El Dorado</b> — удобны для повседневных покупок и акций. <b>Disco / Devoto / Géant</b> — большие сети с хорошим выбором.</p>
+    <p><b>Tienda Inglesa и Fresh Market</b> — более премиальный формат, импортные продукты, готовая еда и расширенный ассортимент.</p>
+    <div class="tip"><b>Совет RusWeo:</b> не привязываться к одной сети. Овощи и фрукты часто выгоднее покупать на feria.</div>
+  </div></div>
+
+  <div class="acc"><button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-left"><span class="acc-icon">🛍️</span><span class="acc-title">Недорогие покупки и торговые районы</span></span><span class="acc-arrow">›</span></button><div class="acc-content">
+    <div class="card"><h3>Avenida 8 de Octubre</h3><p>Большая торговая улица: одежда, обувь, товары для дома, небольшие магазины и разные повседневные товары.</p><span class="coord">-34.8910, -56.1614</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.8910,-56.1614)">🗺 Маршрут</button></div></div>
+    <div class="card"><h3>Barrio de los Judíos · Villa Muñoz / Reus</h3><p>Известный торговый район с одеждой, обувью, аксессуарами, тканями, игрушками и товарами для дома. Указана точка в районе Arenal Grande.</p><span class="coord">-34.8873, -56.1805</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.8873,-56.1805)">🗺 Маршрут</button></div></div>
+  </div></div>
+
+  <div class="acc"><button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-left"><span class="acc-icon">🏥</span><span class="acc-title">Медицина</span></span><span class="acc-arrow">›</span></button><div class="acc-content">
+    <div class="card"><h3>🚑 Экстренная помощь</h3><p>В экстренной ситуации можно звонить <b>911</b> или обращаться в систему <b>SAME 105</b>. При серьёзной ситуации главное — обращаться за помощью сразу.</p></div>
+    <div class="card"><h3>Государственная медицина · ASSE</h3><p>Государственная система с больницами, поликлиниками и отделениями urgencia.</p></div>
+    <div class="card"><h3>Частная медицина / mutualista</h3><p>Можно оформить ежемесячное обслуживание в частной сети. Ориентир стоимости — <b>до ~80 USD в месяц на человека</b>, в зависимости от учреждения, возраста и выбранного плана.</p></div>
+    <div class="tip">Если страховки или членства ещё нет, это не должно останавливать обращение за экстренной помощью.</div>
+  </div></div>
+
+  <div class="acc soon"><button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-left"><span class="acc-icon">🐾</span><span class="acc-title">Как приехать в Уругвай с животными</span></span><span class="acc-arrow">›</span></button><div class="acc-content">
+    <div class="card"><p><b>Раздел готовится.</b></p><p>Мы готовим подробную практическую инструкцию о въезде в Уругвай с домашними животными: необходимые документы, ветеринарные требования, подготовка к перелёту и важные нюансы после приезда.</p><p>Материал будет подготовлен совместно с <b>профессиональным кинологом</b>.</p></div>
+  </div></div>
+
+  <div id="news" class="section-title">📰 Новости Уругвая</div>
+  <div class="acc" id="newsAcc"><button class="acc-btn" onclick="toggleAcc(this);loadNewsOnce()"><span class="acc-left"><span class="acc-icon">📰</span><span class="acc-title">Последние новости Уругвая</span></span><span class="acc-arrow">›</span></button><div class="acc-content">
+    <div class="news-status" id="newsStatus">Новости загружаются только когда вы открываете этот раздел. Уведомления не используются.</div>
+    <div class="news-list" id="newsList"><div class="card">Откройте раздел, чтобы загрузить последние новости.</div></div>
+    <button class="news-more" id="newsMore" type="button" onclick="showMoreNews()" style="display:none">Показать ещё</button>
+  </div></div>
+
+  <div id="tourist" class="section-title">✈️ Куда съездить в Уругвае</div>
+  <div class="section-sub">Подборки мест для поездок. У каждого места есть координаты и кнопка для построения маршрута.</div>
+
+  <div class="acc"><button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-left"><span class="acc-icon">🌎</span><span class="acc-title">Топ-10 мест Уругвая</span></span><span class="acc-arrow">›</span></button><div class="acc-content">
+    <div class="card"><h3>1. Historic Quarter · Colonia del Sacramento</h3><p>Старый город с мощёными улицами, колониальной архитектурой и атмосферой исторической Колонии.</p><span class="coord">-34.4712, -57.8499</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.4712,-57.8499)">🗺 Построить маршрут</button></div></div>
+    <div class="card"><h3>2. Casapueblo · Punta Ballena</h3><p>Дом-музей Карлоса Паэса Виларо на скалах Punta Ballena. Особенно популярен на закате.</p><span class="coord">-34.908869, -55.044906</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.908869,-55.044906)">🗺 Построить маршрут</button></div></div>
+    <div class="card"><h3>3. La Mano · Punta del Este</h3><p>Знаменитая скульптура «Пальцы» на Playa Brava — один из самых узнаваемых символов Уругвая.</p><span class="coord">-34.95786, -54.93718</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.95786,-54.93718)">🗺 Построить маршрут</button></div></div>
+    <div class="card"><h3>4. Cerro San Antonio · Piriápolis</h3><p>Смотровая площадка над Пириаполисом с панорамой города и побережья.</p><span class="coord">-34.87823, -55.27398</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.87823,-55.27398)">🗺 Построить маршрут</button></div></div>
+    <div class="card"><h3>5. Cerro Pan de Azúcar</h3><p>Один из самых известных холмов страны. На вершине находится большой крест и открываются широкие виды на регион.</p><span class="coord">-34.81078, -55.25831</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.81078,-55.25831)">🗺 Построить маршрут</button></div></div>
+    <div class="card"><h3>6. Cabo Polonio</h3><p>Дюны, океан, маяк и посёлок без привычной городской инфраструктуры. Добираются через природную зону специальным транспортом.</p><span class="coord">-34.40537, -53.77780</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.40537,-53.77780)">🗺 Построить маршрут</button></div></div>
+    <div class="card"><h3>7. Punta del Diablo</h3><p>Океанский посёлок Rocha с расслабленной атмосферой, пляжами и близостью к Santa Teresa.</p><span class="coord">-34.04490, -53.53980</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.04490,-53.53980)">🗺 Построить маршрут</button></div></div>
+    <div class="card"><h3>8. Fortaleza de Santa Teresa</h3><p>Историческая крепость внутри большого природного парка недалеко от побережья Rocha.</p><span class="coord">-33.97222, -53.54861</span><div class="actions"><button class="mini-btn" onclick="routeTo(-33.97222,-53.54861)">🗺 Построить маршрут</button></div></div>
+    <div class="card"><h3>9. Salto del Penitente</h3><p>Природный парк с холмами, ущельем, водопадом и маршрутами для прогулок.</p><span class="coord">-34.37200, -55.05276</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.37200,-55.05276)">🗺 Построить маршрут</button></div></div>
+    <div class="card"><h3>10. Mercado del Puerto + Ciudad Vieja</h3><p>Исторический район Монтевидео у порта, старые улицы и знаменитый Mercado del Puerto.</p><span class="coord">-34.90557, -56.21176</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.90557,-56.21176)">🗺 Построить маршрут</button></div></div>
+  </div></div>
+
+  <div class="acc"><button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-left"><span class="acc-icon">🏙</span><span class="acc-title">Топ-5 мест Монтевидео</span></span><span class="acc-arrow">›</span></button><div class="acc-content">
+    <div class="card"><h3>1. Rambla de Montevideo · Pocitos</h3><p>Набережная, пляж, прогулки и закаты. Указана удобная точка для начала прогулки.</p><span class="coord">-34.91710, -56.14970</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.91710,-56.14970)">🗺 Маршрут</button></div></div>
+    <div class="card"><h3>2. Teatro Solís</h3><p>Главный исторический театр страны и одна из ключевых культурных точек столицы.</p><span class="coord">-34.90819, -56.20008</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.90819,-56.20008)">🗺 Маршрут</button></div></div>
+    <div class="card"><h3>3. Plaza Independencia + Palacio Salvo</h3><p>Центральная площадь, памятник Артигасу и одно из самых узнаваемых зданий Монтевидео.</p><span class="coord">-34.90673, -56.19831</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.90673,-56.19831)">🗺 Маршрут</button></div></div>
+    <div class="card"><h3>4. Mercado Agrícola de Montevideo · MAM</h3><p>Исторический рынок с гастрономией, продуктами и магазинами.</p><span class="coord">-34.88689, -56.18337</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.88689,-56.18337)">🗺 Маршрут</button></div></div>
+    <div class="card"><h3>5. Museo Andes 1972</h3><p>Музей, посвящённый истории авиакатастрофы в Андах и людям, пережившим её.</p><span class="coord">-34.90585, -56.20291</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.90585,-56.20291)">🗺 Маршрут</button></div></div>
+  </div></div>
+
+  <div class="acc"><button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-left"><span class="acc-icon">🌴</span><span class="acc-title">Топ-5 мест Мальдонадо</span></span><span class="acc-arrow">›</span></button><div class="acc-content">
+    <div class="card"><h3>1. Arboretum Lussich</h3><p>Большой лесной парк в Punta Ballena с тропами и видами.</p><span class="coord">-34.88187, -55.03633</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.88187,-55.03633)">🗺 Маршрут</button></div></div>
+    <div class="card"><h3>2. Laguna del Sauce</h3><p>Крупная лагуна и спокойная природная зона для автомобильной поездки.</p><span class="coord">-34.82528, -55.06036</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.82528,-55.06036)">🗺 Маршрут</button></div></div>
+    <div class="card"><h3>3. Museo Ralli · Punta del Este</h3><p>Музей современного латиноамериканского и европейского искусства.</p><span class="coord">-34.92967, -54.92705</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.92967,-54.92705)">🗺 Маршрут</button></div></div>
+    <div class="card"><h3>4. Faro de José Ignacio</h3><p>Маяк и знаменитый прибрежный посёлок с особой атмосферой.</p><span class="coord">-34.84628, -54.63282</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.84628,-54.63282)">🗺 Маршрут</button></div></div>
+    <div class="card"><h3>5. Puente de Laguna Garzón</h3><p>Круглый мост на Ruta 10 — необычная архитектурная точка и хороший автомобильный маршрут.</p><span class="coord">-34.80028, -54.56889</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.80028,-54.56889)">🗺 Маршрут</button></div></div>
+  </div></div>
+
+  <div class="acc"><button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-left"><span class="acc-icon">🏖</span><span class="acc-title">Топ-5 пляжей Уругвая</span></span><span class="acc-arrow">›</span></button><div class="acc-content">
+    <div class="card"><h3>1. Playa Mansa · Punta del Este</h3><p>Спокойная вода и красивые закаты.</p><span class="coord">-34.95284, -54.94102</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.95284,-54.94102)">🗺 Маршрут</button></div></div>
+    <div class="card"><h3>2. Playa Bikini · Manantiales</h3><p>Популярный океанский пляж Мальдонадо.</p><span class="coord">-34.90740, -54.82830</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.90740,-54.82830)">🗺 Маршрут</button></div></div>
+    <div class="card"><h3>3. Playa Solanas / Portezuelo</h3><p>Спокойный пляж в районе Punta Ballena, особенно приятный на закате.</p><span class="coord">-34.87382, -55.04648</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.87382,-55.04648)">🗺 Маршрут</button></div></div>
+    <div class="card"><h3>4. Playa El Desplayado · La Pedrera</h3><p>Широкий океанский пляж Rocha с более природной атмосферой.</p><span class="coord">-34.58755, -54.12178</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.58755,-54.12178)">🗺 Маршрут</button></div></div>
+    <div class="card"><h3>5. Playa Hermosa · Maldonado</h3><p>Спокойный пляж недалеко от Piriápolis.</p><span class="coord">-34.83734, -55.30046</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.83734,-55.30046)">🗺 Маршрут</button></div></div>
+  </div></div>
+
+  <div class="acc"><button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-left"><span class="acc-icon">🏛</span><span class="acc-title">Топ-5 мест Колонии-дель-Сакраменто</span></span><span class="acc-arrow">›</span></button><div class="acc-content">
+    <div class="card"><h3>1. Plaza de Toros Real de San Carlos</h3><p>Восстановленная историческая арена и один из символов района Real de San Carlos.</p><span class="coord">-34.44395, -57.84206</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.44395,-57.84206)">🗺 Маршрут</button></div></div>
+    <div class="card"><h3>2. Rambla de las Américas</h3><p>Прибрежная прогулочная зона вдоль Río de la Plata.</p><span class="coord">-34.46114, -57.84317</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.46114,-57.84317)">🗺 Маршрут</button></div></div>
+    <div class="card"><h3>3. Puerto Deportivo de Colonia</h3><p>Яхтенный порт и приятная точка для прогулки у воды.</p><span class="coord">-34.47500, -57.84333</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.47500,-57.84333)">🗺 Маршрут</button></div></div>
+    <div class="card"><h3>4. Playa Ferrando</h3><p>Спокойный пляж немного в стороне от исторического центра.</p><span class="coord">-34.47295, -57.83145</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.47295,-57.83145)">🗺 Маршрут</button></div></div>
+    <div class="card"><h3>5. Bodega Los Cerros de San Juan</h3><p>Историческая винодельческая точка департамента Колония для отдельной поездки.</p><span class="coord">-34.21690, -57.88265</span><div class="actions"><button class="mini-btn" onclick="routeTo(-34.21690,-57.88265)">🗺 Маршрут</button></div></div>
+  </div></div>
+
+
+  <div id="living" class="section-title">🏠 Переезжаете в Уругвай?</div>
+  <div class="section-sub">Здесь собраны партнёрские материалы и специалисты для тех, кто оформляет ПМЖ и обустраивается в стране.</div>
+
+  <div class="partner-zone">
+    <h3>🤝 Проверенные специалисты RusWeo</h3>
+    <p>Если вы планируете остаться в Уругвае, здесь собраны специалисты по документам и недвижимости, которых RusWeo рекомендует своим пользователям. Консультацию можно получить бесплатно.</p>
+  </div>
+
+  <div class="acc partner"><button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-left"><span class="acc-icon">🪪</span><span class="acc-title">Документы и ПМЖ в Уругвае<span class="partner-tag">✓ Личная рекомендация RusWeo · бесплатная консультация</span></span></span><span class="acc-arrow">›</span></button><div class="acc-content">
+    <p>Для помощи с подготовкой и оформлением документов RusWeo рекомендует <b>Павла</b>.</p>
+    <div class="tip"><b>Это личная рекомендация:</b> создатель проекта RusWeo сам проходил оформление документов с помощью Павла, остался доволен сопровождением и рекомендует его на основании собственного опыта.</div>
+    <div class="card"><h3>Основные документы</h3><p>1. Заграничный паспорт — желательно не менее года до окончания.<br>2. 2 цветные фотографии на документы.<br>3. Свидетельство о рождении.<br>4. Справка об отсутствии судимости для лиц старше 18 лет.<br>5. Подтверждение регулярного активного или пассивного дохода — ориентир от 700 USD на каждого члена семьи.<br>6. Прививочный сертификат.<br>7. Для женщин соответствующих возрастных групп — ПАП-тест и при необходимости маммография.<br>8. Свидетельство о браке, если применимо.<br>9. Документ об изменении имени или фамилии, если применимо.<br>10. Документ о расторжении брака, если применимо.<br>11. Справки из школы для детей, если необходимо.<br>12. Согласие второго родителя, если ребёнок подаёт документы с одним родителем.</p></div>
+    <div class="card"><h3>Что ещё рекомендуется взять</h3><p>Водительское удостоверение; нотариальную копию водительских прав с апостилем, если планируете получать права в Уругвае; аттестаты и дипломы; документы на движимое и недвижимое имущество.</p></div>
+    <div class="warning"><b>Если вы приехали только с заграничным паспортом:</b><br>начать процесс оформления легальной резиденции можно и с одним действующим заграничным паспортом. Остальные документы можно запрашивать уже из Уругвая. Но если основной комплект не подготовлен заранее, <b>оформление ПМЖ может затянуться на длительное время</b>.</div>
+    <button class="consult" onclick="openPartner('documents','mapsme')">Получить бесплатную консультацию</button>
+    <div class="note">При переходе RusWeo учитывает обращение в партнёрской статистике, а в Telegram будет подготовлено сообщение, что вы пришли через портал RusWeo.</div>
+  </div></div>
+
+  <div class="acc partner"><button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-left"><span class="acc-icon">🏠</span><span class="acc-title">Недвижимость в Уругвае<span class="partner-tag">✓ Партнёр RusWeo · бесплатная консультация</span></span></span><span class="acc-arrow">›</span></button><div class="acc-content">
+    <div class="card"><p><b>Раздел находится в процессе подготовки.</b> Практическую информацию по аренде и покупке недвижимости добавим после получения материала от нашего партнёра Никиты.</p></div>
+    <button class="consult" onclick="openPartner('realestate','niko_uruguay')">Получить бесплатную консультацию</button>
+    <div class="note">При переходе RusWeo учитывает обращение в партнёрской статистике, а в Telegram будет подготовлено сообщение, что вы пришли через портал RusWeo.</div>
+  </div></div>
+
+  <section class="support-section" id="supportProject">
+    <h2>❤️ Поддержать развитие RusWeo</h2>
+    <p>Если гид оказался полезным, вы можете поддержать развитие проекта. Доступны российские рубли и USDT в сетях TRON (TRC20) и BNB Smart Chain (BEP20).</p>
+    <button class="support-main-btn" type="button" onclick="openSupport()">Выбрать способ поддержки</button>
+  </section>
+
+</div>
+
+
+<div class="support-modal" id="supportModal" onclick="supportBackdrop(event)">
+  <div class="support-sheet" role="dialog" aria-modal="true" aria-labelledby="supportTitle">
+    <div class="support-head"><div><h2 id="supportTitle">❤️ Поддержать RusWeo</h2><div class="note">Выберите удобный способ. Сумму поддержки определяете вы сами.</div></div><button class="support-close" type="button" onclick="closeSupport()">×</button></div>
+
+    <div class="support-choice">
+      <h3>🇷🇺 Российские рубли · ЮMoney</h3>
+      <p>Перевод любой удобной суммы через ЮMoney.</p>
+      <div class="support-btn-row"><button class="support-pay-btn" type="button" onclick="openYooMoney()">₽ Перейти к переводу</button></div>
+    </div>
+
+    <div class="support-choice">
+      <h3>₮ USDT · TRON</h3><div class="support-net">Сеть TRC20</div>
+      <div class="support-address">TK9smvS3m4NiFRD29p2frPxAVRxbEe8QNu</div>
+      <div class="support-btn-row"><button class="support-copy-btn" type="button" onclick="copySupport('TK9smvS3m4NiFRD29p2frPxAVRxbEe8QNu')">Скопировать адрес</button><button class="support-qr-btn" type="button" onclick="toggleSupportQr('qrTrx')">Показать QR</button></div>
+      <div class="support-qr-wrap" id="qrTrx"><img alt="QR USDT TRC20" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQgAAAEIAQAAAACLjVdSAAABi0lEQVR4nO2ZsZLDQAhDnzz5/1/WFcCuJ02qYOY2TpEEq5AZVggs8+G6PgF+iH+MeIHiVxSKwLLwik5h2paPyIQiF4As36JTmPblIxMhDEQydnQM036ElefEdYae4TEGYQujezaGMv0a4gUlpcg4/3hHpzDtQeCSC7996vYUpm31sR1Zaam1EzKGaQ9CRuE1nA0mwxmbw7RPP7KlOPuKQcjCoNP8WNSHy4pFsKzYofXBykAcnnV+3MdjCkJZFs5CKVcaN8+bXy4AVy2g6L8SSDrwvGRF3KoilFSuwW4K02b/4VRQWZay+frM/oLeKiTKA87Tj/Lr3rMLy7Abn+bXL+Kxw5GG/wi77rTvk5g2IZwGPWsCQOlRhzHtQcTD49iAhJoeOr+s7eBen5a25q0pTNv6bQ0ttUINu14tdwzTvvllCUZ81w41NwBTmDbOcyWlwhjZSCs8hekTCCNhFA3XPvT9y75CNdZO5ND6sNN5bBFZfmQW068jtN49ea+DnNpxoD+9+Y9HefwQMxF/zzLE5WFKBwYAAAAASUVORK5CYII="></div>
+    </div>
+
+    <div class="support-choice">
+      <h3>₮ USDT · BNB Smart Chain</h3><div class="support-net">Сеть BEP20</div>
+      <div class="support-address">0x397cb80eef1b2e53739dc78742449d38672c7933</div>
+      <div class="support-btn-row"><button class="support-copy-btn" type="button" onclick="copySupport('0x397cb80eef1b2e53739dc78742449d38672c7933')">Скопировать адрес</button><button class="support-qr-btn" type="button" onclick="toggleSupportQr('qrBsc')">Показать QR</button></div>
+      <div class="support-qr-wrap" id="qrBsc"><img alt="QR USDT BEP20" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQgAAAEIAQAAAACLjVdSAAABhUlEQVR4nO2ZzW4DMQiEv6ny/q88PQC220tO66KSjbKxCIfRCIYfy7x5vt45fDz+sccLFCcjwDIIvKxdkF7jA0NwAMhKS1m7IL3oIYmIExnjCJWw9kL6uMfrOGeqIHyobBek9/mwigexCemC9KKHXWKBULGR1lZIH/fYqeFfn/q7C9Jr+bJTYxfZTUgbpPfiw3kwm4dlGxYfi4bFg71eeFy+JBE+v8bBkxkXH/J6gYWFo8DEa2K/LpAVNMhBjGOecR+kl+utS0TsQ2LH6Yf2EHcMtyhr77j4eAEYasp3aUkM/9dwdPGInKi6Uv2HM21G9qfkyCKcKVOq6qH7D4xjyFfugySDNE8/Vr+e3djxw8R+rOIDhV7I2ZVR410vpE97aE+30Y6tzizWZdP602P/4b1GXiP/yHxx1FZVsngLybj6kvX21FSlKS9muiC9yEc+padLVQbq6Y/7hujA1m7Z1rj+o+YXwKq6onUVcw1HFw953d+ekZEHX8PRxePoP/4Ux8ejp8c36bTzjIYAXLoAAAAASUVORK5CYII="></div>
+    </div>
+
+    <div class="support-warning"><b>Важно:</b> отправляйте USDT только в указанной сети. TRC20 — только на адрес TRON, BEP20 — только на адрес BNB Smart Chain.</div>
+  </div>
+</div>
+<div class="copy-toast" id="copyToast">Адрес скопирован</div>
+
+<script>
+const tg=window.Telegram&&window.Telegram.WebApp?window.Telegram.WebApp:null;
+
+function openSupport(){const m=document.getElementById('supportModal');if(m)m.classList.add('open')}
+function closeSupport(){const m=document.getElementById('supportModal');if(m)m.classList.remove('open')}
+function supportBackdrop(e){if(e&&e.target&&e.target.id==='supportModal')closeSupport()}
+function openYooMoney(){const url='https://yoomoney.ru/to/4100119468150497/0';try{if(tg&&tg.openLink){tg.openLink(url);return}}catch(e){}window.open(url,'_blank')}
+function toggleSupportQr(id){const el=document.getElementById(id);if(el)el.classList.toggle('open')}
+function copySupport(text){const done=()=>showCopyToast();try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done).catch(()=>fallbackCopy(text,done));return}}catch(e){}fallbackCopy(text,done)}
+function fallbackCopy(text,done){const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(ta);done()}
+function showCopyToast(){const t=document.getElementById('copyToast');if(!t)return;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1400)}
+
+const API='https://script.google.com/macros/s/AKfycbzWkerEeWR-3EjY1QW44Az6pj1TjJK9_ktfnrdcgFILlD6Cnqb4z2X97zSknKRJw-i3jw/exec';
+const NEWS_API='https://uruway-news-bot.uruway.workers.dev/api/news';
+function toggleAcc(btn){const a=btn.closest('.acc');if(a)a.classList.toggle('open')}
+function jumpTo(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})}
+function routeTo(lat,lng){const url='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(lat+','+lng);try{if(tg&&tg.openLink){tg.openLink(url);return}}catch(e){}window.open(url,'_blank')}
+function tgUser(){const u=(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user)||{};return{id:String(u.id||localStorage.getItem('uruway_auth_telegram_user_id')||''),username:String(u.username||localStorage.getItem('uruway_auth_username')||''),first:String(u.first_name||localStorage.getItem('uruway_auth_first_name')||''),last:String(u.last_name||localStorage.getItem('uruway_auth_last_name')||'')}}
+function clientId(){const k='uruway_client_id_v1';try{let v=localStorage.getItem(k);if(!v){v='c_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,12);localStorage.setItem(k,v)}return v}catch(e){return 'session_'+Math.random().toString(36).slice(2,12)}}
+function partnerMessage(partner){if(partner==='documents')return 'Здравствуйте! Я обратился к вам через портал RusWeo по вопросу оформления документов и ПМЖ в Уругвае. Хотел бы получить бесплатную консультацию.';return 'Здравствуйте! Я обратился к вам через портал RusWeo по вопросу недвижимости в Уругвае. Хотел бы получить бесплатную консультацию.'}
+function partnerTrackUrl(partner){const u=tgUser(),click=partner+'_'+Date.now()+'_'+Math.random().toString(36).slice(2,10);return API+'?action=partner_lead&partner='+encodeURIComponent(partner)+'&telegram_user_id='+encodeURIComponent(u.id)+'&telegram_username='+encodeURIComponent(u.username)+'&telegram_first_name='+encodeURIComponent(u.first)+'&telegram_last_name='+encodeURIComponent(u.last)+'&client_id='+encodeURIComponent(clientId())+'&source=guide_portal&lead_click_id='+encodeURIComponent(click)}
+function trackPartnerClick(partner){const url=partnerTrackUrl(partner);try{if(navigator.sendBeacon&&navigator.sendBeacon(url,new Blob([],{type:'text/plain'})))return true}catch(e){}try{fetch(url,{method:'GET',mode:'no-cors',cache:'no-store',keepalive:true,credentials:'omit'}).catch(()=>{});return true}catch(e){}return false}
+function openPartner(partner,username){trackPartnerClick(partner);const url='https://t.me/'+username+'?text='+encodeURIComponent(partnerMessage(partner));try{if(tg&&tg.openTelegramLink){tg.openTelegramLink(url);return}}catch(e){}try{if(tg&&tg.openLink){tg.openLink(url);return}}catch(e){}window.location.href=url}
+
+let newsLoaded=false,newsItems=[],newsVisible=5;
+function escNews(v){return String(v==null?'':v).replace(/[&<>\"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]||c})}
+function fmtNewsDate(v){try{const d=new Date(v);if(isNaN(d.getTime()))return String(v||'');return d.toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}catch(e){return String(v||'')}}
+function toggleNewsItem(btn){const item=btn.closest('.news-item');if(item)item.classList.toggle('open')}
+function renderNews(){const box=document.getElementById('newsList'),more=document.getElementById('newsMore');if(!box)return;if(!newsItems.length){box.innerHTML='<div class="card">Пока нет опубликованных новостей.</div>';if(more)more.style.display='none';return}const shown=newsItems.slice(0,newsVisible);box.innerHTML=shown.map(function(n){const src=n.sourceUrl?'<div class="news-source"><a href="'+escNews(n.sourceUrl)+'" target="_blank" rel="noopener">Источник: '+escNews(n.sourceName||'Montevideo Portal')+'</a></div>':'';return '<div class="news-item"><button class="news-head" type="button" onclick="toggleNewsItem(this)"><div class="news-date">'+escNews(fmtNewsDate(n.publishedAt||n.savedAt))+'</div><div class="news-title">'+escNews((n.emoji||'📰')+' '+(n.headline||'Новость'))+'</div></button><div class="news-body">'+escNews(n.body||'')+src+'</div></div>'}).join('');if(more)more.style.display=newsVisible<newsItems.length?'block':'none'}
+function showMoreNews(){newsVisible=Math.min(newsVisible+5,newsItems.length);renderNews()}
+async function loadNewsOnce(){if(newsLoaded)return;newsLoaded=true;const status=document.getElementById('newsStatus'),box=document.getElementById('newsList');if(status)status.textContent='Загружаем последние новости…';try{const r=await fetch(NEWS_API+'?limit=30',{method:'GET',cache:'no-store',credentials:'omit'});if(!r.ok)throw new Error('HTTP '+r.status);const data=await r.json();if(!data||data.ok!==true||!Array.isArray(data.items))throw new Error('Неверный ответ сервера');newsItems=data.items;newsVisible=5;renderNews();if(status)status.textContent='Последнее обновление: '+fmtNewsDate(data.generatedAt||new Date().toISOString())+' · без push-уведомлений'}catch(e){newsLoaded=false;if(box)box.innerHTML='<div class="news-error">Не удалось загрузить новости. Попробуйте открыть раздел ещё раз.</div>';if(status)status.textContent='Новости доступны только при открытии раздела · без push-уведомлений'}}
+
+</script>
+</body>
+</html>

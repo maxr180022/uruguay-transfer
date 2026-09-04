@@ -1,0 +1,1881 @@
+<!doctype html>
+<!-- RusWeo 2.4 -->
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>RusWeo Transfer — оформление заказа</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{--ink:#08305f;--muted:#6f859b;--line:#d8eaf6;--blue:#078de4;--blue2:#04afe9;--pale:#eef8ff;--ok:#158453;--bad:#c83838;--card:#fff}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 88% 0%,rgba(12,173,236,.16),transparent 30%),linear-gradient(180deg,#eaf7ff 0%,#f8fcff 52%,#edf8ff 100%)}
+body{padding:0 0 env(safe-area-inset-bottom)}button,input,select,textarea{font:inherit}.wrap{max-width:640px;margin:0 auto;padding:18px 14px 38px}.top{text-align:center;padding:7px 3px 13px}.brand{font-size:28px;font-weight:950;letter-spacing:-.035em;color:#07356f}.chip{display:inline-flex;align-items:center;gap:7px;margin-top:9px;padding:7px 12px;border-radius:999px;background:#dff3ff;border:1px solid #bee5fb;color:#0879c5;font-weight:850;font-size:12px}.title{font-size:25px;font-weight:950;margin:13px 0 4px}.sub{font-size:13px;color:var(--muted);line-height:1.45}
+.panel{background:rgba(255,255,255,.97);border:1px solid var(--line);border-radius:24px;box-shadow:0 12px 30px rgba(7,71,125,.08);padding:17px;margin-top:13px}.section{padding:2px 0 7px}.section+.section{border-top:1px solid #e7f1f7;margin-top:14px;padding-top:16px}.section-head{display:flex;align-items:center;gap:9px;font-weight:950;font-size:16px;margin-bottom:11px}.bubble{width:31px;height:31px;border-radius:11px;display:grid;place-items:center;background:#e7f6ff;color:#087dca}.field{margin:0 0 12px}.field:last-child{margin-bottom:0}label{display:block;font-size:12px;font-weight:850;color:#17456f;margin:0 0 6px}.req{color:var(--bad)}input,select,textarea{width:100%;min-height:51px;border:1px solid #cfe3f1;border-radius:15px;background:#fff;padding:12px 13px;color:#102f4d;outline:none;font-size:16px}textarea{min-height:82px;resize:vertical}input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(7,141,228,.10)}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hint{font-size:11.5px;color:var(--muted);line-height:1.45;margin-top:5px}.hidden{display:none!important}
+.service-section{position:relative;z-index:30;overflow:visible!important}.service-picker{width:100%;border:2px solid #c7e2f2;border-radius:19px;background:linear-gradient(180deg,#fff,#f5fbff);padding:13px 14px;display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:11px;align-items:center;text-align:left;color:#123958;box-shadow:0 8px 20px rgba(7,71,125,.07);transition:border-color .12s ease,box-shadow .12s ease,transform .12s ease}.service-picker:active{transform:scale(.992)}.service-picker.open{border-color:#45ace7;box-shadow:0 10px 24px rgba(7,141,228,.13)}.service-picker-icon{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#e7f6ff,#d8f0ff);display:grid;place-items:center;font-size:21px}.service-picker-copy{min-width:0}.service-picker-title{display:block;font-size:14px;line-height:1.25;font-weight:950;letter-spacing:-.01em}.service-picker-sub{display:block;margin-top:3px;color:#0b8bd7;font-size:11.5px;line-height:1.25;font-weight:850}.service-picker-chev{font-size:24px;color:#7893a8;transition:transform .18s ease}.service-picker.open .service-picker-chev{transform:rotate(180deg)}.service-list{
+position:relative;
+left:auto;
+right:auto;
+top:auto;
+width:100%;
+margin-top:8px;
+display:flex;
+flex-direction:column;
+gap:18px;
+max-height:min(62vh,560px);
+overflow-y:auto;
+padding:14px;
+border:1px solid #cfe5f3;
+border-radius:22px;
+background:rgba(255,255,255,.98);
+box-shadow:0 22px 50px rgba(6,52,92,.24),0 6px 18px rgba(7,71,125,.10);
+backdrop-filter:blur(12px);
+-webkit-backdrop-filter:blur(12px);
+z-index:1000;
+overscroll-behavior:contain;
+}.service-list.hidden{display:none}.service-backdrop{position:fixed;inset:0;background:transparent;z-index:998}.service-backdrop.hidden{display:none}.service-group{padding:0;background:transparent;border:0}.service-group-title{display:flex;align-items:center;gap:7px;padding:0 3px 9px;color:#71889d;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;font-weight:950}.service-cards{display:grid;grid-template-columns:1fr;gap:10px}.service-card{width:100%;border:2px solid #c7e2f2;border-radius:18px;background:linear-gradient(180deg,#ffffff,#f8fcff);padding:14px 15px;display:grid;grid-template-columns:minmax(0,1fr) auto 18px;gap:10px;align-items:center;text-align:left;color:#123958;box-shadow:0 7px 18px rgba(7,71,125,.07);transition:transform .12s ease,border-color .12s ease,box-shadow .12s ease,background .12s ease}.service-card:active{transform:scale(.988);border-color:#52b7ee}.service-card.selected{border-color:#078de4;background:linear-gradient(135deg,#eff9ff,#dff3ff);box-shadow:0 9px 22px rgba(7,141,228,.16)}.service-card-main{min-width:0}.service-card-name{display:block;font-weight:950;font-size:13.5px;line-height:1.35;letter-spacing:-.005em}.service-card-price{display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;color:#075b91;background:linear-gradient(180deg,#eef9ff,#dff2ff);border:2px solid #1b98dd;border-radius:999px;padding:6px 9px;font-size:12.5px;font-weight:950;line-height:1;box-shadow:inset 0 0 0 1px rgba(255,255,255,.65),0 3px 8px rgba(7,141,228,.10)}.service-card-arrow{font-size:18px;line-height:1;color:#7f9bb0;font-weight:900}.service-card.selected .service-card-name{color:#075c9c}.service-card.selected .service-card-arrow{color:#078de4}.service-card.selected .service-card-price{color:#fff;background:linear-gradient(180deg,#159be3,#067dca);border-color:#0575bd}.service-card-check{display:none;margin-top:4px;color:#078de4;font-size:11px;font-weight:950}.service-card.selected .service-card-check{display:block}.desc{margin-top:12px;border:1px solid #d9ebf6;background:#f4fbff;border-radius:14px;padding:11px 12px;color:#607c96;font-size:12px;line-height:1.5;white-space:pre-line}
+.status{border-radius:14px;padding:11px 12px;font-size:12px;line-height:1.45;background:#f2f8fc;color:#657e94;border:1px solid #deebf3}.status.ok{background:#effcf5;border-color:#ccebd9;color:#18724b}.status.bad{background:#fff3f3;border-color:#efd0d0;color:#a12d2d}.contact-valid input{border-color:#a5d7bd}.price-card{margin-top:15px;padding:16px;border-radius:20px;background:linear-gradient(120deg,#0659a8 0%,#078de4 55%,#0bb9e7 100%);color:#fff;display:flex;align-items:flex-end;justify-content:space-between;gap:14px;box-shadow:0 12px 26px rgba(5,105,184,.22)}.price-card small{opacity:.84;font-weight:750}.price{font-size:25px;font-weight:950;text-align:right;line-height:1.05}.discount{font-size:11px;margin-top:5px;opacity:.9}.primary{width:100%;min-height:57px;border:0;border-radius:18px;margin-top:12px;background:linear-gradient(90deg,#0574d4,#08afea);color:#fff;font-size:17px;font-weight:950;box-shadow:0 10px 24px rgba(5,116,212,.22)}.primary:disabled{opacity:.6}.secondary{width:100%;min-height:50px;border:1px solid #cfe6f5;border-radius:16px;margin-top:10px;background:#eaf7ff;color:#0876bd;font-weight:900}.ghost{background:#fff;color:#456b8c}
+.success-hero{text-align:center;padding:10px 2px 4px}.check{width:70px;height:70px;margin:0 auto 12px;border-radius:24px;background:linear-gradient(145deg,#0794df,#13c6e6);display:grid;place-items:center;color:white;font-size:34px;box-shadow:0 12px 24px rgba(6,144,209,.22)}.success-title{font-size:26px;font-weight:950}.pending{display:inline-flex;margin-top:8px;padding:7px 11px;border-radius:999px;background:#fff6d9;border:1px solid #f1d98a;color:#8c6500;font-size:12px;font-weight:900}.success-note{text-align:center;color:#667f97;font-size:13px;line-height:1.5;margin:12px 2px 15px}.summary{border:1px solid #dbeaf4;border-radius:18px;overflow:hidden;background:#fff}.row{display:flex;justify-content:space-between;gap:15px;padding:11px 12px;border-bottom:1px solid #e7f1f7;font-size:12.5px}.row:last-child{border-bottom:0}.row span{color:#74899c}.row b{text-align:right;color:#113c61;max-width:62%}.booking-no{font-size:21px;color:#067fd0!important}.footnote{font-size:11px;color:#7890a5;text-align:center;line-height:1.45;margin-top:12px}
+@media(max-width:430px){.grid2{grid-template-columns:1fr}.wrap{padding:13px 11px 30px}.panel{padding:14px;border-radius:21px}.brand{font-size:25px}.title{font-size:23px}}
+
+.grid-route-controls{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}.grid-route-btn{flex:1;min-width:145px;min-height:44px;border:1px solid #cfe6f5;border-radius:14px;background:#eef8ff;color:#0876bd;font-weight:900}.grid-route-btn.remove{background:#fff5f7;border-color:#f2d6df;color:#b03a5e}.grid-route-btn:disabled{opacity:.45}.grid-route-count{margin-top:7px;font-size:11px;color:#718197;text-align:center}.grid-route-point-note{margin-top:8px;font-size:10.5px;color:#72839b}
+</style>
+
+<style id="rusweo-v2-booking-theme">
+:root{--ink:#0a204a;--muted:#6d7d97;--line:#e4e8f0;--blue:#087df2;--blue2:#6548ef;--pink:#f30884;--pale:#f7f9ff;--card:#fff;--shadow:0 8px 24px rgba(28,45,84,.07)}
+html,body{background:linear-gradient(180deg,#fff 0%,#fbfcff 58%,#fff 100%)!important;color:var(--ink)!important}
+body{background-image:radial-gradient(circle at 88% 1%,rgba(102,78,239,.07),transparent 25%),radial-gradient(circle at 8% 18%,rgba(8,125,242,.055),transparent 26%),linear-gradient(180deg,#fff 0%,#fbfcff 58%,#fff 100%)!important}
+.wrap{max-width:720px!important;padding:10px 11px 34px!important}
+.rw2-booking-top{text-align:left!important;padding:0 1px 12px!important}
+.rw2-booking-header{display:flex;align-items:center;justify-content:space-between;min-height:62px;padding:0 3px 5px}
+.rw2-booking-logo{width:142px;height:62px;object-fit:contain;object-position:left center;display:block}
+.rw2-close{width:42px;height:42px;border-radius:15px;border:1px solid #e1e6ef;background:#fff;color:#0b59c7;font-size:30px;line-height:1;box-shadow:0 5px 16px rgba(25,45,83,.06)}
+.rw2-booking-hero{position:relative;overflow:hidden;display:grid;grid-template-columns:56% 44%;align-items:center;min-height:198px;border:1px solid #e3e8f0;border-radius:24px;background:#fff;padding:16px 10px 14px 15px;box-shadow:var(--shadow)}
+.rw2-booking-hero::before{content:"";position:absolute;width:315px;height:150px;right:-105px;top:17px;border:12px solid rgba(58,103,245,.075);border-radius:50%;box-shadow:0 0 0 13px rgba(112,77,236,.045),0 0 0 26px rgba(81,144,255,.035);transform:rotate(-9deg)}
+.rw2-booking-hero::after{content:"";position:absolute;width:360px;height:150px;right:-55px;bottom:-75px;border:14px solid rgba(243,8,132,.095);border-radius:50%;box-shadow:0 0 0 14px rgba(219,55,188,.045),0 0 0 28px rgba(123,83,237,.035);transform:rotate(7deg)}
+.rw2-booking-hero-copy{position:relative;z-index:2;min-width:0}
+.rw2-booking-kicker{display:inline-flex;padding:6px 9px;border-radius:999px;background:#f2f6ff;color:#0a67dc;font-size:10px;font-weight:900}
+.rw2-booking-standard{margin-top:12px;font-size:34px;line-height:.95;font-weight:1000;letter-spacing:-.045em;background:linear-gradient(90deg,#087df2 0%,#6548ef 48%,#f30884 96%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.rw2-booking-carname{margin-top:6px;font-size:19px;font-weight:950;color:#0a204a}
+.rw2-booking-minirow{display:grid;grid-template-columns:auto 1fr auto 1fr;gap:6px;align-items:center;margin-top:14px;font-size:9.5px;color:#1a3158;line-height:1.2}.rw2-booking-minirow span{width:27px;height:27px;border-radius:50%;background:#f0f5ff;display:grid;place-items:center;font-size:13px}.rw2-booking-minirow b{font-weight:850}
+.rw2-booking-car{position:relative;z-index:2;display:flex;align-items:center;justify-content:flex-end;min-width:0}.rw2-booking-car img{width:142%;max-width:none;height:auto;transform:translateX(17%);filter:drop-shadow(0 13px 10px rgba(12,37,57,.18))}
+.rw2-booking-title-row{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding:14px 4px 2px}.top .title{font-size:25px!important;line-height:1.05;letter-spacing:-.035em;color:#0a204a!important;margin:0 0 5px!important}.top .sub{font-size:11.5px!important;line-height:1.4;max-width:500px;color:#6e7f98!important}.rw2-step-pill{flex:0 0 auto;border-radius:999px;background:linear-gradient(100deg,#0a8cf6,#6747ef,#f30a84);color:#fff;font-size:10px;font-weight:950;padding:7px 9px;box-shadow:0 5px 13px rgba(86,68,230,.16)}
+#bookingCard.panel{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;margin-top:7px!important}
+#bookingCard .section{position:relative;margin:0 0 10px!important;padding:14px!important;border:1px solid #e3e8f0!important;border-radius:19px!important;background:#fff!important;box-shadow:0 5px 17px rgba(25,45,83,.05)!important;overflow:visible}
+#bookingCard .section+.section{margin-top:0!important;border-top:1px solid #e3e8f0!important;padding-top:14px!important}
+#bookingCard .section::before{content:"";position:absolute;left:0;top:16px;bottom:16px;width:3px;border-radius:999px;background:linear-gradient(180deg,#0a8cf6,#6847ef,#f30a84);opacity:.85}
+.section-head{font-size:14px!important;color:#0a204a!important;margin-bottom:11px!important}.bubble{width:30px!important;height:30px!important;border-radius:10px!important;background:linear-gradient(145deg,#eff5ff,#f7efff)!important;color:#0b6ee4!important;border:1px solid #e1e8f5!important;font-size:12px!important;font-weight:950!important}
+label{font-size:11.5px!important;color:#253c63!important;margin-bottom:6px!important}input,select,textarea{border:1px solid #dde4ee!important;border-radius:14px!important;background:linear-gradient(180deg,#fff,#fcfdff)!important;color:#0d284e!important;min-height:50px!important;padding:12px 13px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}input:focus,select:focus,textarea:focus{border-color:#6888f2!important;box-shadow:0 0 0 3px rgba(104,72,239,.08)!important}.hint{font-size:10.5px!important;color:#71809a!important}.status{border-color:#e3e8f0!important;background:#f8faff!important;color:#6d7e98!important;border-radius:13px!important}.status.ok{background:#effaf5!important;border-color:#d8eddf!important;color:#176d48!important}.status.bad{background:#fff5f7!important;border-color:#f3d9e4!important;color:#9a2d55!important}
+.service-picker{border:1px solid #e1e6ef!important;border-radius:16px!important;background:#fff!important;padding:12px!important;box-shadow:none!important}.service-picker.open{border-color:#6a78ee!important;box-shadow:0 0 0 3px rgba(101,72,239,.07)!important}.service-picker-icon{background:linear-gradient(145deg,#edf5ff,#f8efff)!important;color:#0b6de4!important}.service-picker-sub{color:#0a72e6!important}.service-list{border-color:#e1e6ef!important;border-radius:19px!important;box-shadow:0 20px 45px rgba(20,34,70,.18)!important;padding:11px!important}.service-card{border:1px solid #e2e7ef!important;border-radius:15px!important;background:#fff!important;box-shadow:0 4px 13px rgba(20,35,70,.045)!important;padding:12px 13px!important}.service-card.selected{border-color:#7757ed!important;background:linear-gradient(110deg,#f0f7ff 0%,#f7f0ff 60%,#fff2f8 100%)!important;box-shadow:0 7px 17px rgba(92,72,230,.10)!important}.service-card-price{color:#0a68d7!important;background:#f1f6ff!important;border:1px solid #d9e6fa!important}.service-card.selected .service-card-price{color:#fff!important;border-color:transparent!important;background:linear-gradient(100deg,#0a8cf6,#6747ef,#f30a84)!important}.service-card.selected .service-card-arrow,.service-card.selected .service-card-name,.service-card.selected .service-card-check{color:#5b43dd!important}.desc{border-color:#e4e8f0!important;background:linear-gradient(105deg,#f8fbff,#fbf8ff)!important;color:#667995!important}
+.price-card{margin-top:10px!important;border-radius:19px!important;background:linear-gradient(100deg,#0a8cf6 0%,#6548ef 52%,#f30884 100%)!important;box-shadow:0 10px 23px rgba(84,68,230,.20)!important;padding:15px!important}.price{font-size:24px!important}.discount{font-weight:850!important}.primary{margin-top:10px!important;min-height:55px!important;border-radius:17px!important;background:linear-gradient(100deg,#0a8cf6 0%,#6548ef 52%,#f30884 100%)!important;box-shadow:0 10px 23px rgba(84,68,230,.20)!important}.footnote{font-size:10.5px!important;color:#78859b!important}
+#successCard{border:1px solid #e3e8f0!important;border-radius:21px!important;box-shadow:var(--shadow)!important}.check{background:linear-gradient(145deg,#0a8cf6,#6747ef,#f30a84)!important;border-radius:22px!important}.secondary{border-color:#e0e6ef!important;background:#fff!important;color:#0a65d7!important}.secondary:first-of-type{background:linear-gradient(100deg,#0a8cf6,#6747ef,#f30a84)!important;color:#fff!important;border:0!important}.summary{border-color:#e3e8f0!important}.row{border-color:#edf0f5!important}
+@media(max-width:430px){.wrap{padding:8px 9px 28px!important}.rw2-booking-header{min-height:56px}.rw2-booking-logo{width:128px;height:55px}.rw2-booking-hero{grid-template-columns:57% 43%;min-height:180px;padding:13px 8px 12px 12px;border-radius:21px}.rw2-booking-standard{font-size:29px}.rw2-booking-carname{font-size:17px}.rw2-booking-minirow{font-size:8.3px;gap:4px}.rw2-booking-minirow span{width:24px;height:24px}.rw2-booking-car img{width:154%;transform:translateX(21%)}.rw2-booking-title-row{padding:12px 3px 1px}.top .title{font-size:23px!important}#bookingCard .section{padding:12px!important;border-radius:17px!important}.grid2{grid-template-columns:1fr!important}.panel{padding:13px!important;border-radius:19px!important}}
+</style>
+
+<style id="rusweoWizardV2">
+.wizard-shell{padding:16px!important;overflow:visible!important;background:linear-gradient(180deg,rgba(255,255,255,.99),rgba(252,252,255,.98))!important;border:1px solid rgba(73,97,170,.12)!important;box-shadow:0 18px 50px rgba(44,58,122,.10)!important}
+.wizard-topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:2px 2px 10px}.wizard-kicker{font-size:11px;font-weight:900;color:#6e7c9a;text-transform:uppercase;letter-spacing:.08em}.wizard-title{font-size:21px;font-weight:950;color:#101f49;letter-spacing:-.025em;margin-top:3px}.wizard-count{min-width:44px;height:44px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(135deg,#0878ff,#7a35e8 58%,#f20886);color:#fff;font-size:13px;font-weight:950;box-shadow:0 9px 24px rgba(84,54,209,.22)}
+.wizard-progress{height:5px;border-radius:999px;background:#edf0fb;overflow:hidden;margin:0 2px}.wizard-progress-fill{height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#078df3,#6746e9 55%,#f20886);transition:width .28s ease}.wizard-dots{display:flex;justify-content:space-between;padding:8px 4px 2px}.wizard-dot{width:7px;height:7px;border-radius:99px;background:#dce2f2;transition:.2s ease}.wizard-dot.active{width:22px;background:linear-gradient(90deg,#078df3,#f20886)}.wizard-dot.done{background:#4e71e8}
+.booking-step{display:none;animation:rwWizardIn .22s ease}.booking-step.active{display:block}@keyframes rwWizardIn{from{opacity:.25;transform:translateY(7px)}to{opacity:1;transform:none}}
+.step-card{margin-top:10px;padding:15px;border-radius:20px;border:1px solid rgba(58,87,165,.12);background:linear-gradient(145deg,#fff 0%,#fbfcff 58%,#fff7fc 100%);box-shadow:0 8px 25px rgba(33,53,117,.055)}.step-card+.step-card{margin-top:10px}.step-card-head{display:flex;align-items:center;gap:10px;margin-bottom:13px}.step-card-head b{display:block;color:#12214a;font-size:15px;line-height:1.25}.step-card-head small{display:block;color:#7b879f;font-size:11px;line-height:1.35;margin-top:2px}.step-icon{width:38px;height:38px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,#e9f5ff,#f7e8ff);font-size:18px;box-shadow:inset 0 0 0 1px rgba(88,94,190,.08)}
+.wizard-actions{display:grid;grid-template-columns:.72fr 1.28fr;gap:10px;margin-top:13px}.wizard-actions.one{grid-template-columns:1fr}.wizard-actions.final{grid-template-columns:.55fr 1.45fr}.wizard-back,.wizard-next{min-height:52px;border-radius:16px;font-weight:950;font-size:14px}.wizard-back{border:1px solid #d9e1f2;background:#fff;color:#3e547b}.wizard-next{border:0;color:#fff;background:linear-gradient(90deg,#078df3,#6545e8 55%,#f20886);box-shadow:0 10px 25px rgba(92,54,210,.20)}.wizard-next span{font-size:18px;margin-left:4px}.wizard-submit{margin:0!important;min-height:52px!important;border-radius:16px!important;background:linear-gradient(90deg,#078df3,#6545e8 55%,#f20886)!important;box-shadow:0 10px 25px rgba(92,54,210,.20)!important;font-size:14px!important}
+.wizard-review{display:grid;gap:8px}.wizard-review-row{display:grid;grid-template-columns:110px minmax(0,1fr);gap:12px;align-items:start;padding:10px 11px;border-radius:14px;background:rgba(247,249,255,.92);border:1px solid #e6eaf6}.wizard-review-row span{font-size:11px;color:#79869f;font-weight:800}.wizard-review-row b{font-size:12.5px;color:#18284f;line-height:1.35;word-break:break-word}.wizard-review-empty{padding:14px;border-radius:14px;background:#f8f9fd;color:#7b879f;font-size:12px;text-align:center}
+.wizard-shell input,.wizard-shell select,.wizard-shell textarea{border-color:#dde5f4!important;background:#fff!important}.wizard-shell input:focus,.wizard-shell select:focus,.wizard-shell textarea:focus{border-color:#7d78ee!important;box-shadow:0 0 0 3px rgba(107,79,232,.10)!important}.wizard-shell .status{border-color:#e0e6f4;background:#f8faff}.wizard-shell .status.ok{background:#effbf5}.wizard-shell .status.bad{background:#fff4f5}.wizard-shell .price-card{background:linear-gradient(105deg,#087df5 0%,#6845e9 56%,#f20886 100%)!important;border-radius:18px!important;box-shadow:0 13px 29px rgba(83,58,200,.20)!important}
+@media(max-width:430px){.wizard-shell{padding:13px!important}.wizard-title{font-size:19px}.wizard-count{width:40px;height:40px;min-width:40px}.grid2{grid-template-columns:1fr 1fr}.wizard-review-row{grid-template-columns:95px minmax(0,1fr)}.wizard-actions.final{grid-template-columns:.65fr 1.35fr}}
+@media(max-width:350px){.grid2{grid-template-columns:1fr}.wizard-actions,.wizard-actions.final{grid-template-columns:1fr}.wizard-back{order:2}}
+</style>
+
+<style id="rusweo-booking-user-polish-v2">
+.rw2-booking-logo{width:148px!important;height:64px!important;object-fit:contain!important;object-position:left center!important}
+.rw2-booking-hero{min-height:176px!important;grid-template-columns:58% 42%!important;padding:14px 9px 12px 14px!important}
+.rw2-booking-car img{width:108%!important;max-width:108%!important;transform:translateX(-2%)!important;position:relative!important;z-index:3!important}
+.rw2-booking-hero::before,.rw2-booking-hero::after{z-index:0!important}.rw2-booking-hero-copy,.rw2-booking-car{z-index:2!important}
+.rw2-service-stage{padding:14px!important}.rw2-service-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0 11px}.rw2-service-tile{position:relative;min-height:116px;border:1px solid #e2e7f0;border-radius:17px;background:linear-gradient(145deg,#fff,#fbfcff);padding:12px 10px;text-align:left;box-shadow:0 5px 15px rgba(22,42,76,.045);color:#0a204a;display:flex;flex-direction:column;align-items:flex-start;gap:5px}.rw2-service-tile.selected{border:2px solid transparent;background:linear-gradient(#fff,#fff) padding-box,linear-gradient(120deg,#0989f3,#6846e9,#ef0a83) border-box;box-shadow:0 8px 19px rgba(86,64,201,.12)}.rw2-service-tile.selected::after{content:'✓';position:absolute;right:9px;top:9px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#0a77eb;color:#fff;font-size:11px;font-weight:1000}.rw2-tile-icon{width:38px;height:38px;border-radius:12px;background:linear-gradient(145deg,#eef5ff,#f8efff);display:grid;place-items:center;color:#246ce3;font-size:20px;font-weight:1000}.rw2-service-tile b{font-size:12.5px;line-height:1.2;font-weight:950}.rw2-service-tile small{font-size:9px;color:#6a7890;line-height:1.3}.rw2-all-services-label{font-size:10px;color:#6a7890;font-weight:800;margin:2px 2px 6px}.service-picker{min-height:59px!important;border-radius:15px!important}.wizard-shell{padding:14px!important}.wizard-actions.one{margin-top:11px!important}.wizard-next{min-height:50px!important}
+@media(max-width:430px){.rw2-booking-logo{width:134px!important;height:58px!important}.rw2-booking-hero{min-height:164px!important;grid-template-columns:60% 40%!important}.rw2-booking-standard{font-size:27px!important}.rw2-booking-car img{width:104%!important;max-width:104%!important}.rw2-service-tiles{gap:7px}.rw2-service-tile{min-height:106px;padding:10px 8px}.rw2-service-tile b{font-size:11.2px}.rw2-service-tile small{font-size:8px}.rw2-tile-icon{width:34px;height:34px;font-size:18px}}
+</style>
+
+<style id="rusweo-booking-compact-directions-v3">
+/* RusWeo 2.0 — compact service selector. UI only; booking/E2E logic unchanged. */
+#bookingStep1 .step-card-head{align-items:center!important;margin-bottom:9px!important}
+#bookingStep1 .step-card-head>div{min-width:0;flex:1}
+#bookingStep1 .step-card-head b{white-space:nowrap!important;font-size:14px!important;letter-spacing:-.02em!important}
+#bookingStep1 .step-card-head small{font-size:9.4px!important;line-height:1.28!important;margin-top:2px!important}
+#bookingStep1 .step-icon{width:33px!important;height:33px!important;border-radius:11px!important;font-size:15px!important;flex:0 0 auto}
+.rw2-service-stage{padding:12px!important}
+.rw2-service-tiles{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;margin:8px 0 9px!important}
+.rw2-service-tile{min-height:82px!important;border-radius:15px!important;padding:9px!important;display:grid!important;grid-template-columns:31px minmax(0,1fr)!important;grid-template-rows:auto auto!important;column-gap:8px!important;row-gap:2px!important;align-content:center!important;align-items:center!important}
+.rw2-tile-icon{grid-row:1 / span 2!important;width:31px!important;height:31px!important;border-radius:10px!important;font-size:16px!important}
+.rw2-service-tile b{grid-column:2!important;font-size:10.6px!important;line-height:1.16!important;font-weight:950!important;letter-spacing:-.015em!important}
+.rw2-service-tile small{grid-column:2!important;font-size:7.9px!important;line-height:1.18!important;color:#64738d!important}
+.rw2-service-tile.selected::after{right:7px!important;top:7px!important;width:18px!important;height:18px!important;font-size:9px!important}
+.rw2-all-services-label{font-size:9px!important;margin:1px 1px 5px!important}
+.service-picker{min-height:51px!important;border-radius:14px!important;padding:9px 10px!important;grid-template-columns:34px minmax(0,1fr) auto!important;gap:8px!important}
+.service-picker-icon{width:34px!important;height:34px!important;border-radius:10px!important;font-size:17px!important}
+.service-picker-title{font-size:11.5px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.service-picker-sub{font-size:8.8px!important;margin-top:2px!important}
+.wizard-actions.one{margin-top:9px!important}
+.wizard-next{min-height:48px!important;border-radius:15px!important}
+@media(max-width:380px){
+  #bookingStep1 .step-card-head b{font-size:12.5px!important}
+  .rw2-service-tile{min-height:78px!important;padding:8px 7px!important;grid-template-columns:29px minmax(0,1fr)!important;column-gap:6px!important}
+  .rw2-tile-icon{width:29px!important;height:29px!important;font-size:15px!important}
+  .rw2-service-tile b{font-size:9.7px!important}.rw2-service-tile small{font-size:7.3px!important}
+}
+</style>
+
+<style id="rusweo-booking-service-hierarchy-v4">
+.rw2-all-services-head{margin-bottom:10px!important}.rw2-all-services-head b{font-size:14px!important}.rw2-all-services-head small{max-width:520px}
+.rw2-primary-picker{border:1.5px solid transparent!important;background:linear-gradient(#fff,#fff) padding-box,linear-gradient(110deg,#078af4,#6748ee,#ef0a83) border-box!important;box-shadow:0 8px 20px rgba(75,67,214,.10)!important}
+.rw2-primary-picker .service-picker-title{font-size:13.5px!important;color:#0a204a!important}.rw2-primary-picker .service-picker-sub{font-size:10.5px!important;color:#0a6ee3!important}
+.rw2-popular-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin:16px 2px 8px}.rw2-popular-head b{display:block;font-size:15px;color:#0a204a;font-weight:950;letter-spacing:-.01em}.rw2-popular-head small{display:block;margin-top:4px;font-size:10.8px;line-height:1.42;color:#718098;max-width:430px}.rw2-popular-head>span{flex:0 0 auto;border-radius:999px;background:linear-gradient(100deg,#eef6ff,#fff0f7);color:#6b51df;padding:5px 8px;font-size:8.6px;font-weight:900}
+.rw2-service-tiles{margin:0!important;gap:8px!important}.rw2-service-tile{min-height:96px!important;padding:10px 10px!important;border-radius:15px!important}.rw2-tile-icon{width:33px!important;height:33px!important;border-radius:10px!important;font-size:18px!important}.rw2-service-tile b{font-size:12.6px!important;line-height:1.2!important}.rw2-service-tile small{font-size:9.6px!important;line-height:1.35!important}
+@media(max-width:430px){.rw2-popular-head{margin-top:14px}.rw2-popular-head b{font-size:14px!important}.rw2-popular-head small{font-size:9.6px}.rw2-service-tile{min-height:90px!important;padding:8px 9px!important}.rw2-service-tile b{font-size:11.4px!important;line-height:1.18!important}.rw2-service-tile small{font-size:9px!important}.rw2-primary-picker .service-picker-title{font-size:12.9px!important}}
+</style>
+
+<style id="rusweo-soft-theme-v31">
+:root{--rw31-bg:#f1f3f6;--rw31-card:#f8f9fb;--rw31-card2:#f5f7fa;--rw31-line:#dfe4eb;--rw31-ink:#1b293f;--rw31-muted:#6f7989;--rw31-blue:#2d78b9;--rw31-violet:#6d60bf;--rw31-pink:#c94f88}
+html,body{background:var(--rw31-bg)!important;color:var(--rw31-ink)!important}
+.rw31-bottom-nav{width:min(100%,760px);margin:14px auto 2px;padding:7px;border:1px solid var(--rw31-line);border-radius:19px;background:rgba(248,249,251,.96);box-shadow:0 8px 24px rgba(31,44,65,.06);display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.rw31-bottom-nav button,.rw31-bottom-nav a{appearance:none;-webkit-appearance:none;border:0;text-decoration:none;background:transparent;color:#6c7687;min-height:49px;border-radius:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:5px 3px;font:inherit;cursor:pointer}
+.rw31-bottom-nav .rw31-nav-icon{width:27px;height:27px;border-radius:9px;display:grid;place-items:center;font-size:15px;line-height:1;background:#eef1f5;color:#697588}
+.rw31-bottom-nav b{font-size:8.5px;font-weight:850;line-height:1;color:inherit}
+.rw31-bottom-nav .active{color:#336fa8;background:linear-gradient(145deg,#eaf1f8,#f4eef4);box-shadow:inset 0 0 0 1px rgba(72,102,140,.08)}
+.rw31-bottom-nav .active .rw31-nav-icon{background:linear-gradient(145deg,#dcecf8,#efe6f1);color:#3f6fa5}
+@media(max-width:420px){.rw31-bottom-nav{margin-top:11px;border-radius:17px;padding:6px}.rw31-bottom-nav button,.rw31-bottom-nav a{min-height:46px}.rw31-bottom-nav b{font-size:8px}.rw31-bottom-nav .rw31-nav-icon{width:25px;height:25px;font-size:14px}}
+</style>
+
+<style id="rusweo-booking-polish-v31">
+.wrap{background:transparent!important}.panel,.step-card,.service-list,.service-picker,.rw2-service-tile,.wizard-review-row,.price-card{border-color:var(--rw31-line)!important}
+.panel,.step-card,.rw2-service-tile,.wizard-review-row{background:var(--rw31-card)!important;box-shadow:0 5px 17px rgba(31,44,65,.045)!important}
+.title,.wizard-title,.step-card-head b,.rw2-popular-head b,.rw2-all-services-head b,.rw2-service-tile b{color:var(--rw31-ink)!important}
+.sub,.wizard-kicker,.step-card-head small,.hint,.rw2-popular-head small,.rw2-service-tile small,.rw2-all-services-head small{color:var(--rw31-muted)!important}
+.wizard-count,.wizard-next,.wizard-submit,.primary{background:linear-gradient(100deg,#2b82bf,#6d60bf 56%,#c94f88)!important;box-shadow:0 9px 22px rgba(79,72,145,.13)!important}
+.rw2-primary-picker{background:linear-gradient(var(--rw31-card),var(--rw31-card)) padding-box,linear-gradient(110deg,#5b91bd,#7769b8,#c06491) border-box!important}
+.rw2-service-tile.selected{background:linear-gradient(var(--rw31-card),var(--rw31-card)) padding-box,linear-gradient(120deg,#5b91bd,#7769b8,#c06491) border-box!important}
+.rw2-service-tile.selected::after{background:#4c7eae!important}
+</style>
+
+<style id="rusweo-nav-back-v32">
+.rw31-page-back{width:42px;height:42px;border:1px solid #dfe4eb;border-radius:14px;background:#f7f8fa;color:#2d4668;display:inline-grid;place-items:center;font:900 25px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;box-shadow:0 5px 15px rgba(31,44,65,.055);cursor:pointer;flex:0 0 auto}.rw31-page-back:active{transform:translateY(1px);background:#eef1f5}.rw31-index-back-row{display:flex;align-items:center;margin:0 2px 9px}.rw31-bottom-nav{margin-top:14px!important;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:6px!important;padding:7px!important;border:1px solid #dfe3e9!important;border-radius:19px!important;background:#f4f5f7!important;box-shadow:0 6px 18px rgba(31,44,65,.055)!important}.rw31-bottom-nav a,.rw31-bottom-nav button{appearance:none;-webkit-appearance:none;text-decoration:none!important;border:0!important;background:transparent!important;min-width:0!important;min-height:60px!important;border-radius:15px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:5px!important;color:#717986!important;padding:6px 3px!important;font:inherit!important;cursor:pointer!important}.rw31-bottom-nav .rw31-nav-icon{width:34px!important;height:30px!important;border-radius:11px!important;background:#e9edf2!important;display:grid!important;place-items:center!important;font-size:18px!important;line-height:1!important;color:#5d6b7c!important}.rw31-bottom-nav b{font-size:9.5px!important;line-height:1!important;font-weight:900!important;white-space:nowrap!important}.rw31-bottom-nav a.active,.rw31-bottom-nav button.active{background:linear-gradient(135deg,#eef4f9,#f3eef4)!important;color:#316b94!important}.rw31-bottom-nav .active .rw31-nav-icon{background:linear-gradient(135deg,#dcecf7,#eee6f1)!important;color:#2d7eaf!important}@media(max-width:380px){.rw31-bottom-nav{gap:4px!important;padding:6px!important}.rw31-bottom-nav a,.rw31-bottom-nav button{min-height:56px!important}.rw31-bottom-nav b{font-size:8.7px!important}.rw31-page-back{width:39px;height:39px;border-radius:13px}}
+</style>
+
+
+<style id="rusweo-bottom-nav-three-v34">
+.rw31-bottom-nav.rw31-bottom-nav-3{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:8px!important;padding:8px!important;
+  border:1px solid #dfe4ec!important;border-radius:20px!important;
+  background:rgba(247,248,251,.97)!important;
+  box-shadow:0 9px 26px rgba(28,42,67,.07)!important;
+}
+.rw31-bottom-nav.rw31-bottom-nav-3 button,
+.rw31-bottom-nav.rw31-bottom-nav-3 a{
+  min-height:62px!important;border-radius:16px!important;
+  background:linear-gradient(145deg,#f6f9ff,#f8f3fa)!important;
+  border:1px solid #e4e8f0!important;
+  color:#53657c!important;
+  box-shadow:0 4px 12px rgba(34,54,86,.035)!important;
+}
+.rw31-bottom-nav.rw31-bottom-nav-3 .rw31-nav-icon{
+  width:36px!important;height:32px!important;border-radius:12px!important;
+  background:linear-gradient(145deg,#e8f3ff,#f6eaf3)!important;
+  color:#2678b7!important;font-size:18px!important;
+}
+.rw31-bottom-nav.rw31-bottom-nav-3 b{font-size:10px!important;font-weight:950!important;letter-spacing:.01em!important}
+.rw31-bottom-nav.rw31-bottom-nav-3 .active{
+  color:#fff!important;border-color:transparent!important;
+  background:linear-gradient(105deg,#1288e9 0%,#5d55dd 52%,#d84d94 100%)!important;
+  box-shadow:0 8px 20px rgba(76,78,194,.2)!important;
+}
+.rw31-bottom-nav.rw31-bottom-nav-3 .active .rw31-nav-icon{
+  background:rgba(255,255,255,.18)!important;color:#fff!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.2)!important;
+}
+@media(max-width:420px){
+  .rw31-bottom-nav.rw31-bottom-nav-3{gap:6px!important;padding:7px!important}
+  .rw31-bottom-nav.rw31-bottom-nav-3 button,.rw31-bottom-nav.rw31-bottom-nav-3 a{min-height:58px!important}
+  .rw31-bottom-nav.rw31-bottom-nav-3 .rw31-nav-icon{width:32px!important;height:29px!important;font-size:16px!important}
+  .rw31-bottom-nav.rw31-bottom-nav-3 b{font-size:9.3px!important}
+}
+</style>
+
+<style id="rusweo-global-type-v37">
+/* Larger readable type across booking without making the cards taller than necessary. */
+html,body,button,input,select,textarea,.wrap,.panel{hyphens:none;-webkit-hyphens:none;word-break:normal;overflow-wrap:normal}
+.title,.top .title{font-size:28px!important;line-height:1.08!important}
+.sub,.top .sub{font-size:14px!important;line-height:1.45!important}
+.section-head{font-size:17.5px!important;line-height:1.2!important}
+label{font-size:13px!important;line-height:1.25!important}
+.hint{font-size:12.5px!important;line-height:1.4!important}
+input,select,textarea{font-size:16.5px!important}
+.service-picker-title{font-size:15.5px!important;line-height:1.25!important}
+.service-picker-sub{font-size:12.5px!important;line-height:1.3!important}
+.service-group-title{font-size:11.5px!important}
+.service-card-name{font-size:14.5px!important;line-height:1.34!important}
+.service-card-price{font-size:13.5px!important}
+.service-card-check{font-size:12px!important}
+.desc,.status{font-size:13px!important;line-height:1.48!important}
+.price-card small{font-size:13px!important}.price{font-size:27px!important}.discount{font-size:12px!important}
+.primary{font-size:18px!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;white-space:nowrap!important}
+.secondary,.ghost{font-size:14px!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;white-space:nowrap!important}
+.row{font-size:13.5px!important;line-height:1.35!important}.booking-no{font-size:22px!important}.footnote{font-size:12px!important}
+.rw2-booking-kicker{font-size:11px!important}.rw2-step-pill{font-size:11px!important}
+.rw31-bottom-nav.rw31-bottom-nav-3 b{font-size:11px!important;text-align:center!important;white-space:nowrap!important}
+button,button *,.primary,.secondary,.ghost,.rw31-bottom-nav a,.rw31-bottom-nav button{hyphens:none!important;word-break:normal!important;overflow-wrap:normal!important}
+@media(max-width:430px){
+ .title,.top .title{font-size:26px!important}.sub,.top .sub{font-size:13.2px!important}
+ .section-head{font-size:16.5px!important}.service-picker-title{font-size:14.8px!important}.service-picker-sub{font-size:12px!important}
+ .service-card-name{font-size:14px!important}.service-card-price{font-size:13px!important}.primary{font-size:17px!important}
+ .rw31-bottom-nav.rw31-bottom-nav-3 b{font-size:10.5px!important}
+}
+</style>
+
+
+<style id="rusweo-nav-screen-fit-v39">
+/* Keep the approved three-button navigation compact and consistent on phones. */
+@media(max-width:430px){
+  .rw31-page-back{width:32px!important;height:32px!important;font-size:20px!important}
+  .rw31-bottom-nav.rw31-bottom-nav-3{margin-top:5px!important;padding:4px!important;gap:5px!important;border-radius:16px!important}
+  .rw31-bottom-nav.rw31-bottom-nav-3 button,.rw31-bottom-nav.rw31-bottom-nav-3 a{min-height:44px!important;padding:3px 2px!important;gap:3px!important;border-radius:12px!important}
+  .rw31-bottom-nav.rw31-bottom-nav-3 .rw31-nav-icon{width:27px!important;height:24px!important;font-size:14px!important;border-radius:9px!important}
+  .rw31-bottom-nav.rw31-bottom-nav-3 b{font-size:10.1px!important}
+}
+</style>
+
+<style id="rusweo-floating-nav-v40">
+/* One floating bottom navigation level across every RusWeo page. */
+html,body{min-height:100%!important}
+body{padding-bottom:calc(92px + env(safe-area-inset-bottom))!important}
+html body .rw31-bottom-nav.rw31-bottom-nav-3,
+html body #telegramHomeV105 .rw31-bottom-nav.rw31-bottom-nav-3{
+  position:fixed!important;
+  left:50%!important;
+  right:auto!important;
+  bottom:calc(8px + env(safe-area-inset-bottom))!important;
+  transform:translateX(-50%)!important;
+  z-index:9998!important;
+  width:min(660px,calc(100vw - 22px))!important;
+  margin:0!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:6px!important;
+  padding:6px!important;
+  border:1px solid rgba(202,211,225,.96)!important;
+  border-radius:20px!important;
+  background:rgba(248,249,252,.94)!important;
+  box-shadow:0 12px 34px rgba(27,42,69,.16),0 2px 10px rgba(27,42,69,.07)!important;
+  -webkit-backdrop-filter:blur(16px)!important;
+  backdrop-filter:blur(16px)!important;
+}
+html body .rw31-bottom-nav.rw31-bottom-nav-3 button,
+html body .rw31-bottom-nav.rw31-bottom-nav-3 a,
+html body #telegramHomeV105 .rw31-bottom-nav.rw31-bottom-nav-3 button,
+html body #telegramHomeV105 .rw31-bottom-nav.rw31-bottom-nav-3 a{
+  min-height:52px!important;
+  padding:4px 3px!important;
+  gap:3px!important;
+  border-radius:14px!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+}
+html body .rw31-bottom-nav.rw31-bottom-nav-3 .rw31-nav-icon,
+html body #telegramHomeV105 .rw31-bottom-nav.rw31-bottom-nav-3 .rw31-nav-icon{
+  width:30px!important;height:27px!important;border-radius:10px!important;font-size:15px!important;
+}
+html body .rw31-bottom-nav.rw31-bottom-nav-3 b,
+html body #telegramHomeV105 .rw31-bottom-nav.rw31-bottom-nav-3 b{
+  font-size:10.6px!important;line-height:1!important;font-weight:950!important;
+  white-space:nowrap!important;text-align:center!important;
+}
+@media(max-width:430px){
+  body{padding-bottom:calc(86px + env(safe-area-inset-bottom))!important}
+  html body .rw31-bottom-nav.rw31-bottom-nav-3,
+  html body #telegramHomeV105 .rw31-bottom-nav.rw31-bottom-nav-3{
+    width:calc(100vw - 16px)!important;
+    bottom:calc(6px + env(safe-area-inset-bottom))!important;
+    padding:5px!important;gap:5px!important;border-radius:18px!important;
+  }
+  html body .rw31-bottom-nav.rw31-bottom-nav-3 button,
+  html body .rw31-bottom-nav.rw31-bottom-nav-3 a,
+  html body #telegramHomeV105 .rw31-bottom-nav.rw31-bottom-nav-3 button,
+  html body #telegramHomeV105 .rw31-bottom-nav.rw31-bottom-nav-3 a{min-height:49px!important}
+  html body .rw31-bottom-nav.rw31-bottom-nav-3 b,
+  html body #telegramHomeV105 .rw31-bottom-nav.rw31-bottom-nav-3 b{font-size:10.2px!important}
+}
+</style>
+
+
+<style id="rusweo-fixed-nav-scroll-clearance-v41">
+/* Keep the floating navigation visible while allowing every last field/button to scroll above it. */
+html{scroll-padding-bottom:calc(104px + env(safe-area-inset-bottom))!important}
+body{padding-bottom:0!important}
+.wrap{padding-bottom:calc(112px + env(safe-area-inset-bottom))!important;scroll-padding-bottom:calc(104px + env(safe-area-inset-bottom))!important}
+@media(max-width:430px){.wrap{padding-bottom:calc(102px + env(safe-area-inset-bottom))!important}}
+</style>
+
+
+<style id="rusweo-global-fixed-nav-v43">
+/* RusWeo 2.0 — one viewport-fixed bottom navigation on every screen. */
+html{scroll-padding-bottom:calc(104px + env(safe-area-inset-bottom))!important}
+body{padding-bottom:calc(92px + env(safe-area-inset-bottom))!important}
+html body .rw31-bottom-nav.rw31-bottom-nav-3,
+html body #rw31GlobalBottomNav{
+  position:fixed!important;
+  left:50%!important;
+  right:auto!important;
+  bottom:calc(6px + env(safe-area-inset-bottom))!important;
+  top:auto!important;
+  transform:translate3d(-50%,0,0)!important;
+  width:min(680px,calc(100vw - 14px))!important;
+  max-width:680px!important;
+  margin:0!important;
+  z-index:2147483000!important;
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:5px!important;
+  padding:5px!important;
+  box-sizing:border-box!important;
+  border:1px solid rgba(205,213,226,.98)!important;
+  border-radius:18px!important;
+  background:rgba(248,249,252,.96)!important;
+  box-shadow:0 12px 34px rgba(27,42,69,.18),0 2px 10px rgba(27,42,69,.08)!important;
+  -webkit-backdrop-filter:blur(16px)!important;
+  backdrop-filter:blur(16px)!important;
+}
+html body .rw31-bottom-nav.rw31-bottom-nav-3 button,
+html body .rw31-bottom-nav.rw31-bottom-nav-3 a,
+html body #rw31GlobalBottomNav button{
+  min-height:49px!important;
+  padding:4px 3px!important;
+  gap:3px!important;
+  border-radius:13px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  box-sizing:border-box!important;
+}
+html body .rw31-bottom-nav.rw31-bottom-nav-3 b,
+html body #rw31GlobalBottomNav b{white-space:nowrap!important;text-align:center!important}
+/* Leave real scroll space under long pages so the bar never hides the final content. */
+#telegramHomeV105,
+#telegramHomeV105 #rw2TransferPanel,
+#telegramHomeV105 #rw2AccountPanel,
+main.wrap,
+body>.wrap{scroll-padding-bottom:calc(108px + env(safe-area-inset-bottom))!important}
+#telegramHomeV105 #rw2TransferPanel,
+#telegramHomeV105 #rw2AccountPanel,
+main.wrap,
+body>.wrap{padding-bottom:calc(108px + env(safe-area-inset-bottom))!important}
+@media(max-width:430px){
+  body{padding-bottom:calc(86px + env(safe-area-inset-bottom))!important}
+  html body .rw31-bottom-nav.rw31-bottom-nav-3,
+  html body #rw31GlobalBottomNav{
+    width:calc(100vw - 10px)!important;
+    bottom:calc(5px + env(safe-area-inset-bottom))!important;
+    padding:4px!important;
+    gap:4px!important;
+    border-radius:17px!important;
+  }
+  html body .rw31-bottom-nav.rw31-bottom-nav-3 button,
+  html body .rw31-bottom-nav.rw31-bottom-nav-3 a,
+  html body #rw31GlobalBottomNav button{min-height:47px!important}
+  #telegramHomeV105 #rw2TransferPanel,
+  #telegramHomeV105 #rw2AccountPanel,
+  main.wrap,body>.wrap{padding-bottom:calc(100px + env(safe-area-inset-bottom))!important}
+}
+</style>
+
+
+<style id="rusweo-route-abc-v1">
+.route-point-list{display:grid;gap:10px}.route-point{padding:12px;border:1px solid rgba(49,103,170,.13);border-radius:17px;background:linear-gradient(145deg,#fff,#f9fbff 62%,#fff7fb)}
+.route-point-head{display:flex;align-items:center;gap:9px;margin-bottom:10px}.route-point-letter{width:32px;height:32px;border-radius:11px;display:grid;place-items:center;color:#fff;font-weight:950;background:linear-gradient(135deg,#1596ef,#6250e9 55%,#ea3a92);box-shadow:0 7px 16px rgba(72,77,213,.18)}
+.route-point-head b{font-size:14px;color:#13264a}.route-point-head small{display:block;color:#7a879a;font-size:10.5px;margin-top:2px}.route-point-grid{display:grid;grid-template-columns:minmax(0,1fr) 108px;gap:9px}.route-point .field{margin-bottom:9px}.route-point .field:last-child{margin-bottom:0}.route-city-row{display:grid;grid-template-columns:1fr;gap:9px}.route-latin-hint{margin-top:8px;padding:9px 10px;border-radius:13px;background:#f2f8ff;border:1px solid #dbeeff;color:#54708e;font-size:10.8px;line-height:1.42}.route-wait-wrap{margin-top:8px;padding:10px 11px;border-radius:13px;background:#fff9ed;border:1px solid #f5e1b4}.route-wait-wrap label{display:block;font-size:11px;font-weight:900;color:#7b5c16;margin-bottom:6px}.route-wait-wrap select{width:100%;min-height:42px;border:1px solid #e8d39f;border-radius:11px;background:#fff;color:#243552;padding:0 10px;font-weight:800}.route-wait-wrap small{display:block;margin-top:6px;font-size:10.3px;line-height:1.35;color:#8a7549}.route-latin-hint b{color:#176fae}.route-point input[readonly]{background:#f4f7fb;color:#52637c;font-weight:800}.route-fixed{display:flex;flex-direction:column;gap:4px;padding:11px 12px;border-radius:13px;background:linear-gradient(135deg,#eef8ff,#fff3f9);border:1px solid #dceaf7;color:#18365d}.route-fixed b{font-size:13px}.route-fixed small{font-size:10.8px;line-height:1.35;color:#62758d}
+@media(max-width:380px){.route-point-grid{grid-template-columns:1fr}.route-point{padding:11px}}
+</style>
+
+<script id="rusweo-booking-embedded-context-v57">
+(function(){
+  try{
+    const q=new URLSearchParams(location.search);
+    if(q.get('embedded')==='1'){
+      document.documentElement.classList.add('rw2-embedded-booking');
+    }
+    if(q.get('modal')==='1'){
+      document.documentElement.classList.add('rw2-modal-booking');
+    }
+  }catch(e){}
+})();
+</script>
+<style id="rusweo-booking-embedded-style-v57">
+html.rw2-embedded-booking .rw31-bottom-nav,
+html.rw2-embedded-booking #rw31GlobalBottomNav{
+  display:none!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+html.rw2-embedded-booking body{
+  padding-bottom:calc(104px + env(safe-area-inset-bottom))!important;
+  scroll-padding-bottom:calc(104px + env(safe-area-inset-bottom))!important;
+}
+</style>
+
+
+<style id="rusweo-booking-modal-child-test-v1">
+html.rw2-modal-booking,
+html.rw2-modal-booking body{
+  width:100%!important;
+  min-height:100%!important;
+  margin:0!important;
+  background:#f5f7fb!important;
+}
+html.rw2-modal-booking{
+  height:100%!important;
+  overflow:hidden!important;
+}
+html.rw2-modal-booking body{
+  height:100%!important;
+  padding:0!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior-y:contain!important;
+  -webkit-overflow-scrolling:touch!important;
+}
+html.rw2-modal-booking main.wrap{
+  width:100%!important;
+  max-width:none!important;
+  min-height:100dvh!important;
+  height:auto!important;
+  box-sizing:border-box!important;
+  padding:10px 10px 28px!important;
+  overflow:visible!important;
+  background:#f5f7fb!important;
+}
+html.rw2-modal-booking .rw2-booking-top{display:none!important}
+html.rw2-modal-booking .rw31-bottom-nav{display:none!important}
+html.rw2-modal-booking #bookingCard,
+html.rw2-modal-booking #successCard{
+  margin:0!important;
+  transform-origin:top left!important;
+}
+html.rw2-modal-booking #bookingCard{
+  overflow:visible!important;
+}
+html.rw2-modal-booking .wizard-shell{
+  padding:12px!important;
+  border-radius:21px!important;
+  box-shadow:none!important;
+}
+html.rw2-modal-booking .wizard-topbar{
+  padding:1px 72px 8px 2px!important; /* room for 4/5 badge + parent X */
+}
+html.rw2-modal-booking .wizard-kicker{font-size:10px!important}
+html.rw2-modal-booking .wizard-title{font-size:18px!important}
+html.rw2-modal-booking .wizard-count{
+  min-width:39px!important;width:39px!important;height:39px!important;border-radius:13px!important;
+}
+html.rw2-modal-booking .wizard-dots{padding:6px 4px 1px!important}
+html.rw2-modal-booking .step-card{margin-top:8px!important;padding:12px!important}
+html.rw2-modal-booking .wizard-actions{margin-top:9px!important}
+html.rw2-modal-booking .wizard-back,
+html.rw2-modal-booking .wizard-next,
+html.rw2-modal-booking .wizard-submit{min-height:47px!important}
+html.rw2-modal-booking .field{margin-bottom:9px!important}
+html.rw2-modal-booking .hint{line-height:1.28!important}
+html.rw2-modal-booking textarea{min-height:58px!important}
+html.rw2-modal-booking .rw2-service-tiles{
+  gap:7px!important;
+  margin:9px 0!important;
+}
+html.rw2-modal-booking .rw2-service-tile{
+  min-height:92px!important;
+  padding:9px!important;
+}
+html.rw2-modal-booking .rw2-tile-icon{
+  width:32px!important;height:32px!important;font-size:17px!important;
+}
+html.rw2-modal-booking .rw2-service-tile b{font-size:11.4px!important}
+html.rw2-modal-booking .rw2-service-tile small{font-size:8.6px!important}
+html.rw2-modal-booking .rw2-popular-head{margin-top:8px!important}
+html.rw2-modal-booking .route-point{padding:10px!important}
+html.rw2-modal-booking .route-point-list{gap:8px!important}
+html.rw2-modal-booking .compact-contact-card{margin-top:8px!important}
+
+</style>
+
+
+<style id="rusweo-booking-modal-scroll-safety-v2">
+html.rw2-modal-booking #bookingCard,
+html.rw2-modal-booking #successCard{
+  padding-bottom:18px!important;
+}
+html.rw2-modal-booking .wizard-actions{
+  scroll-margin-bottom:24px!important;
+}
+</style>
+
+
+<style id="rusweo-booking-compact-contact-success-v3">
+/* Contacts 5/6 and final success/operator screen should fit a normal phone modal. */
+html.rw2-modal-booking #bookingStep5 .step-card{
+  margin-top:6px!important;
+  padding:10px 11px!important;
+  border-radius:18px!important;
+}
+html.rw2-modal-booking #bookingStep5 .step-card-head{
+  gap:8px!important;
+  margin-bottom:8px!important;
+}
+html.rw2-modal-booking #bookingStep5 .step-icon{
+  width:32px!important;
+  height:32px!important;
+  border-radius:11px!important;
+  font-size:16px!important;
+}
+html.rw2-modal-booking #bookingStep5 .step-card-head b{font-size:13.2px!important}
+html.rw2-modal-booking #bookingStep5 .step-card-head small{
+  font-size:9.8px!important;
+  line-height:1.22!important;
+}
+html.rw2-modal-booking #bookingStep5 .field{margin-bottom:7px!important}
+html.rw2-modal-booking #bookingStep5 label{
+  margin-bottom:4px!important;
+  font-size:10.7px!important;
+  line-height:1.2!important;
+}
+html.rw2-modal-booking #bookingStep5 input{
+  min-height:44px!important;
+  height:44px!important;
+  padding:8px 11px!important;
+  border-radius:13px!important;
+  font-size:14.5px!important;
+}
+html.rw2-modal-booking #bookingStep5 .grid2{gap:7px!important}
+html.rw2-modal-booking #bookingStep5 #orderComment{
+  min-height:58px!important;
+  height:58px!important;
+  max-height:58px!important;
+  resize:none!important;
+  box-sizing:border-box!important;
+  padding:9px 11px!important;
+  border-radius:13px!important;
+  font-size:12.2px!important;
+  line-height:1.28!important;
+  text-align:left!important;
+}
+html.rw2-modal-booking #bookingStep5 #orderComment::placeholder{
+  font-size:12.2px!important;
+  line-height:1.28!important;
+  color:#7e8795!important;
+}
+html.rw2-modal-booking #bookingStep5 .hint{
+  margin-top:3px!important;
+  font-size:9.8px!important;
+  line-height:1.22!important;
+}
+html.rw2-modal-booking #bookingStep5 .wizard-actions{
+  margin-top:7px!important;
+}
+html.rw2-modal-booking #bookingStep5 .wizard-back,
+html.rw2-modal-booking #bookingStep5 .wizard-next{
+  min-height:45px!important;
+  height:45px!important;
+  border-radius:14px!important;
+  font-size:12.6px!important;
+}
+
+/* Success + operator button in one view. */
+html.rw2-modal-booking #successCard{
+  padding:9px 10px 10px!important;
+  border-radius:19px!important;
+}
+html.rw2-modal-booking #successCard .success-hero{
+  padding:2px 2px 1px!important;
+}
+html.rw2-modal-booking #successCard .check{
+  width:50px!important;
+  height:50px!important;
+  margin:0 auto 6px!important;
+  border-radius:17px!important;
+  font-size:25px!important;
+}
+html.rw2-modal-booking #successCard .success-title{
+  font-size:21px!important;
+  line-height:1.08!important;
+}
+html.rw2-modal-booking #successCard .pending{
+  margin-top:5px!important;
+  padding:5px 9px!important;
+  font-size:10px!important;
+}
+html.rw2-modal-booking #successCard .success-note{
+  margin:7px 2px 8px!important;
+  font-size:10.7px!important;
+  line-height:1.32!important;
+}
+html.rw2-modal-booking #successCard .summary{border-radius:15px!important}
+html.rw2-modal-booking #successCard .row{
+  gap:8px!important;
+  padding:7px 9px!important;
+  font-size:10.5px!important;
+  line-height:1.2!important;
+}
+html.rw2-modal-booking #successCard .row b{
+  max-width:66%!important;
+  line-height:1.2!important;
+}
+html.rw2-modal-booking #successCard .booking-no{font-size:17px!important}
+html.rw2-modal-booking #successCard .secondary{
+  min-height:42px!important;
+  height:42px!important;
+  margin-top:6px!important;
+  border-radius:13px!important;
+  font-size:11.8px!important;
+}
+</style>
+
+
+<style id="rusweo-booking-review-stability-v23">
+#bookingStep6 .price-card{
+  min-height:100px!important;
+  box-sizing:border-box!important;
+  contain:layout paint!important;
+}
+#bookingStep6 #price{
+  min-width:116px;
+  min-height:30px;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  white-space:nowrap;
+}
+#bookingStep6 #discountText{min-height:14px}
+#bookingStep6.active{overflow-anchor:none}
+</style>
+
+
+<style id="rusweo-grid-fallback-actions-v23">
+/* Error/business state must stay readable inside the Step 6 modal. */
+#bookingStep6 .price-card{
+  align-items:center!important;
+}
+#bookingStep6 #price{
+  max-width:48%!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  font-size:clamp(20px,5.4vw,29px)!important;
+  line-height:1.05!important;
+}
+#bookingStep6 #discountText{
+  max-width:330px;
+  line-height:1.3;
+  overflow-wrap:anywhere;
+}
+.rw23-grid-fallback{
+  margin-top:10px;
+  border:1px solid #dfe5f2;
+  border-radius:17px;
+  background:linear-gradient(145deg,#fff,#f8faff);
+  padding:11px;
+  display:grid;
+  grid-template-columns:38px minmax(0,1fr);
+  gap:9px 10px;
+  align-items:center;
+  box-shadow:0 5px 16px rgba(26,46,80,.055);
+}
+.rw23-grid-fallback.hidden{display:none!important}
+.rw23-grid-fallback-icon{
+  width:38px;height:38px;border-radius:12px;
+  display:grid;place-items:center;
+  background:linear-gradient(145deg,#eaf5ff,#f5ebff);
+  font-size:18px;
+}
+.rw23-grid-fallback-copy{min-width:0}
+.rw23-grid-fallback-copy b{
+  display:block;
+  color:#16264c;
+  font-size:12px;
+  line-height:1.25;
+}
+.rw23-grid-fallback-copy span{
+  display:block;
+  margin-top:3px;
+  color:#66758e;
+  font-size:9.6px;
+  line-height:1.35;
+  overflow-wrap:anywhere;
+}
+.rw23-grid-fallback button{
+  grid-column:1 / -1;
+  width:100%;
+  min-height:46px;
+  border:0;
+  border-radius:14px;
+  color:#fff;
+  font-size:12px;
+  font-weight:950;
+  background:linear-gradient(90deg,#0788ef,#6548e9 55%,#ef0a83);
+  box-shadow:0 8px 19px rgba(88,62,205,.16);
+}
+#wizardFinalActions.rw23-fallback-active{
+  grid-template-columns:1fr!important;
+}
+#wizardFinalActions.rw23-fallback-active #submit{
+  display:none!important;
+}
+@media(max-width:380px){
+  #bookingStep6 #price{font-size:20px!important;max-width:44%!important}
+  .rw23-grid-fallback{padding:9px}
+  .rw23-grid-fallback-copy b{font-size:11px}
+  .rw23-grid-fallback-copy span{font-size:9px}
+}
+</style>
+
+</head>
+<body>
+<main class="wrap">
+<section class="top rw2-booking-top">
+  <div class="rw2-booking-header">
+    <img src="data:image/webp;base64,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" class="rw2-booking-logo" alt="RusWeo">
+    <button class="rw2-close rw31-page-back" type="button" onclick="rw31Back()" aria-label="Назад">‹</button>
+  </div>
+  <div class="rw2-booking-title-row">
+    <div><div class="title">Бронирование</div><div class="sub">Заполните поездку по шагам — расчёт, скидки и проверка доступности работают как раньше.</div></div>
+    <div class="rw2-step-pill">2.0</div>
+  </div>
+</section>
+<section class="panel wizard-shell" id="bookingCard">
+  <div class="wizard-topbar">
+    <div>
+      <div class="wizard-kicker" id="wizardKicker">Шаг 1 из 6</div>
+      <div class="wizard-title" id="wizardTitle">Выберите услугу</div>
+    </div>
+    <div class="wizard-count" id="wizardCount">1/6</div>
+  </div>
+  <div class="wizard-progress" aria-hidden="true"><div class="wizard-progress-fill" id="wizardProgressFill"></div></div>
+  <div class="wizard-dots" aria-hidden="true">
+    <span class="wizard-dot active" data-dot="1"></span><span class="wizard-dot" data-dot="2"></span><span class="wizard-dot" data-dot="3"></span><span class="wizard-dot" data-dot="4"></span><span class="wizard-dot" data-dot="5"></span><span class="wizard-dot" data-dot="6"></span>
+  </div>
+
+  <div class="booking-step active" data-step="1" id="bookingStep1">
+    <div class="step-card service-section rw2-service-stage">
+      <div class="step-card-head rw2-all-services-head"><span class="step-icon">☰</span><div><b>Все услуги и направления</b><small>Полный список RusWeo — выберите любой доступный маршрут или услугу.</small></div></div>
+      <button class="service-picker rw2-primary-picker" id="servicePicker" type="button"><span class="service-picker-icon" id="servicePickerIcon">🚕</span><span class="service-picker-copy"><span class="service-picker-title" id="servicePickerTitle">Открыть полный список услуг</span><span class="service-picker-sub" id="servicePickerSub">Все направления находятся здесь</span></span><span class="service-picker-chev">⌄</span></button>
+      <div class="service-backdrop hidden" id="serviceBackdrop"></div><div class="service-list hidden" id="serviceList"></div><div class="desc hidden" id="serviceDescription"></div>
+
+      <div class="rw2-popular-head"><div><b>Популярные направления</b><small>Быстрый выбор. Это только популярные варианты — полный список расположен выше.</small></div><span>Популярное</span></div>
+      <div class="rw2-service-tiles" id="rw2ServiceTiles">
+        <button class="rw2-service-tile" type="button" data-service="airport_to_mvd"><span class="rw2-tile-icon">✈</span><b>Аэропорт<br>↔ Монтевидео</b><small>Карраско (MVD)</small></button>
+        <button class="rw2-service-tile" type="button" data-service="buquebus_to_mvd"><span class="rw2-tile-icon">⛴</span><b>Buquebus<br>↔ Монтевидео</b><small>Порт / центр</small></button>
+        <button class="rw2-service-tile" type="button" data-service="hourly"><span class="rw2-tile-icon">◉</span><b>Личный водитель<br>по Монтевидео</b><small>от 3 часов</small></button>
+        <button class="rw2-service-tile" type="button" data-service="mvd_to_pde"><span class="rw2-tile-icon">☀</span><b>Пунта-дель-Эсте</b><small>Трансфер / поездка</small></button>
+      </div>
+    </div>
+    <div class="wizard-actions one"><button class="wizard-next" type="button" onclick="nextBookingStep()">Продолжить <span>→</span></button></div>
+  </div>
+
+  <div class="booking-step" data-step="2" id="bookingStep2">
+    <div class="step-card">
+      <div class="step-card-head"><span class="step-icon">📅</span><div><b>Дата и время</b><small>Выберите удобное время — свободное окно проверится автоматически.</small></div></div>
+      <div class="grid2"><div class="field"><label>Дата <span class="req">*</span></label><input id="date" type="date"></div><div class="field"><label>Время <span class="req">*</span></label><input id="time" type="time"></div></div>
+      <div class="field hidden" id="hoursWrap"><label>Количество часов</label><select id="hours"></select><div class="hint">Минимальный заказ — 3 часа. После заказа дополнительно резервируется 4 часа перед следующей возможной бронью.</div></div>
+      <div class="hint">Бронирование возможно не раньше чем через 2 часа от текущего времени. Система также учитывает длительность поездки и обязательный резерв автомобиля между клиентами.</div><div class="status" id="availabilityBox">Выберите услугу, дату и время — система проверит свободное окно.</div>
+    </div>
+    <div class="wizard-actions"><button class="wizard-back" type="button" onclick="prevBookingStep()">← Назад</button><button class="wizard-next" type="button" onclick="nextBookingStep()">Продолжить <span>→</span></button></div>
+  </div>
+
+  <div class="booking-step" data-step="3" id="bookingStep3">
+    <div class="step-card">
+      <div class="step-card-head"><span class="step-icon">👥</span><div><b>Пассажиры и детали</b><small>Только необходимые параметры поездки.</small></div></div>
+      <div class="grid2"><div class="field"><label>Пассажиры</label><select id="passengers"></select></div><div class="field"><label>Чемоданы</label><select id="bags"></select><div class="hint">1 пассажир — до 6 · 2 пассажира — до 3 · 3 пассажира — до 1</div></div></div>
+      <div class="field"><label>Детский бустер для ребёнка 4–12 лет <span class="req">*</span></label><select id="booster"><option value="">Выберите</option><option value="no">Нет</option><option value="yes">Да</option></select></div>
+      <div class="field"><label>💳 Как вы планируете оплатить остаток после поездки?</label><select id="finalPayment"><option value="">Выберите способ оплаты</option><option value="cash_usd">💵 Наличными — USD</option><option value="cash_uyu">💵 Наличными — UYU</option><option value="transfer_usd">🏦 Переводом — USD</option><option value="transfer_uyu">🏦 Переводом — UYU</option><option value="usdt">₮ USDT</option><option value="later">❓ Уточню позже с оператором</option></select><div class="hint">Это способ окончательного расчёта. Предоплата оформляется отдельно.</div></div>
+      <div class="field hidden" id="corpPassengerWrap"><label>Имя или ник пассажира <span class="req">*</span></label><input id="corpPassenger" placeholder="Кого нужно забрать"></div><div class="field hidden" id="corpCommentWrap"><label>Комментарий к корпоративному заказу</label><textarea id="corpComment" placeholder="Дополнительная информация для водителя"></textarea></div>
+    </div>
+    <div class="wizard-actions"><button class="wizard-back" type="button" onclick="prevBookingStep()">← Назад</button><button class="wizard-next" type="button" onclick="nextBookingStep()">Продолжить <span>→</span></button></div>
+  </div>
+
+  <div class="booking-step" data-step="4" id="bookingStep4">
+    <div class="step-card">
+      <div class="step-card-head"><span class="step-icon">📍</span><div><b>Маршрут</b><small id="routeStepHelp">Укажите маршрут поездки.</small></div></div>
+      <div id="routeDynamicWrap">
+        <div class="route-point-list">
+          <div class="route-point" id="routeAPoint">
+            <div class="route-point-head"><span class="route-point-letter">A</span><div><b id="routeATitle">Точка A — где забрать</b><small id="routeASub">Адрес подачи</small></div></div>
+            <div class="field hidden" id="routeATypeWrap"><label>Тип точки <span class="req">*</span></label><select id="routeAType"><option value="address">Обычный адрес</option><option value="airport">Аэропорт Караско (MVD)</option><option value="pde_airport">Аэропорт Пунта-дель-Эсте (PDP)</option><option value="buquebus">Терминал Buquebus Montevideo</option></select><div class="hint">Для аэропорта или Buquebus адрес подставится автоматически.</div></div>
+            <div class="route-fixed hidden" id="routeAFixed"></div>
+            <div id="routeAFields">
+              <div class="route-city-row"><div class="field"><label>Город / населённый пункт <span class="req">*</span></label><input id="routeACity" placeholder="Montevideo"></div></div>
+              <div class="route-point-grid"><div class="field"><label>Улица / адрес <span class="req">*</span></label><input id="routeAStreet" placeholder="Av. Gral. Rivera"></div><div class="field"><label>№ дома <span style="font-weight:600;color:#8a96a8">(необязательно)</span></label><input id="routeAHouse" placeholder="4237"></div></div>
+            </div>
+          </div>
+          <div class="route-point" id="routeBPoint">
+            <div class="route-point-head"><span class="route-point-letter">B</span><div><b id="routeBTitle">Точка B — куда приехать</b><small id="routeBSub">Адрес назначения</small></div></div>
+            <div class="field hidden" id="routeBTypeWrap"><label>Тип точки <span class="req">*</span></label><select id="routeBType"><option value="address">Обычный адрес</option><option value="airport">Аэропорт Караско (MVD)</option><option value="pde_airport">Аэропорт Пунта-дель-Эсте (PDP)</option><option value="buquebus">Терминал Buquebus Montevideo</option></select><div class="hint">Для аэропорта или Buquebus адрес подставится автоматически.</div></div>
+            <div class="route-fixed hidden" id="routeBFixed"></div>
+            <div id="routeBFields">
+              <div class="route-city-row"><div class="field"><label>Город / населённый пункт <span class="req">*</span></label><input id="routeBCity" placeholder="Punta del Este"></div></div>
+              <div class="route-point-grid"><div class="field"><label id="routeBStreetLabel">Улица / адрес <span class="req">*</span></label><input id="routeBStreet" placeholder="Av. Gorlero"></div><div class="field"><label id="routeBHouseLabel">№ дома <span style="font-weight:600;color:#8a96a8">(необязательно)</span></label><input id="routeBHouse" placeholder="123"></div></div>
+            </div>
+                      <div class="route-wait-wrap hidden" id="routeBWaitWrap"><label>⏱ Ожидание в этой точке</label><select id="routeBWait"><option value="0">Без ожидания</option><option value="30">30 минут — 250 UYU</option><option value="60">1 час — 500 UYU</option><option value="90">1 ч 30 мин — 750 UYU</option><option value="120">2 часа — 1 000 UYU</option><option value="150">2 ч 30 мин — 1 250 UYU</option><option value="180">3 часа — 1 500 UYU</option><option value="210">3 ч 30 мин — 1 750 UYU</option><option value="240">4 часа — 2 000 UYU</option></select><small>Ожидание считается по 500 UYU/час. Если после ожидания нужно ехать дальше или обратно — добавьте следующую точку маршрута.</small></div>
+          </div>
+          <div class="route-point hidden" id="routeCPoint">
+            <div class="route-point-head"><span class="route-point-letter">C</span><div><b id="routeCTitle">Точка C</b><small id="routeCSub">Дополнительная точка</small></div></div>
+            <div class="field hidden" id="routeCTypeWrap"><label>Тип точки <span class="req">*</span></label><select id="routeCType"><option value="address">Обычный адрес</option><option value="airport">Аэропорт Караско (MVD)</option><option value="pde_airport">Аэропорт Пунта-дель-Эсте (PDP)</option><option value="buquebus">Терминал Buquebus Montevideo</option></select><div class="hint">Для аэропорта или Buquebus адрес подставится автоматически.</div></div><div class="route-fixed hidden" id="routeCFixed"></div>
+            <div id="routeCFields">
+              <div class="route-city-row"><div class="field"><label>Город / населённый пункт <span class="req">*</span></label><input id="routeCCity" placeholder="Pando"></div></div>
+              <div class="route-point-grid"><div class="field"><label>Улица / адрес <span class="req">*</span></label><input id="routeCStreet" placeholder="Calle / Ruta"></div><div class="field"><label>№ дома <span style="font-weight:600;color:#8a96a8">(необязательно)</span></label><input id="routeCHouse" placeholder="123"></div></div>
+            </div>
+                      <div class="route-wait-wrap hidden" id="routeCWaitWrap"><label>⏱ Ожидание в этой точке</label><select id="routeCWait"><option value="0">Без ожидания</option><option value="30">30 минут — 250 UYU</option><option value="60">1 час — 500 UYU</option><option value="90">1 ч 30 мин — 750 UYU</option><option value="120">2 часа — 1 000 UYU</option><option value="150">2 ч 30 мин — 1 250 UYU</option><option value="180">3 часа — 1 500 UYU</option><option value="210">3 ч 30 мин — 1 750 UYU</option><option value="240">4 часа — 2 000 UYU</option></select><small>Ожидание считается по 500 UYU/час. Если после ожидания нужно ехать дальше или обратно — добавьте следующую точку маршрута.</small></div>
+          </div>
+          <div class="route-point hidden" id="routeDPoint">
+            <div class="route-point-head"><span class="route-point-letter">D</span><div><b id="routeDTitle">Точка D</b><small id="routeDSub">Дополнительная точка</small></div></div>
+            <div class="field hidden" id="routeDTypeWrap"><label>Тип точки <span class="req">*</span></label><select id="routeDType"><option value="address">Обычный адрес</option><option value="airport">Аэропорт Караско (MVD)</option><option value="pde_airport">Аэропорт Пунта-дель-Эсте (PDP)</option><option value="buquebus">Терминал Buquebus Montevideo</option></select><div class="hint">Для аэропорта или Buquebus адрес подставится автоматически.</div></div><div class="route-fixed hidden" id="routeDFixed"></div>
+            <div id="routeDFields"><div class="route-city-row"><div class="field"><label>Город / населённый пункт <span class="req">*</span></label><input id="routeDCity" placeholder="Город"></div></div><div class="route-point-grid"><div class="field"><label>Улица / адрес <span class="req">*</span></label><input id="routeDStreet" placeholder="Calle / Ruta"></div><div class="field"><label>№ дома <span style="font-weight:600;color:#8a96a8">(необязательно)</span></label><input id="routeDHouse" placeholder="123"></div></div></div>
+                      <div class="route-wait-wrap hidden" id="routeDWaitWrap"><label>⏱ Ожидание в этой точке</label><select id="routeDWait"><option value="0">Без ожидания</option><option value="30">30 минут — 250 UYU</option><option value="60">1 час — 500 UYU</option><option value="90">1 ч 30 мин — 750 UYU</option><option value="120">2 часа — 1 000 UYU</option><option value="150">2 ч 30 мин — 1 250 UYU</option><option value="180">3 часа — 1 500 UYU</option><option value="210">3 ч 30 мин — 1 750 UYU</option><option value="240">4 часа — 2 000 UYU</option></select><small>Ожидание считается по 500 UYU/час. Если после ожидания нужно ехать дальше или обратно — добавьте следующую точку маршрута.</small></div>
+          </div>
+          <div class="route-point hidden" id="routeEPoint">
+            <div class="route-point-head"><span class="route-point-letter">E</span><div><b id="routeETitle">Точка E</b><small id="routeESub">Дополнительная точка</small></div></div>
+            <div class="field hidden" id="routeETypeWrap"><label>Тип точки <span class="req">*</span></label><select id="routeEType"><option value="address">Обычный адрес</option><option value="airport">Аэропорт Караско (MVD)</option><option value="pde_airport">Аэропорт Пунта-дель-Эсте (PDP)</option><option value="buquebus">Терминал Buquebus Montevideo</option></select><div class="hint">Для аэропорта или Buquebus адрес подставится автоматически.</div></div><div class="route-fixed hidden" id="routeEFixed"></div>
+            <div id="routeEFields"><div class="route-city-row"><div class="field"><label>Город / населённый пункт <span class="req">*</span></label><input id="routeECity" placeholder="Город"></div></div><div class="route-point-grid"><div class="field"><label>Улица / адрес <span class="req">*</span></label><input id="routeEStreet" placeholder="Calle / Ruta"></div><div class="field"><label>№ дома <span style="font-weight:600;color:#8a96a8">(необязательно)</span></label><input id="routeEHouse" placeholder="123"></div></div></div>
+                      <div class="route-wait-wrap hidden" id="routeEWaitWrap"><label>⏱ Ожидание в этой точке</label><select id="routeEWait"><option value="0">Без ожидания</option><option value="30">30 минут — 250 UYU</option><option value="60">1 час — 500 UYU</option><option value="90">1 ч 30 мин — 750 UYU</option><option value="120">2 часа — 1 000 UYU</option><option value="150">2 ч 30 мин — 1 250 UYU</option><option value="180">3 часа — 1 500 UYU</option><option value="210">3 ч 30 мин — 1 750 UYU</option><option value="240">4 часа — 2 000 UYU</option></select><small>Ожидание считается по 500 UYU/час. Если после ожидания нужно ехать дальше или обратно — добавьте следующую точку маршрута.</small></div>
+          </div>
+          <div class="route-point hidden" id="routeFPoint">
+            <div class="route-point-head"><span class="route-point-letter">F</span><div><b id="routeFTitle">Точка F</b><small id="routeFSub">Дополнительная точка</small></div></div>
+            <div class="field hidden" id="routeFTypeWrap"><label>Тип точки <span class="req">*</span></label><select id="routeFType"><option value="address">Обычный адрес</option><option value="airport">Аэропорт Караско (MVD)</option><option value="pde_airport">Аэропорт Пунта-дель-Эсте (PDP)</option><option value="buquebus">Терминал Buquebus Montevideo</option></select><div class="hint">Для аэропорта или Buquebus адрес подставится автоматически.</div></div><div class="route-fixed hidden" id="routeFFixed"></div>
+            <div id="routeFFields"><div class="route-city-row"><div class="field"><label>Город / населённый пункт <span class="req">*</span></label><input id="routeFCity" placeholder="Город"></div></div><div class="route-point-grid"><div class="field"><label>Улица / адрес <span class="req">*</span></label><input id="routeFStreet" placeholder="Calle / Ruta"></div><div class="field"><label>№ дома <span style="font-weight:600;color:#8a96a8">(необязательно)</span></label><input id="routeFHouse" placeholder="123"></div></div></div>
+            <div class="route-wait-wrap hidden" id="routeFWaitWrap"><label>⏱ Ожидание в этой точке</label><select id="routeFWait"><option value="0">Без ожидания</option><option value="30">30 минут — 250 UYU</option><option value="60">1 час — 500 UYU</option><option value="90">1 ч 30 мин — 750 UYU</option><option value="120">2 часа — 1 000 UYU</option><option value="150">2 ч 30 мин — 1 250 UYU</option><option value="180">3 часа — 1 500 UYU</option><option value="210">3 ч 30 мин — 1 750 UYU</option><option value="240">4 часа — 2 000 UYU</option></select><small>Ожидание считается по 500 UYU/час. Если после ожидания нужно ехать дальше или обратно — добавьте следующую точку маршрута.</small></div>
+          </div>
+        </div>
+        <div class="grid-route-controls hidden" id="gridRouteControls"><button class="grid-route-btn" type="button" id="gridAddPoint">＋ Добавить точку</button><button class="grid-route-btn remove" type="button" id="gridRemovePoint">− Удалить последнюю</button></div><div class="grid-route-count hidden" id="gridRouteCount"></div>
+        <div class="route-latin-hint" id="routeHelp"><b>Важно:</b> адреса вводятся латиницей. Испанские акценты необязательны: <b>José</b> и <b>Jose</b> принимаются одинаково.</div>
+        <input id="from" type="hidden"><input id="to" type="hidden">
+      </div>
+    </div>
+    <div class="wizard-actions"><button class="wizard-back" type="button" onclick="prevBookingStep()">← Назад</button><button class="wizard-next" type="button" onclick="nextBookingStep()">Продолжить <span>→</span></button></div>
+  </div>
+
+    <div class="booking-step" data-step="5" id="bookingStep5">
+    <div class="step-card compact-contact-card">
+      <div class="step-card-head"><span class="step-icon">💬</span><div><b>Контакты</b><small>Укажите хотя бы один удобный способ связи.</small></div></div>
+      <div class="field" id="tgField"><label>Telegram ник</label><input id="telegram" placeholder="@username"></div>
+      <div class="grid2">
+        <div class="field" id="phoneField"><label>Номер телефона</label><input id="phone" type="tel" placeholder="+598 ..."></div>
+        <div class="field" id="waField"><label>WhatsApp</label><input id="whatsapp" type="tel" placeholder="+598 ..."></div>
+      </div>
+      <div class="field">
+        <label>Комментарий к заказу <span style="font-weight:600;color:#8a96a8">(необязательно)</span></label>
+        <textarea id="orderComment" placeholder="Например: много багажа, остановка по пути или важная информация"></textarea>
+        <div class="hint">Достаточно одного контакта. Комментарий можно оставить пустым.</div>
+      </div>
+    </div>
+    <div class="wizard-actions"><button class="wizard-back" type="button" onclick="prevBookingStep()">← Назад</button><button class="wizard-next" type="button" onclick="nextBookingStep()">Продолжить <span>→</span></button></div>
+  </div>
+
+<div class="booking-step" data-step="6" id="bookingStep6">
+    <div class="step-card review-card">
+      <div class="step-card-head"><span class="step-icon">✓</span><div><b>Проверьте заказ</b><small>Последний шаг перед отправкой водителю.</small></div></div>
+      <div class="wizard-review" id="wizardReviewSummary"></div>
+    </div>
+    <div class="price-card"><div><small id="priceLabel">Стоимость услуги</small><div class="discount" id="discountText"></div></div><div class="price" id="price">—</div></div>
+
+    <div class="rw23-grid-fallback hidden" id="rwGridFallback">
+      <div class="rw23-grid-fallback-icon" id="rwGridFallbackIcon">💬</div>
+      <div class="rw23-grid-fallback-copy">
+        <b id="rwGridFallbackTitle">Нужна помощь с маршрутом</b>
+        <span id="rwGridFallbackText">Свяжитесь с оператором — сообщение будет подготовлено автоматически.</span>
+      </div>
+      <button type="button" id="rwGridFallbackBtn">Обратиться к оператору</button>
+    </div>
+
+    <div class="wizard-actions final" id="wizardFinalActions"><button class="wizard-back" type="button" onclick="prevBookingStep()">← Назад</button><button class="primary wizard-submit" id="submit">Подтвердить бронирование</button></div>
+    <div class="footnote">Заявка является предварительной. Водитель подтверждает бронирование после проверки.</div>
+  </div>
+</section>
+<section class="panel hidden" id="successCard"><div class="success-hero"><div class="check">✓</div><div class="success-title">Заявка оформлена</div><div class="pending">🟡 Ожидает подтверждения</div></div><div class="success-note" id="successNote">Заявка создана и передана водителю STANDARD.</div><div class="summary" id="summary"></div><button class="secondary" id="mainMenuV43">← Вернуться в главное меню</button><button class="secondary" id="back">Изменить заявку</button><button class="secondary ghost" id="operator">👨‍💼 Связаться с оператором</button></section>
+</main>
+<nav class="rw31-bottom-nav rw31-bottom-nav-3" aria-label="Навигация RusWeo"><button class="active" type="button" onclick="rw31Navigate('home')"><span class="rw31-nav-icon">⌂</span><b>Главная</b></button><button type="button" onclick="rw31Navigate('guide')"><span class="rw31-nav-icon">◇</span><b>Гид</b></button><button type="button" onclick="rw31Navigate('account')"><span class="rw31-nav-icon">●</span><b>Кабинет</b></button></nav>
+<datalist id="rwTariffCities"><option value="Araminda" label="Araminda"></option><option value="Atlántida" label="Atlántida"></option><option value="Barros Blancos" label="Barros Blancos"></option><option value="Bella Vista" label="Bella Vista"></option><option value="Bello Horizonte" label="Bello Horizonte"></option><option value="Canelones" label="Canelones"></option><option value="Capilla de Cella" label="Capilla de Cella"></option><option value="Ciudad de la Costa" label="Ciudad de la Costa"></option><option value="Ciudad del Plata" label="Ciudad del Plata"></option><option value="Colonia Nicolich" label="Colonia Nicolich"></option><option value="Colonia Valdense" label="Colonia Valdense"></option><option value="Costa Azul" label="Costa Azul"></option><option value="Cuchilla Alta" label="Cuchilla Alta"></option><option value="Ecilda Paullier" label="Ecilda Paullier"></option><option value="El Pinar" label="El Pinar"></option><option value="Empalme Olmos" label="Empalme Olmos"></option><option value="Florida" label="Florida ⚡"></option><option value="Fortín de Santa Rosa" label="Fortín de Santa Rosa"></option><option value="Gregorio Aznárez" label="Gregorio Aznárez"></option><option value="Guazú-Virá" label="Guazú-Virá"></option><option value="Jaureguiberry" label="Jaureguiberry"></option><option value="Juanicó" label="Juanicó"></option><option value="La Floresta" label="La Floresta"></option><option value="La Paz" label="La Paz"></option><option value="La Tuna" label="La Tuna"></option><option value="Lagomar" label="Lagomar"></option><option value="Las Piedras" label="Las Piedras"></option><option value="Las Toscas" label="Las Toscas"></option><option value="Libertad" label="Libertad"></option><option value="Los Titanes" label="Los Titanes"></option><option value="Maldonado" label="Maldonado ⚡"></option><option value="Marindia" label="Marindia"></option><option value="Migues" label="Migues"></option><option value="Minas" label="Minas ⚡"></option><option value="Montes" label="Montes"></option><option value="Montevideo" label="Montevideo"></option><option value="Neptunia" label="Neptunia"></option><option value="Nueva Helvecia" label="Nueva Helvecia ⚡"></option><option value="Pan de Azúcar" label="Pan de Azúcar"></option><option value="Pando" label="Pando"></option><option value="Parador Las Brasas" label="Parador Las Brasas (Capilla de Cella)"></option><option value="Parque del Plata" label="Parque del Plata"></option><option value="Paso Carrasco" label="Paso Carrasco"></option><option value="Piedras de Afilar" label="Piedras de Afilar"></option><option value="Pinamar" label="Pinamar"></option><option value="Piriápolis" label="Piriápolis"></option><option value="Playa Hermosa" label="Playa Hermosa"></option><option value="Playa Verde" label="Playa Verde"></option><option value="Progreso" label="Progreso"></option><option value="Punta Ballena" label="Punta Ballena"></option><option value="Punta del Este" label="Punta del Este ⚡"></option><option value="Punta Fría" label="Punta Fría"></option><option value="Rafael Perazza" label="Rafael Perazza"></option><option value="Rodríguez" label="Rodríguez"></option><option value="Rosario" label="Rosario"></option><option value="Salinas" label="Salinas"></option><option value="San Bautista" label="San Bautista"></option><option value="San Carlos" label="San Carlos"></option><option value="San Francisco" label="San Francisco"></option><option value="San Jacinto" label="San Jacinto"></option><option value="San José de Mayo" label="San José de Mayo ⚡"></option><option value="San Luis" label="San Luis"></option><option value="San Ramón" label="San Ramón"></option><option value="Santa Ana" label="Santa Ana"></option><option value="Santa Lucía" label="Santa Lucía"></option><option value="Santa Rosa" label="Santa Rosa"></option><option value="Sarandí Grande" label="Sarandí Grande"></option><option value="Sauce" label="Sauce"></option><option value="Soca" label="Soca"></option><option value="Solís" label="Solís"></option><option value="Solís Grande" label="Solís Grande"></option><option value="Solymar" label="Solymar"></option><option value="Suárez" label="Suárez"></option><option value="Tala" label="Tala"></option><option value="Toledo" label="Toledo"></option><option value="Villa Argentina" label="Villa Argentina"></option></datalist>
+<iframe name="booking_sink" id="bookingSink" style="display:none"></iframe>
+<script>
+const BACKEND_URL='https://script.google.com/macros/s/AKfycbzWkerEeWR-3EjY1QW44Az6pj1TjJK9_ktfnrdcgFILlD6Cnqb4z2X97zSknKRJw-i3jw/exec';
+const RW_EXPECTED_BACKEND_BUILD='RUSWEO_2.4_TELEGRAM_ACCOUNTING_20260904_0001';
+const tg=window.Telegram?.WebApp;const isAndroid=!!(window.UruWayAndroid&&typeof window.UruWayAndroid.getPlatform==='function');const params=new URLSearchParams(location.search);const corporateMode=params.get('mode')==='corporate';
+if(tg){try{tg.ready();tg.expand()}catch(e){}}
+const $=id=>document.getElementById(id);
+const services=[
+{g:'✈️ Аэропорт Караско — Монтевидео',i:'✈️',a:[{id:'airport_to_mvd',n:'Аэропорт Караско (MVD) → Монтевидео',p:70,c:'USD',f:'Аэропорт Караско (MVD)',t:'Монтевидео',d:'Индивидуальный трансфер из аэропорта Караско в Монтевидео. Во время поездки по согласованию можно сделать необходимые остановки.'},{id:'mvd_to_airport',n:'Монтевидео → аэропорт Караско (MVD)',p:70,c:'USD',f:'Монтевидео',t:'Аэропорт Караско (MVD)',d:'Индивидуальный трансфер из Монтевидео в аэропорт Караско.'}]},
+{g:'⛴️ Buquebus — Монтевидео',i:'⛴️',a:[{id:'buquebus_to_mvd',n:'Buquebus → Монтевидео',p:70,c:'USD',f:'Buquebus',t:'Монтевидео',d:'Индивидуальный трансфер от терминала Buquebus в Монтевидео.'},{id:'mvd_to_buquebus',n:'Монтевидео → Buquebus',p:70,c:'USD',f:'Монтевидео',t:'Buquebus',d:'Индивидуальный трансфер из Монтевидео к терминалу Buquebus.'}]},
+{g:'✈️ Аэропорт Караско — Пунта-дель-Эсте',i:'✈️',a:[{id:'airport_to_pde',n:'Аэропорт Караско (MVD) → Пунта-дель-Эсте',p:190,c:'USD',f:'Аэропорт Караско (MVD)',t:'Пунта-дель-Эсте',d:'Индивидуальный трансфер из аэропорта Караско в Пунта-дель-Эсте.'},{id:'pde_to_airport',n:'Пунта-дель-Эсте → аэропорт Караско (MVD)',p:190,c:'USD',f:'Пунта-дель-Эсте',t:'Аэропорт Караско (MVD)',d:'Индивидуальный трансфер из Пунта-дель-Эсте в аэропорт Караско.'}]},
+{g:'⛴️ Buquebus — Пунта-дель-Эсте',i:'⛴️',a:[{id:'buquebus_to_pde',n:'Buquebus → Пунта-дель-Эсте',p:200,c:'USD',f:'Buquebus',t:'Пунта-дель-Эсте',d:'Индивидуальный трансфер от терминала Buquebus в Пунта-дель-Эсте.'},{id:'pde_to_buquebus',n:'Пунта-дель-Эсте → Buquebus',p:200,c:'USD',f:'Пунта-дель-Эсте',t:'Buquebus',d:'Индивидуальный трансфер из Пунта-дель-Эсте к терминалу Buquebus.'}]},
+{g:'🌴 Монтевидео — Пунта-дель-Эсте',i:'🌴',a:[{id:'mvd_to_pde',n:'Монтевидео → Пунта-дель-Эсте',p:190,c:'USD',f:'Монтевидео',t:'Пунта-дель-Эсте',d:'Индивидуальная поездка в одну сторону.'},{id:'pde_to_mvd',n:'Пунта-дель-Эсте → Монтевидео',p:190,c:'USD',f:'Пунта-дель-Эсте',t:'Монтевидео',d:'Индивидуальная поездка в одну сторону.'}]},
+{g:'☀️ Поездка на целый день',i:'☀️',a:[{id:'mvd_pde_day',n:'Монтевидео → Пунта-дель-Эсте → Монтевидео',p:275,c:'USD',f:'Монтевидео',t:'Монтевидео',d:'Поездка на целый день по маршруту Монтевидео — Пунта-дель-Эсте — Монтевидео.'},{id:'pde_mvd_day',n:'Пунта-дель-Эсте → Монтевидео → Пунта-дель-Эсте',p:275,c:'USD',f:'Пунта-дель-Эсте',t:'Пунта-дель-Эсте',d:'Поездка на целый день по маршруту Пунта-дель-Эсте — Монтевидео — Пунта-дель-Эсте.'}]},
+{g:'🚗 Личный водитель',i:'🚗',a:[{id:'hourly',n:'Личный водитель — Монтевидео и ближайшие окрестности',p:600,c:'UYU/час',f:'',t:'',d:'600 UYU/час. Минимальный заказ — 3 часа.'}]},
+{g:'🛣️ Другие направления',i:'🛣️',a:[{id:'grid_one',n:'Другие направления — создать маршрут',autoGrid:true,label:'авторасчёт',f:'',t:'',d:'⚠️ Возможны ошибки, проходит тестирование. Создайте маршрут A → B и при необходимости добавьте C, D, E или F. Для промежуточных точек можно указать ожидание от 30 минут до 4 часов. Для обычной точки выберите город из тарифной сетки и укажите улицу. Аэропорты Carrasco/Punta del Este и Buquebus доступны как готовые точки без ручного адреса. Дорожные сборы включены.'}]}
+];
+let selected=null,loyalty={paidCount:0,orderNumber:1,discountPercent:0,eligible:false},availabilityTimer=null;
+const fixed={
+  airport:{
+    label:'Аэропорт Караско (MVD)',
+    address:'Aeropuerto Internacional de Carrasco (MVD), Ruta 101 km 19.950, Ciudad de la Costa',
+    gridCity:'Aeropuerto Carrasco',
+    gridKey:'CARRASCO_AIRPORT'
+  },
+  pde_airport:{
+    label:'Аэропорт Пунта-дель-Эсте (PDP)',
+    address:'Aeropuerto Internacional C/C Carlos A. Curbelo - Laguna del Sauce (PDP), Ruta 93 km 113, Maldonado',
+    gridCity:'Aeropuerto Punta del Este',
+    gridKey:'PUNTA_DEL_ESTE_AIRPORT'
+  },
+  buquebus:{
+    label:'Терминал Buquebus Montevideo',
+    address:'Terminal Buquebus Montevideo, Rambla 25 de Agosto de 1825, Montevideo',
+    gridCity:'Terminal Buquebus Montevideo',
+    gridKey:'BUQUEBUS_PORT'
+  }
+};
+const roundTripABCServices=new Set(['mvd_pde_day','pde_mvd_day','km_round']);
+
+const RW_TARIFF_CITY_NAMES = ["Araminda", "Atlántida", "Barros Blancos", "Bella Vista", "Bello Horizonte", "Canelones", "Capilla de Cella", "Ciudad de la Costa", "Ciudad del Plata", "Colonia Nicolich", "Colonia Valdense", "Costa Azul", "Cuchilla Alta", "Ecilda Paullier", "El Pinar", "Empalme Olmos", "Florida", "Fortín de Santa Rosa", "Gregorio Aznárez", "Guazú-Virá", "Jaureguiberry", "Juanicó", "La Floresta", "La Paz", "La Tuna", "Lagomar", "Las Piedras", "Las Toscas", "Libertad", "Los Titanes", "Maldonado", "Marindia", "Migues", "Minas", "Montes", "Montevideo", "Neptunia", "Nueva Helvecia", "Pan de Azúcar", "Pando", "Parque del Plata", "Paso Carrasco", "Piedras de Afilar", "Pinamar", "Piriápolis", "Playa Hermosa", "Playa Verde", "Progreso", "Punta Ballena", "Punta del Este", "Punta Fría", "Rafael Perazza", "Rodríguez", "Rosario", "Salinas", "San Bautista", "San Carlos", "San Francisco", "San Jacinto", "San José de Mayo", "San Luis", "San Ramón", "Santa Ana", "Santa Lucía", "Santa Rosa", "Sarandí Grande", "Sauce", "Soca", "Solís", "Solís Grande", "Solymar", "Suárez", "Tala", "Toledo", "Villa Argentina"];
+const RW_TARIFF_ALIAS_NAMES = ['Parador Las Brasas','Las Brasas','Punta del Esta','Punto del Este','PDE','San Jose','Pan de Azucar','Punta Fria','Capilla de Celia'];
+let rwGridQuote=null,rwGridQuoteTimer=null,rwGridPointCount=2,rwGridQuoteSignature='';
+const RW_GRID_POINT_LETTERS=['A','B','C','D','E','F'];
+const RW_GRID_WAIT_RATE_UYU_PER_HOUR=500;
+function rwNormCity(v){return String(v||'').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ' ).trim()}
+function rwKnownTariffCity(v){
+  const n=rwNormCity(v);
+  const fixedCities=Object.values(fixed)
+    .flatMap(x=>[x.gridCity,x.gridKey])
+    .filter(Boolean);
+  return RW_TARIFF_CITY_NAMES.concat(RW_TARIFF_ALIAS_NAMES,fixedCities)
+    .some(x=>rwNormCity(x)===n)
+}
+function rwGridCityInputs(enable){RW_GRID_POINT_LETTERS.forEach(letter=>{const el=$('route'+letter+'City');if(!el)return;if(enable){el.setAttribute('list','rwTariffCities');el.setAttribute('autocomplete','off');}else{el.removeAttribute('list')}})}
+function rwGridPointCities(){
+  return RW_GRID_POINT_LETTERS.slice(0,rwGridPointCount).map(letter=>{
+    const point=$('route'+letter+'Point');
+    const key=String(point?.dataset?.fixedKey||'').trim();
+
+    // Fixed transport points are sent to backend by canonical GRID KEY.
+    // This prevents display-name/address variations from breaking tariff lookup.
+    if(key&&fixed[key]){
+      return String(fixed[key].gridKey||fixed[key].gridCity||'').trim();
+    }
+
+    return String($('route'+letter+'City').value||'').trim();
+  })
+}
+function rwGridPointWaits(){return RW_GRID_POINT_LETTERS.slice(0,rwGridPointCount).map((letter,i)=>{if(i===0||i===rwGridPointCount-1)return 0;const el=$('route'+letter+'Wait');return Number(el?.value||0)})}
+function rwGridFormatWait(minutes){minutes=Number(minutes||0);const h=Math.floor(minutes/60),m=minutes%60;return h&&m?h+' ч '+m+' мин':h?h+' ч':m?m+' мин':'0 мин'}
+function rwGridWaitingSummary(){const waits=rwGridPointWaits(),parts=[];waits.forEach((mins,i)=>{if(mins>0){const city=String($('route'+RW_GRID_POINT_LETTERS[i]+'City')?.value||('Точка '+RW_GRID_POINT_LETTERS[i])).trim();parts.push(city+' — '+rwGridFormatWait(mins)+' ('+Math.round(mins*RW_GRID_WAIT_RATE_UYU_PER_HOUR/60)+' UYU)')}});return parts.join(' · ')}
+function rwGridUpdatePointLabels(){
+  RW_GRID_POINT_LETTERS.forEach((letter,i)=>{
+    const point=$('route'+letter+'Point'); if(!point)return;
+    const visible=i<rwGridPointCount; point.classList.toggle('hidden',!visible);
+    if(!visible)return;
+    const title=$('route'+letter+'Title'),sub=$('route'+letter+'Sub');
+    if(letter==='A'){if(title)title.textContent='Точка A — где забрать';if(sub)sub.textContent='Адрес подачи';return}
+    const isLast=i===rwGridPointCount-1;
+    if(title)title.textContent='Точка '+letter+(isLast?' — финальная':' — остановка');
+    if(sub)sub.textContent=isLast?'Конечный адрес':'Промежуточная остановка';
+    const waitWrap=$('route'+letter+'WaitWrap'),waitSel=$('route'+letter+'Wait');
+    if(waitWrap)waitWrap.classList.toggle('hidden',isLast||!visible||!(selected&&selected.id==='grid_one'));
+    if((isLast||!visible)&&waitSel)waitSel.value='0';
+  });
+  const controls=$('gridRouteControls'),count=$('gridRouteCount');
+  if(controls)controls.classList.toggle('hidden',!(selected&&selected.id==='grid_one'));
+  if(count){count.classList.toggle('hidden',!(selected&&selected.id==='grid_one'));count.textContent='Точек в маршруте: '+rwGridPointCount+' из 6';}
+  if($('gridAddPoint'))$('gridAddPoint').disabled=rwGridPointCount>=6;
+  if($('gridRemovePoint'))$('gridRemovePoint').disabled=rwGridPointCount<=2;
+}
+function rwGridClearPoint(letter){
+  ['City','Street','House'].forEach(s=>{const el=$('route'+letter+s);if(el)el.value=''});
+  const type=$('route'+letter+'Type');if(type)type.value='address';
+  const point=$('route'+letter+'Point');
+  if(point){point.dataset.fixedAddress='';point.dataset.fixedKey=''}
+  const fields=$('route'+letter+'Fields'),fixedBox=$('route'+letter+'Fixed');
+  if(fields)fields.classList.remove('hidden');
+  if(fixedBox){fixedBox.classList.add('hidden');fixedBox.textContent=''}
+  const w=$('route'+letter+'Wait');if(w)w.value='0'
+}
+function rwGridResetPoints(){rwGridPointCount=2;['C','D','E','F'].forEach(rwGridClearPoint);rwGridUpdatePointLabels();rwGridQuote=null;rwGridQuoteSignature='';}
+function rwGridCurrentQuoteSignature(){
+  return rwGridPointCities().join('|')+'::'+rwGridPointWaits().join('|');
+}
+function rwScheduleGridQuote(){
+  clearTimeout(rwGridQuoteTimer);
+  rwGridQuoteTimer=setTimeout(rwLoadGridQuote,180)
+}
+function rwInvalidateGridQuote(){
+  rwGridQuote=null;
+  rwGridQuoteSignature='';
+  if(selected&&selected.id==='grid_one')rwScheduleGridQuote()
+}
+function rwGridAddPoint(){
+  if(rwGridPointCount>=6)return;
+  rwGridPointCount++;
+  rwGridUpdatePointLabels();
+  if(selected&&selected.id==='grid_one')configureSpecialPointTypes(true,RW_GRID_POINT_LETTERS.slice(0,rwGridPointCount));
+  rwInvalidateGridQuote()
+}
+function rwGridRemovePoint(){
+  if(rwGridPointCount<=2)return;
+  const letter=RW_GRID_POINT_LETTERS[rwGridPointCount-1];
+  rwGridClearPoint(letter);
+  rwGridPointCount--;
+  rwGridUpdatePointLabels();
+  rwInvalidateGridQuote()
+}
+
+const RW_GRID_OPERATOR_USERNAME='maxriccomsk';
+const RW_GRID_BUSINESS_USERNAME='AVladimirovich';
+
+function rwGridRouteForMessage(){
+  try{
+    const route=getRouteData();
+    return String(route&&route.route_text||'').trim();
+  }catch(e){
+    return rwGridPointCities().filter(Boolean).join(' → ');
+  }
+}
+function rwGridAntonMessage(mode){
+  const route=rwGridRouteForMessage()||'маршрут из приложения RusWeo';
+  const date=String($('date')?.value||'').trim();
+  const time=String($('time')?.value||'').trim();
+  const when=[date,time].filter(Boolean).join(' ');
+
+  if(mode==='business'){
+    return 'Здравствуйте! Я по поводу поездки через RusWeo: '+route+
+      (when?'. Дата и время: '+when:'')+
+      '. Маршрут больше 150 км. Хотел бы заказать тариф BUSINESS.';
+  }
+
+  return 'Здравствуйте! Я по поводу поездки через RusWeo: '+route+
+    (when?'. Дата и время: '+when:'')+
+    '. Автоматический расчёт не сработал. Помогите, пожалуйста, проверить маршрут и рассчитать стоимость.';
+}
+function rwGridOpenContact(mode){
+  const business=mode==='business';
+  const username=business
+    ?RW_GRID_BUSINESS_USERNAME
+    :RW_GRID_OPERATOR_USERNAME;
+  const text=rwGridAntonMessage(mode);
+  const url='https://t.me/'+username+'?text='+encodeURIComponent(text);
+
+  // Same direct Telegram transition pattern used on RusWeo Home / Guide.
+  try{
+    if(tg&&typeof tg.openTelegramLink==='function'){
+      tg.openTelegramLink(url);
+      return;
+    }
+  }catch(e){}
+  try{
+    if(tg&&typeof tg.openLink==='function'){
+      tg.openLink(url);
+      return;
+    }
+  }catch(e){}
+  try{
+    if(isAndroid&&window.UruWayAndroid&&typeof window.UruWayAndroid.openExternal==='function'){
+      window.UruWayAndroid.openExternal(url);
+      return;
+    }
+  }catch(e){}
+  window.location.href=url;
+}
+function rwGridHideFallback(){
+  const box=$('rwGridFallback');
+  const actions=$('wizardFinalActions');
+  if(box)box.classList.add('hidden');
+  if(actions)actions.classList.remove('rw23-fallback-active');
+}
+function rwGridShowFallback(mode,detail){
+  const box=$('rwGridFallback');
+  const actions=$('wizardFinalActions');
+  const icon=$('rwGridFallbackIcon');
+  const title=$('rwGridFallbackTitle');
+  const text=$('rwGridFallbackText');
+  const btn=$('rwGridFallbackBtn');
+
+  if(!box||!btn)return;
+
+  const business=mode==='business';
+
+  if(icon)icon.textContent=business?'🚐':'💬';
+  if(title)title.textContent=business?'Маршрут доступен через BUSINESS':'Автоматический расчёт недоступен';
+  if(text)text.textContent=String(detail||(
+    business
+      ?'STANDARD выполняет маршруты до 150 км. Для этой поездки можно обратиться к BUSINESS-партнёру RusWeo.'
+      :'Оператор поможет проверить направление и рассчитать поездку вручную.'
+  ));
+  btn.textContent=business?'Перейти в BUSINESS':'Обратиться к оператору';
+  btn.onclick=()=>rwGridOpenContact(business?'business':'operator');
+
+  box.classList.remove('hidden');
+  if(actions)actions.classList.add('rw23-fallback-active');
+}
+
+async function rwLoadGridQuote(){
+  if(!selected||selected.id!=='grid_one')return;
+  const cities=rwGridPointCities();
+  const waits=rwGridPointWaits();
+  const requestSignature=cities.join('|')+'::'+waits.join('|');
+
+  if(
+    rwGridQuote &&
+    rwGridQuote.ok &&
+    rwGridQuoteSignature===requestSignature
+  ){
+    return;
+  }
+
+  rwGridQuote=null;
+  rwGridQuoteSignature='';
+  $('priceLabel').textContent='Стоимость поездки';
+  $('discountText').textContent='';
+
+  rwGridHideFallback();
+
+  if(cities.some(x=>!x)){
+    $('price').textContent='—';
+    $('discountText').textContent='Заполните города всех точек.';
+    return
+  }
+
+  if(cities.some(x=>!rwKnownTariffCity(x))){
+    $('price').textContent='—';
+    $('discountText').textContent='Автоматический расчёт для этой точки недоступен.';
+    rwGridShowFallback(
+      'operator',
+      'Эта точка пока не входит в автоматическую тарифную сетку. Оператор поможет рассчитать поездку.'
+    );
+    return
+  }
+
+  $('price').textContent='Рассчитываем…';
+
+  try{
+    const p=profile();const r=await jsonp(BACKEND_URL+'?action=tariff_quote&route_cities='+encodeURIComponent(cities.join('|'))+'&route_wait_minutes='+encodeURIComponent(waits.join('|'))+'&telegram_user_id='+encodeURIComponent(p.id)+'&telegram='+encodeURIComponent($('telegram').value.trim()));
+
+    if(requestSignature!==rwGridCurrentQuoteSignature())return;
+
+    if(!r){
+      rwGridQuote=null;
+      rwGridQuoteSignature='';
+      $('price').textContent='—';
+      $('discountText').textContent='Не удалось получить ответ расчёта.';
+      rwGridShowFallback(
+        'operator',
+        'Автоматический расчёт временно недоступен. Оператор поможет проверить маршрут.'
+      );
+      return
+    }
+
+    // backend_build is DIAGNOSTIC ONLY.
+    // Never hide a valid customer price just because an older deployment
+    // did not yet expose the build marker.
+    if(
+      r.backend_build &&
+      String(r.backend_build)!==RW_EXPECTED_BACKEND_BUILD
+    ){
+      try{
+        console.warn(
+          'RusWeo backend build mismatch:',
+          r.backend_build,
+          'expected:',
+          RW_EXPECTED_BACKEND_BUILD
+        );
+      }catch(e){}
+    }
+
+    rwGridQuote=r;
+    rwGridQuoteSignature=requestSignature;
+
+    if(!r.ok){
+      $('price').textContent='—';
+      $('discountText').textContent='Автоматический расчёт недоступен.';
+      rwGridShowFallback(
+        'operator',
+        (r&&r.message)||'Оператор поможет проверить маршрут и рассчитать стоимость.'
+      );
+      return
+    }
+
+    if(r.type==='business_required'){
+      const km=Number(r.distance_km||0);
+      $('priceLabel').textContent='Маршрут больше 150 км';
+      $('price').textContent='BUSINESS';
+      $('discountText').textContent=km?km+' км · STANDARD не выполняется':'STANDARD не выполняется';
+      rwGridShowFallback(
+        'business',
+        'Этот маршрут составляет '+km+' км. Для поездок свыше 150 км доступен тариф BUSINESS.'
+      );
+      return
+    }
+
+    if(r.type!=='standard'){
+      $('price').textContent='—';
+      $('discountText').textContent='Нужен индивидуальный расчёт.';
+      rwGridShowFallback(
+        'operator',
+        r.message||'Оператор поможет проверить маршрут и рассчитать стоимость.'
+      );
+      return
+    }
+
+    rwGridHideFallback();
+    const base=Number(r.price_usd||0),disc=Number(loyalty.discountPercent||0);
+    let fin=disc===10?Math.round(base*.9*100)/100:base;
+    let discountLimited=false;
+    if(disc===10&&!r.profit_protection_exempt){
+      const floor=Number(r.min_final_customer_price_usd||0);
+      if(floor>fin){fin=floor;discountLimited=true}
+    }
+    rwGridQuote.client_price_usd=fin;
+    $('priceLabel').textContent='Стоимость поездки';
+    rwGridHideFallback();
+    $('price').textContent=money(fin,'USD');
+    const pp=r.profit_protection_applied?' · тариф скорректирован под удалённую подачу':'';
+    const wait=r.waiting_minutes>0?' · ожидание '+rwGridFormatWait(r.waiting_minutes)+' = '+Number(r.waiting_uyu||0)+' UYU':'';
+    const discText=disc===10?(discountLimited?' · 🎁 скидка применена в пределах минимальной стоимости':' · 🎁 скидка 10%'):'';
+    $('discountText').textContent='Дорожные сборы включены · '+Number(r.distance_km||0)+' км · '+Number(r.point_count||cities.length)+' точек'+wait+pp+discText;
+    if($('date').value&&$('time').value)scheduleAvailability();
+  }catch(e){
+    $('price').textContent='—';
+    $('discountText').textContent='Не удалось выполнить автоматический расчёт.';
+    rwGridShowFallback(
+      'operator',
+      'Не удалось получить автоматическую стоимость. Оператор поможет проверить маршрут.'
+    );
+  }
+}
+
+function hasCyrillic(v){return /[А-Яа-яЁё]/.test(String(v||''))}
+function hasLatinLetter(v){return /[A-Za-zÁÉÍÓÚÜÑáéíóúüñÀ-ÖØ-öø-ÿ]/.test(String(v||''))}
+function validateLatinPart(v,label,requireNumber){
+  v=String(v||'').trim();
+  if(!v)throw new Error(label+': заполните поле.');
+  if(hasCyrillic(v))throw new Error(label+': используйте латиницу — как адрес пишется в Уругвае.');
+  if(!hasLatinLetter(v)&&!requireNumber)throw new Error(label+': используйте латинские буквы.');
+  if(requireNumber&&!/\d/.test(v))throw new Error(label+': укажите номер дома цифрами.');
+  return v;
+}
+function fullPoint(city,street,house,label){
+  city=validateLatinPart(city,label+' — город',false);
+  street=validateLatinPart(street,label+' — улица',false);
+  house=String(house||'').trim();
+  if(house)house=validateLatinPart(house,label+' — номер дома',true);
+  return {city,street,house,address:city+', '+street+(house?' '+house:'')};
+}
+function cityOrFullPoint(city,street,house,label){
+  return fullPoint(city,street,house,label);
+}
+function routePlan(id){
+  const P=(mode,A,B,C)=>({mode,A:A||{},B:B||{},C:C||{}});
+  if(id==='hourly')return P('a',{city:'Montevideo',editableCity:true});
+  if(id==='grid_one')return P('ab',{},{});
+  if(id==='airport_to_mvd')return P('ab',{fixed:'airport'},{city:'Montevideo'});
+  if(id==='mvd_to_airport')return P('ab',{city:'Montevideo'},{fixed:'airport'});
+  if(id==='buquebus_to_mvd')return P('ab',{fixed:'buquebus'},{city:'Montevideo'});
+  if(id==='mvd_to_buquebus')return P('ab',{city:'Montevideo'},{fixed:'buquebus'});
+  if(id==='airport_to_pde')return P('ab',{fixed:'airport'},{city:'Punta del Este'});
+  if(id==='pde_to_airport')return P('ab',{city:'Punta del Este'},{fixed:'airport'});
+  if(id==='buquebus_to_pde')return P('ab',{fixed:'buquebus'},{city:'Punta del Este'});
+  if(id==='pde_to_buquebus')return P('ab',{city:'Punta del Este'},{fixed:'buquebus'});
+  if(id==='mvd_to_pde')return P('ab',{city:'Montevideo'},{city:'Punta del Este'});
+  if(id==='pde_to_mvd')return P('ab',{city:'Punta del Este'},{city:'Montevideo'});
+  if(id==='mvd_pde_day')return P('abc',{city:'Montevideo'},{city:'Punta del Este'},{city:'Montevideo'});
+  if(id==='pde_mvd_day')return P('abc',{city:'Punta del Este'},{city:'Montevideo'},{city:'Punta del Este'});
+  if(id==='km_round')return P('abc',{}, {}, {});
+  if(id==='corporate')return P('ab',{corporateFlexible:true},{corporateFlexible:true});
+  return P('ab',{},{});
+}
+function setPointUI(letter,cfg,visible){
+  const point=$('route'+letter+'Point'),fields=$('route'+letter+'Fields'),fixedBox=$('route'+letter+'Fixed');
+  point.classList.toggle('hidden',!visible); if(!visible)return;
+  const city=$('route'+letter+'City'),street=$('route'+letter+'Street'),house=$('route'+letter+'House');
+  city.value='';street.value='';house.value='';city.readOnly=false;
+  if(cfg&&cfg.fixed){
+    const f=fixed[cfg.fixed];
+    fields.classList.add('hidden');
+    fixedBox.classList.remove('hidden');
+    fixedBox.innerHTML='<b>'+esc(f.label)+'</b><small>'+esc(f.address)+'</small>';
+    point.dataset.fixedAddress=f.address;
+    point.dataset.fixedKey=cfg.fixed;
+    return;
+  }
+  point.dataset.fixedAddress=''; point.dataset.fixedKey=''; fields.classList.remove('hidden'); fixedBox.classList.add('hidden'); fixedBox.textContent='';
+  if(cfg&&cfg.city){city.value=cfg.city;city.readOnly=!cfg.editableCity;}
+}
+function applySpecialPointType(letter){
+  const typeEl=$('route'+letter+'Type');
+  const point=$('route'+letter+'Point'),fields=$('route'+letter+'Fields'),fixedBox=$('route'+letter+'Fixed');
+  if(!typeEl||!point||!fields||!fixedBox)return;
+  const key=String(typeEl.value||'address');
+  if(key==='airport'||key==='pde_airport'||key==='buquebus'){
+    const f=fixed[key];
+    point.dataset.fixedAddress=f.address;
+    point.dataset.fixedKey=key;
+    fields.classList.add('hidden');
+    fixedBox.classList.remove('hidden');
+    fixedBox.innerHTML='<b>'+esc(f.label)+'</b><small>'+esc(f.address)+'</small>';
+  }else{
+    point.dataset.fixedAddress='';
+    point.dataset.fixedKey='';
+    fields.classList.remove('hidden');
+    fixedBox.classList.add('hidden');
+    fixedBox.textContent='';
+  }
+}
+function configureSpecialPointTypes(enabled,letters){
+  (letters||['A','B']).forEach(letter=>{
+    const wrap=$('route'+letter+'TypeWrap'),sel=$('route'+letter+'Type');
+    if(!wrap||!sel)return;
+    wrap.classList.toggle('hidden',!enabled);
+    if(enabled){
+      sel.value='address';
+      sel.onchange=()=>{applySpecialPointType(letter);rwInvalidateGridQuote()};
+      applySpecialPointType(letter);
+    }else{
+      sel.onchange=null;
+    }
+  });
+}
+
+function configureRouteUI(){
+  if(!selected)return;
+  const plan=routePlan(selected.id); window._routePlan=plan;
+  setPointUI('A',plan.A,true); setPointUI('B',plan.B,plan.mode!=='a'); setPointUI('C',plan.C,plan.mode==='abc');
+  const specialLetters=selected.id==='grid_one'?RW_GRID_POINT_LETTERS.slice(0,rwGridPointCount):['A','B'];
+  configureSpecialPointTypes(selected.id==='corporate'||selected.id==='grid_one',specialLetters);
+  const cityOnly=!!(plan.B&&plan.B.cityOnlyAllowed&&plan.mode==='abc');
+  rwGridCityInputs(selected.id==='grid_one');
+  if(selected.id==='grid_one'){rwGridResetPoints();rwGridUpdatePointLabels();}else{const gc=$('gridRouteControls'),gn=$('gridRouteCount');if(gc)gc.classList.add('hidden');if(gn)gn.classList.add('hidden');}
+  $('routeBStreetLabel').innerHTML='Улица / адрес <span class="req">*</span>';
+  $('routeBHouseLabel').innerHTML='№ дома <span style="font-weight:600;color:#8a96a8">(необязательно)</span>';
+  if(selected.id==='corporate'){
+    $('routeStepHelp').textContent='Корпоративный маршрут: обязательные точки A → B.';
+    $('routeHelp').innerHTML='<b>Корпоративный заказ:</b> тариф и программа поездки определяются по вашей договорённости с RusWeo. Обязательно укажите точки <b>A</b> и <b>B</b>. Для обычной точки укажите город и улицу. № дома — если он известен. Если точка — аэропорт Караско, аэропорт Пунта-дель-Эсте или Buquebus, выберите её в поле «Тип точки»: адрес подставится автоматически. Адреса вводятся латиницей.';
+  }else if(selected.id==='grid_one'){
+    $('routeStepHelp').textContent='Создайте маршрут A → B и при необходимости добавьте дополнительные точки.';
+    $('routeHelp').innerHTML='<b>Другие направления:</b> ⚠️ Возможны ошибки, проходит тестирование.<br><br>Начните с точек <b>A</b> и <b>B</b>. Кнопкой «Добавить точку» можно добавить остановки <b>C–F</b>. Для обычной точки выберите город и укажите улицу. № дома — если он известен. Для Carrasco, аэропорта Punta del Este или Buquebus выберите готовую транспортную точку — адрес вводить не нужно. Цена считается по всему маршруту. На каждой промежуточной точке можно указать ожидание от 30 минут до 4 часов по тарифу 500 UYU/час. Если после ожидания нужно вернуться, добавьте следующую точку с городом возврата.';
+  }else if(plan.mode==='a'){
+    $('routeStepHelp').textContent='Для почасовой поездки нужен только точный адрес подачи.';
+    $('routeHelp').innerHTML='<b>Почасовая поездка:</b> укажите адрес подачи — город и улицу. № дома — если он известен. Маршрут во время поездки можно согласовать с водителем.';
+  }else if(plan.mode==='abc'){
+    $('routeStepHelp').textContent='Маршрут туда и обратно: A → B → C.';
+    $('routeHelp').innerHTML='<b>Поездка на целый день / туда и обратно:</b> для точек <b>A</b>, <b>B</b> и <b>C</b> укажите город и улицу. № дома — если он известен. Все адреса — латиницей.';
+  }else{
+    $('routeStepHelp').textContent='Поездка в одну сторону: точка A → точка B.';
+    $('routeHelp').innerHTML='<b>Поездка в одну сторону:</b> нужны точки <b>A</b> и <b>B</b>. Для обычного адреса укажите город и улицу. № дома — если он известен. Аэропорты Carrasco/Punta del Este и Buquebus подставляются автоматически. Все вводимые адреса — латиницей.';
+  }
+}
+function readPoint(letter,cfg,label,allowCityOnly){
+  const point=$('route'+letter+'Point');
+  const fixedAddress=String(point.dataset.fixedAddress||'').trim();
+  if(fixedAddress){
+    const fixedKey=String(point.dataset.fixedKey||cfg?.fixed||'');
+    const f=fixed[fixedKey]||{};
+    return {city:String(f.gridCity||(cfg&&cfg.city)||''),street:'',house:'',address:fixedAddress,fixed:true,fixedKey};
+  }
+  return allowCityOnly?cityOrFullPoint($('route'+letter+'City').value,$('route'+letter+'Street').value,$('route'+letter+'House').value,label):fullPoint($('route'+letter+'City').value,$('route'+letter+'Street').value,$('route'+letter+'House').value,label);
+}
+function getRouteData(){
+  if(!selected)throw new Error('Сначала выберите услугу.');
+  const plan=window._routePlan||routePlan(selected.id);
+  if(selected.id==='grid_one'){
+    const points=RW_GRID_POINT_LETTERS.slice(0,rwGridPointCount).map((letter,i)=>{const p=readPoint(letter,{},'Точка '+letter,false);p.fixed_key=p.fixedKey||'';p.wait_minutes=(i===0||i===rwGridPointCount-1)?0:Number($('route'+letter+'Wait')?.value||0);return p});
+    const first=points[0],last=points[points.length-1],middles=points.slice(1,-1);
+    $('from').value=first.address;$('to').value=last.address;
+    const out={route_mode:'multi',from:first.address,to:last.address,via:middles.map(p=>p.address).join(' | '),route_text:points.map(p=>p.address).join(' → '),route_points_json:JSON.stringify(points)};
+    RW_GRID_POINT_LETTERS.forEach((letter,i)=>{const p=points[i]||{};const k=letter.toLowerCase();out['route_'+k+'_city']=p.city||'';out['route_'+k+'_street']=p.street||'';out['route_'+k+'_house']=p.house||'';out['route_'+k+'_wait_minutes']=String(p.wait_minutes||0);out['route_'+k+'_fixed']=p.fixedKey||'';});
+    return out;
+  }
+  const A=readPoint('A',plan.A,'Точка A',false);
+  if(plan.mode==='a'){
+    $('from').value=A.address;$('to').value='';
+    return {route_mode:'a',from:A.address,to:'',via:'',route_text:A.address,route_a_city:A.city||'',route_a_street:A.street||'',route_a_house:A.house||'',route_a_fixed:A.fixedKey||'',route_b_city:'',route_b_street:'',route_b_house:'',route_b_fixed:'',route_c_city:'',route_c_street:'',route_c_house:''};
+  }
+  const B=readPoint('B',plan.B,'Точка B',!!(plan.B&&plan.B.cityOnlyAllowed&&plan.mode==='abc'));
+  if(plan.mode==='ab'){
+    $('from').value=A.address;$('to').value=B.address;
+    return {route_mode:'ab',from:A.address,to:B.address,via:'',route_text:A.address+' → '+B.address,route_a_city:A.city||'',route_a_street:A.street||'',route_a_house:A.house||'',route_a_fixed:A.fixedKey||'',route_b_city:B.city||'',route_b_street:B.street||'',route_b_house:B.house||'',route_b_fixed:B.fixedKey||'',route_c_city:'',route_c_street:'',route_c_house:''};
+  }
+  const C=readPoint('C',plan.C,'Точка C',false);
+  $('from').value=A.address;$('to').value=C.address;
+  return {route_mode:'abc',from:A.address,to:C.address,via:B.address,route_text:A.address+' → '+B.address+' → '+C.address,route_a_city:A.city||'',route_a_street:A.street||'',route_a_house:A.house||'',route_a_fixed:A.fixedKey||'',route_b_city:B.city||'',route_b_street:B.street||'',route_b_house:B.house||'',route_b_fixed:B.fixedKey||'',route_c_city:C.city||'',route_c_street:C.street||'',route_c_house:C.house||''};
+}
+
+function profile(){let u=tg?.initDataUnsafe?.user||null;if(!u){try{let h=parent!==window?parent.location.hash:location.hash;let o=new URLSearchParams(String(h||'').replace(/^#/,'').replace(/^\?/,''));let raw=o.get('tgWebAppData');if(raw){let x=new URLSearchParams(raw),ru=x.get('user');if(ru)u=JSON.parse(ru)}}catch(e){}}if(!u&&isAndroid){u={id:localStorage.getItem('uruway_auth_telegram_user_id')||'',first_name:localStorage.getItem('uruway_auth_first_name')||'',last_name:localStorage.getItem('uruway_auth_last_name')||'',username:localStorage.getItem('uruway_auth_username')||''};}return {id:String(u?.id||'').trim(),first:String(u?.first_name||'').trim(),last:String(u?.last_name||'').trim(),username:String(u?.username||'').trim().replace(/^@/,'')};}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function money(n,c){return Number(n).toLocaleString('ru-RU')+' '+c}
+function jsonp(url){return new Promise((resolve,reject)=>{const cb='uru_'+Date.now()+'_'+Math.floor(Math.random()*1e6),s=document.createElement('script');window[cb]=d=>{delete window[cb];s.remove();resolve(d)};s.onerror=()=>{delete window[cb];s.remove();reject(new Error('Ошибка соединения с сервером'))};s.src=url+(url.includes('?')?'&':'?')+'callback='+cb;document.head.appendChild(s)})}
+function renderMenu(){
+  let h='';
+  if(corporateMode){
+    h+='<div class="service-group"><div class="service-group-title">🏢 Корпоративный заказ</div><div class="service-cards"><button class="service-card" data-id="corporate"><span class="service-card-main"><span class="service-card-name">Корпоративное бронирование STANDARD</span><span class="service-card-check">✓ Выбрано</span></span><span class="service-card-price">по договорённости</span><span class="service-card-arrow">›</span></button></div></div>';
+  }else services.forEach(g=>{
+    h+='<div class="service-group"><div class="service-group-title">'+esc(g.g)+'</div><div class="service-cards">';
+    g.a.forEach(x=>{
+      h+='<button class="service-card" data-id="'+x.id+'"><span class="service-card-main"><span class="service-card-name">'+esc(x.n)+'</span><span class="service-card-check">✓ Выбрано</span></span><span class="service-card-price">'+esc(x.manual?x.label:(x.autoGrid?x.label:money(x.p,x.c)))+'</span><span class="service-card-arrow">›</span></button>'
+    });
+    h+='</div></div>'
+  });
+  $('serviceList').innerHTML=h;
+  $('serviceList').querySelectorAll('.service-card').forEach(b=>b.onclick=()=>choose(b.dataset.id))
+}
+function allItems(){const corp={id:'corporate',n:'Корпоративное бронирование STANDARD',manual:true,label:'по договорённости',f:'',t:'',d:'Корпоративный заказ по индивидуальным условиям. Тарифы из общего пакета не применяются, стоимость в форме не отображается.',icon:'🏢'};return corporateMode?[corp]:services.flatMap(g=>g.a.map(x=>({...x,icon:g.i})))}
+function setRoute(el,raw){el.readOnly=false;el.value='';if(fixed[raw]){el.value=fixed[raw];el.readOnly=true;return}if(raw){el.placeholder='Укажите точный адрес в '+raw}else el.placeholder='Укажите точный адрес'}
+function choose(id){
+  selected=allItems().find(x=>x.id===id);
+  if(!selected)return;
+  $('serviceList').querySelectorAll('.service-card').forEach(b=>b.classList.toggle('selected',b.dataset.id===id));document.querySelectorAll('.rw2-service-tile').forEach(b=>b.classList.toggle('selected',b.dataset.service===id));
+  $('servicePickerIcon').textContent=selected.icon||'🚕';
+  $('servicePickerTitle').textContent=selected.n;
+  $('servicePickerSub').textContent=selected.manual?selected.label:(selected.autoGrid?selected.label:money(selected.p,selected.c));
+  setServiceDropdown(false);
+  $('serviceDescription').textContent=selected.d;
+  $('serviceDescription').classList.remove('hidden');
+  $('hoursWrap').classList.toggle('hidden',id!=='hourly');
+  $('corpPassengerWrap').classList.toggle('hidden',id!=='corporate');
+  $('corpCommentWrap').classList.add('hidden');
+  configureRouteUI();
+  renderPassengers();
+  updatePrice();
+  checkAvailability()
+}
+function setServiceDropdown(open){
+  $('serviceList').classList.toggle('hidden',!open);
+  $('serviceBackdrop').classList.toggle('hidden',!open);
+  $('servicePicker').classList.toggle('open',open);
+}
+document.querySelectorAll('.rw2-service-tile').forEach(b=>b.addEventListener('click',()=>choose(b.dataset.service)));
+$('servicePicker').onclick=()=>setServiceDropdown($('serviceList').classList.contains('hidden'));
+$('serviceBackdrop').onclick=()=>setServiceDropdown(false);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')setServiceDropdown(false)});
+function renderHours(){for(let i=3;i<=12;i++)$('hours').insertAdjacentHTML('beforeend','<option value="'+i+'">'+i+' часа</option>')}
+function renderPassengers(){const corp=selected?.id==='corporate';$('passengers').innerHTML=(corp?[0,1,2,3]:[1,2,3]).map(x=>'<option>'+x+'</option>').join('');renderBags()}
+function maxBagsForPassengers(p){if(selected?.id==='corporate'&&p===0)return 8;if(p===1)return 6;if(p===2)return 3;if(p===3)return 1;return 0}
+function renderBags(){let p=Number($('passengers').value||1),max=maxBagsForPassengers(p),prev=Number($('bags').value||0);$('bags').innerHTML=Array.from({length:max+1},(_,i)=>'<option value="'+i+'">'+i+'</option>').join('');$('bags').value=String(Math.min(prev,max))}
+$('passengers').onchange=renderBags;
+function updatePrice(){
+  if(!selected){$('price').textContent='—';return}
+  if(selected.id==='corporate'){$('priceLabel').textContent='Корпоративный заказ';$('price').textContent='По договорённости';$('discountText').textContent='';return}
+  if(selected.id==='grid_one'){
+    const signature=rwGridCurrentQuoteSignature();
+    if(rwGridQuote&&rwGridQuote.ok&&rwGridQuoteSignature===signature)return;
+    rwScheduleGridQuote();
+    return
+  }
+  if(selected.manual){$('priceLabel').textContent='Стоимость';$('price').textContent='Рассчитывается водителем';$('discountText').textContent=loyalty.discountPercent===10?'🎁 Применится скидка 10%':'';return}
+  let base=selected.id==='hourly'?600*Number($('hours').value||3):Number(selected.p),cur=selected.id==='hourly'?'UYU':selected.c,disc=Number(loyalty.discountPercent||0),fin=disc===10?Math.round(base*.9*100)/100:base;
+  $('priceLabel').textContent=selected.id==='hourly'?'Стоимость за '+Number($('hours').value||3)+' ч.':'Стоимость услуги';$('price').textContent=money(fin,cur);$('discountText').textContent=disc===10?'🎁 Ваш '+loyalty.orderNumber+'-й заказ — скидка 10%':''
+}
+RW_GRID_POINT_LETTERS.forEach(letter=>{
+  const el=$('route'+letter+'City');
+  if(el){
+    el.addEventListener('input',rwInvalidateGridQuote);
+    el.addEventListener('change',rwInvalidateGridQuote)
+  }
+});
+if($('gridAddPoint'))$('gridAddPoint').onclick=rwGridAddPoint;
+if($('gridRemovePoint'))$('gridRemovePoint').onclick=rwGridRemovePoint;
+['B','C','D','E','F'].forEach(letter=>{
+  const w=$('route'+letter+'Wait');
+  if(w)w.addEventListener('change',rwInvalidateGridQuote)
+});
+$('hours').onchange=()=>{updatePrice();checkAvailability()};
+async function loadLoyalty(){let p=profile(),tgname=$('telegram').value.trim();try{loyalty=await jsonp(BACKEND_URL+'?action=discount_status&telegram_user_id='+encodeURIComponent(p.id)+'&telegram='+encodeURIComponent(tgname));updatePrice()}catch(e){}}
+$('telegram').addEventListener('change',loadLoyalty);
+function scheduleAvailability(){clearTimeout(availabilityTimer);availabilityTimer=setTimeout(checkAvailability,280)}
+$('date').onchange=scheduleAvailability;$('time').onchange=scheduleAvailability;
+
+function localDateTimeValue(dateStr,timeStr){
+  if(!dateStr||!timeStr)return null;
+  const d=new Date(dateStr+'T'+timeStr+':00');
+  return Number.isNaN(d.getTime())?null:d
+}
+function validateMinimumLeadTime(){
+  const requested=localDateTimeValue($('date').value,$('time').value);
+  if(!requested)return true;
+  const minimum=new Date(Date.now()+2*60*60*1000);
+  if(requested.getTime()<minimum.getTime()){
+    throw new Error('Ближайшее доступное время бронирования — не раньше чем через 2 часа.')
+  }
+  return true
+}
+function refreshMinimumBookingTime(){
+  const minimum=new Date(Date.now()+2*60*60*1000);
+  const yyyy=minimum.getFullYear();
+  const mm=String(minimum.getMonth()+1).padStart(2,'0');
+  const dd=String(minimum.getDate()).padStart(2,'0');
+  $('date').min=yyyy+'-'+mm+'-'+dd;
+  if($('date').value===yyyy+'-'+mm+'-'+dd){
+    $('time').min=String(minimum.getHours()).padStart(2,'0')+':'+String(minimum.getMinutes()).padStart(2,'0')
+  }else{
+    $('time').removeAttribute('min')
+  }
+}
+
+function rwCalendarAvailabilityQueryV16(){
+  if(!selected)return '';
+  let extra='';
+  if(selected.id==='grid_one'){
+    const cities=rwGridPointCities().filter(Boolean);
+    const km=Number((rwGridQuote&&(rwGridQuote.customer_distance_km||rwGridQuote.distance_km))||0);
+    const wait=Number((rwGridQuote&&rwGridQuote.waiting_minutes)||0);
+    if(km>0)extra+='&grid_km='+encodeURIComponent(km);
+    if(wait>0)extra+='&wait_minutes='+encodeURIComponent(wait);
+    if(cities.length)extra+='&route_cities='+encodeURIComponent(cities.join('|'));
+  }
+  return extra;
+}
+async function checkAvailability(){
+  refreshMinimumBookingTime();
+  if(!selected||!$('date').value||!$('time').value){
+    $('availabilityBox').className='status';
+    $('availabilityBox').textContent='Выберите услугу, дату и время — система проверит свободное окно.';
+    return
+  }
+  let b=$('availabilityBox');b.className='status';
+  try{validateMinimumLeadTime()}catch(e){b.className='status bad';b.textContent=e.message;return}
+  if(selected.id==='grid_one'&&!rwGridQuote){
+    b.className='status';
+    b.textContent='Время предварительно проверяется. После заполнения маршрута система пересчитает занятость с учётом дороги и ожидания.';
+  }else{
+    b.textContent='Проверяем доступность…';
+  }
+  try{
+    let r=await jsonp(
+      BACKEND_URL+
+      '?action=availability&vehicle_class=standard&service='+encodeURIComponent(selected.id)+
+      '&date='+encodeURIComponent($('date').value)+
+      '&time='+encodeURIComponent($('time').value)+
+      '&hours='+encodeURIComponent($('hours').value||3)+
+      rwCalendarAvailabilityQueryV16()
+    );
+    if(r.available){
+      b.className='status ok';
+      b.textContent='✓ Время доступно для бронирования.';
+    }else{
+      b.className='status bad';
+      b.textContent=(r.message||'Выбранное время занято.')+(r.next?' Ближайшее свободное: '+r.next:'')
+    }
+  }catch(e){
+    b.className='status bad';
+    b.textContent='Не удалось проверить календарь. Повторите попытку.'
+  }
+}
+function contactCheck(){['telegram','phone','whatsapp'].forEach(id=>$(id).parentElement.classList.toggle('contact-valid',!!$(id).value.trim()))}['telegram','phone','whatsapp'].forEach(id=>$(id).addEventListener('input',contactCheck));
+function token(){return 'site_'+Date.now()+'_'+Math.random().toString(36).slice(2,11)}
+async function waitResult(t){for(let i=0;i<40;i++){await new Promise(r=>setTimeout(r,500));let s=await jsonp(BACKEND_URL+'?action=site_status&request_token='+encodeURIComponent(t));if(s.ready)return s.result}throw new Error('Сервер не подтвердил создание заявки. Проверьте Telegram перед повторной отправкой.')}
+$('submit').onclick=async()=>{
+  try{
+    if(!selected)throw new Error('Выберите услугу.');
+    if(!$('date').value||!$('time').value)throw new Error('Укажите дату и время.');
+    validateMinimumLeadTime();
+    if(!$('booster').value)throw new Error('Обязательно выберите: нужен ли детский бустер — Да или Нет.');
+    let passengerCount=Number($('passengers').value||0),bagCount=Number($('bags').value||0),bagLimit=maxBagsForPassengers(passengerCount);
+    if(bagCount>bagLimit)throw new Error('Для '+passengerCount+' пассажир(а/ов) можно выбрать максимум '+bagLimit+' чемодан(а/ов).');
+    if(!$('finalPayment').value)throw new Error('Укажите способ окончательного расчёта.');
+    const route=getRouteData();
+    if(selected.id==='grid_one'){
+      const routePoints=JSON.parse(route.route_points_json||'[]');
+      if(routePoints.length<2||routePoints.some(p=>!rwKnownTariffCity(p.city)))throw new Error('Выберите все города маршрута из тарифной сетки RusWeo.');
+      if(!rwGridQuote||!rwGridQuote.ok)throw new Error('Сначала дождитесь расчёта стоимости маршрута.');
+      if(rwGridQuote.type==='business_required')throw new Error('Для маршрута свыше 150 км используйте кнопку «Перейти в BUSINESS».');
+      if(rwGridQuote.type!=='standard')throw new Error(rwGridQuote.message||'Для этого направления используйте кнопку «Обратиться к оператору».');
+    }
+    if(!$('telegram').value.trim()&&!$('phone').value.trim()&&!$('whatsapp').value.trim())throw new Error('Укажите хотя бы один контакт: телефон, WhatsApp или Telegram.');
+    if(selected.id==='corporate'&&!$('corpPassenger').value.trim())throw new Error('Укажите имя или ник пассажира.');
+    const p=profile(),rt=token(),btn=$('submit');
+    btn.disabled=true;btn.textContent='Отправляем заявку…';
+    let basePrice=selected.manual?'':(selected.id==='grid_one'?(rwGridQuote?(rwGridQuote.client_price_usd||rwGridQuote.price_usd):''):(selected.id==='hourly'?600*Number($('hours').value||3):selected.p));
+    let currency=selected.id==='hourly'?'UYU':(selected.id==='grid_one'?'USD':(selected.c||''));
+    let data={service:selected.id,service_name:selected.n,date:$('date').value,time:$('time').value,hours:$('hours').value||3,...route,passengers:$('passengers').value,bags:$('bags').value,booster:$('booster').value,final_payment:$('finalPayment').value,telegram:$('telegram').value.trim(),phone:$('phone').value.trim(),whatsapp:$('whatsapp').value.trim(),telegram_user_id:p.id,telegram_first_name:p.first,telegram_last_name:p.last,telegram_username:p.username,corporate_passenger_name:$('corpPassenger').value.trim(),comment:$('orderComment').value.trim()||$('corpComment').value.trim(),price:String(basePrice),currency,source:(isAndroid?'android':'telegram_mini_app'),request_token:rt,vehicle_class:'standard',app_session:(isAndroid?String(localStorage.getItem('uruway_auth_session')||''):'')};
+    let form=document.createElement('form');form.method='POST';form.action=BACKEND_URL;form.target='booking_sink';form.style.display='none';
+    let inp=document.createElement('input');inp.type='hidden';inp.name='payload';inp.value=JSON.stringify(data);form.appendChild(inp);document.body.appendChild(form);form.submit();form.remove();
+    let result=await waitResult(rt);if(!result||result.ok!==true)throw new Error(result?.error||result?.message||'Не удалось создать заявку.');
+    showSuccess(result,data);
+    try{if(isAndroid&&window.UruWayAndroid&&typeof window.UruWayAndroid.trackBooking==='function'){window.UruWayAndroid.trackBooking(rt,String(result.booking_number||''));}}catch(e){}
+    btn.disabled=false;btn.textContent='Отправить заявку';
+  }catch(e){alert(e.message||String(e));$('submit').disabled=false;$('submit').textContent='Отправить заявку'}
+};
+function paymentLabel(v){return({cash_usd:'Наличными — USD',cash_uyu:'Наличными — UYU',transfer_usd:'Переводом — USD',transfer_uyu:'Переводом — UYU',usdt:'USDT',later:'Уточню позже с оператором'})[v]||'—'}
+function showSuccess(r,d){
+  let contacts=[d.telegram,d.phone,d.whatsapp].filter(Boolean).join(' · '),cost=selected.id==='corporate'?'По договорённости':selected.manual?'Рассчитывается водителем':(r.price?money(r.price,r.currency):$('price').textContent);
+  $('successNote').innerHTML='Заявка №'+esc(r.booking_number||'')+' создана и передана водителю STANDARD.<br>Подтверждение и кнопка отмены будут отправлены в Telegram.';
+  $('summary').innerHTML='<div class="row"><span>Номер заявки</span><b class="booking-no">№'+esc(r.booking_number||'')+'</b></div><div class="row"><span>Услуга</span><b>'+esc(selected.n)+'</b></div><div class="row"><span>Дата и время</span><b>'+esc(d.date)+' · '+esc(d.time)+'</b></div>'+(selected.id==='hourly'?'<div class="row"><span>Количество часов</span><b>'+esc(d.hours)+'</b></div>':'')+'<div class="row"><span>Маршрут</span><b>'+esc(d.route_text||((d.from||'')+' → '+(d.to||'')))+'</b></div>'+(selected.id==='grid_one'&&rwGridWaitingSummary()?'<div class="row"><span>Ожидание</span><b>'+esc(rwGridWaitingSummary())+'</b></div>':'')+'<div class="row"><span>Пассажиры</span><b>'+esc(d.passengers)+'</b></div><div class="row"><span>Багаж</span><b>'+esc(d.bags)+'</b></div><div class="row"><span>Детский бустер</span><b>'+(d.booster==='yes'?'Да':'Нет')+'</b></div><div class="row"><span>Окончательный расчёт</span><b>'+esc(paymentLabel(d.final_payment))+'</b></div>'+(selected.id==='corporate'?'<div class="row"><span>Пассажир</span><b>'+esc(d.corporate_passenger_name)+'</b></div>':'')+(d.comment?'<div class="row"><span>Комментарий</span><b>'+esc(d.comment)+'</b></div>':'')+'<div class="row"><span>Контакты</span><b>'+esc(contacts)+'</b></div><div class="row"><span>Стоимость</span><b>'+esc(cost)+'</b></div>';
+  $('bookingCard').classList.add('hidden');$('successCard').classList.remove('hidden');scrollTo(0,0)
+}
+$('mainMenuV43').onclick=()=>{try{if(parent&&parent!==window&&typeof parent.backToHub==='function'){parent.backToHub();return}}catch(e){}history.back()};$('back').onclick=()=>{$('successCard').classList.add('hidden');$('bookingCard').classList.remove('hidden');scrollTo(0,0)};$('operator').onclick=()=>{const u='https://t.me/maxriccomsk';try{if(isAndroid&&window.UruWayAndroid&&typeof window.UruWayAndroid.openExternal==='function'){window.UruWayAndroid.openExternal(u);return}if(tg?.openTelegramLink)tg.openTelegramLink(u);else location.href=u}catch(e){location.href=u}};
+(function init(){renderHours();refreshMinimumBookingTime();renderMenu();if(corporateMode){document.querySelector('.rw2-all-services-head b').textContent='Корпоративное бронирование';document.querySelector('.rw2-all-services-head small').textContent='Заказ оформляется только по индивидуальным договорённостям с RusWeo.';const pop=document.querySelector('.rw2-popular-head');if(pop)pop.classList.add('hidden');const tiles=$('rw2ServiceTiles');if(tiles)tiles.classList.add('hidden');choose('corporate');}renderPassengers();let p=profile();if(p.username)$('telegram').value='@'+p.username;contactCheck();let now=new Date(Date.now()+2*3600000);let y=now.getFullYear(),m=String(now.getMonth()+1).padStart(2,'0'),d=String(now.getDate()).padStart(2,'0');$('date').min=y+'-'+m+'-'+d;loadLoyalty()})();
+</script>
+
+<script id="rusweoWizardLogicV2">
+let currentBookingStep=1;
+const bookingStepMeta=[
+  ['Выберите услугу','Услуга'],
+  ['Дата и время','Время'],
+  ['Пассажиры и детали','Детали'],
+  ['Маршрут','Маршрут'],
+  ['Контакты','Связь'],
+  ['Проверка заказа','Готово']
+];
+function validateBookingWizardStep(step){
+  if(step===1){if(!selected)throw new Error('Выберите услугу или направление.');}
+  if(step===2){if(!$('date').value||!$('time').value)throw new Error('Укажите дату и время.');validateMinimumLeadTime();}
+  if(step===3){
+    if(!$('booster').value)throw new Error('Выберите, нужен ли детский бустер.');
+    const passengerCount=Number($('passengers').value||0),bagCount=Number($('bags').value||0),bagLimit=maxBagsForPassengers(passengerCount);
+    if(bagCount>bagLimit)throw new Error('Для '+passengerCount+' пассажир(а/ов) можно выбрать максимум '+bagLimit+' чемодан(а/ов).');
+    if(!$('finalPayment').value)throw new Error('Укажите способ окончательного расчёта.');
+    if(selected&&selected.id==='corporate'&&!$('corpPassenger').value.trim())throw new Error('Укажите имя или ник пассажира.');
+  }
+  if(step===4){
+    getRouteData();
+  }
+  if(step===5){
+    if(!$('telegram').value.trim()&&!$('phone').value.trim()&&!$('whatsapp').value.trim())throw new Error('Укажите хотя бы один контакт: Telegram, телефон или WhatsApp.');
+  }
+  return true;
+}
+function refreshWizardReview(){
+  const box=$('wizardReviewSummary');if(!box)return;
+  const rows=[];
+  const add=(a,b)=>rows.push('<div class="wizard-review-row"><span>'+esc(a)+'</span><b>'+esc(String(b||'—'))+'</b></div>');
+  add('Услуга',selected?selected.n:'—');
+  add('Дата и время',($('date').value||'—')+' · '+($('time').value||'—'));
+  if(selected&&selected.id==='hourly')add('Продолжительность',($('hours').value||'3')+' ч.');
+  try{add('Маршрут',getRouteData().route_text);if(selected&&selected.id==='grid_one'){const ws=rwGridWaitingSummary();if(ws)add('Ожидание',ws)}}catch(e){add('Маршрут','Заполните маршрут на шаге 4')}
+  add('Пассажиры / багаж',($('passengers').value||'—')+' / '+($('bags').value||'—'));
+  add('Бустер',$('booster').value==='yes'?'Да':$('booster').value==='no'?'Нет':'—');
+  add('Оплата',paymentLabel($('finalPayment').value));
+  const contacts=[$('telegram').value.trim(),$('phone').value.trim(),$('whatsapp').value.trim()].filter(Boolean).join(' · ');
+  add('Контакт',contacts||'—');
+  if(selected&&selected.id==='corporate')add('Пассажир',$('corpPassenger').value.trim()||'—');
+  if($('orderComment').value.trim())add('Комментарий',$('orderComment').value.trim());
+  box.innerHTML=rows.join('');
+  updatePrice();
+}
+function setBookingStep(step){
+  currentBookingStep=Math.max(1,Math.min(6,Number(step)||1));
+  document.querySelectorAll('.booking-step').forEach(el=>el.classList.toggle('active',Number(el.dataset.step)===currentBookingStep));
+  document.querySelectorAll('.wizard-dot').forEach(el=>{const n=Number(el.dataset.dot);el.classList.toggle('active',n===currentBookingStep);el.classList.toggle('done',n<currentBookingStep)});
+  const meta=bookingStepMeta[currentBookingStep-1];
+  if($('wizardKicker'))$('wizardKicker').textContent='Шаг '+currentBookingStep+' из 6';
+  if($('wizardTitle'))$('wizardTitle').textContent=meta[0];
+  if($('wizardCount'))$('wizardCount').textContent=currentBookingStep+'/6';
+  if($('wizardProgressFill'))$('wizardProgressFill').style.width=((currentBookingStep-1)/5*100)+'%';
+  if(currentBookingStep===6)refreshWizardReview();
+  const modalMode=(()=>{try{return new URLSearchParams(location.search).get('modal')==='1'}catch(e){return false}})();
+  if(modalMode){
+    window.scrollTo(0,0);
+  }else{
+    const card=$('bookingCard');if(card){const y=card.getBoundingClientRect().top+window.scrollY-12;window.scrollTo({top:Math.max(0,y),behavior:'smooth'})}
+  }
+}
+function nextBookingStep(){try{validateBookingWizardStep(currentBookingStep);setBookingStep(currentBookingStep+1)}catch(e){alert(e.message||String(e))}}
+function prevBookingStep(){setBookingStep(currentBookingStep-1)}
+window.nextBookingStep=nextBookingStep;window.prevBookingStep=prevBookingStep;window.setBookingStep=setBookingStep;
+setTimeout(()=>setBookingStep(1),0);
+</script>
+
+<script id="rusweo-navigation-v32">
+(function(){window.rw31Back=window.rw31Back||function(){try{if(typeof window.rw2SetTab==='function'){var account=document.getElementById('rw2AccountPanel');if(account&&account.classList.contains('active')){window.rw2SetTab('transfer');window.scrollTo({top:0,behavior:'smooth'});return}if(location.hash==='#rw2Partners'){history.replaceState(null,'',location.pathname+location.search);window.scrollTo({top:0,behavior:'smooth'});return}}}catch(e){}try{if(history.length>1){history.back();return}}catch(e){}try{window.location.href='index.html'}catch(e){}};window.rw31Navigate=window.rw31Navigate||function(target){target=String(target||'home');if(typeof window.rw2SetTab==='function'){if(target==='home'){window.rw2SetTab('transfer');try{history.replaceState(null,'',location.pathname)}catch(e){}setTimeout(function(){window.scrollTo({top:0,behavior:'smooth'})},40);return}if(target==='partners'){window.rw2SetTab('transfer');try{history.replaceState(null,'',location.pathname+'?section=partners#rw2Partners')}catch(e){}var go=function(){var el=document.getElementById('rw2Partners');if(el)el.scrollIntoView({behavior:'smooth',block:'start'})};requestAnimationFrame(function(){requestAnimationFrame(go)});setTimeout(go,180);return}if(target==='account'){window.rw2SetTab('account');setTimeout(function(){window.scrollTo({top:0,behavior:'smooth'})},40);return}if(target==='guide'){window.location.href='guide.html';return}}if(target==='partners'){window.location.href='index.html?section=partners#rw2Partners';return}if(target==='account'){window.location.href='index.html?view=account';return}if(target==='guide'){window.location.href='guide.html';return}window.location.href='index.html'}})();
+</script>
+
+
+<script id="rusweo-global-fixed-nav-runtime-v43">
+(function(){
+  function pinRusWeoBottomNav(){
+    var nav=document.getElementById('rw31GlobalBottomNav')||document.querySelector('.rw31-bottom-nav.rw31-bottom-nav-3');
+    if(!nav)return;
+    if(nav.parentElement!==document.body)document.body.appendChild(nav);
+    nav.setAttribute('data-rw31-fixed','true');
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',pinRusWeoBottomNav,{once:true});}
+  else{pinRusWeoBottomNav();}
+  window.addEventListener('pageshow',pinRusWeoBottomNav);
+  window.addEventListener('resize',pinRusWeoBottomNav);
+})();
+</script>
+
+
+<script id="rusweo-booking-embedded-runtime-v57">
+(function(){
+  let embedded=false;
+  try{
+    embedded=new URLSearchParams(location.search).get('embedded')==='1'&&window.parent&&window.parent!==window;
+  }catch(e){}
+  if(!embedded)return;
+
+  document.documentElement.classList.add('rw2-embedded-booking');
+  document.body.classList.add('rw2-embedded-booking');
+
+  function parentNav(target){
+    try{
+      if(parent&&parent!==window&&typeof parent.rw31Navigate==='function'){
+        parent.rw31Navigate(String(target||'home'));
+        return true;
+      }
+    }catch(e){}
+    return false;
+  }
+
+  window.rw31Navigate=function(target){parentNav(target)};
+  window.rw31Back=function(){
+    try{
+      if(parent&&parent!==window&&typeof parent.backToHub==='function'){
+        parent.backToHub();return;
+      }
+    }catch(e){}
+    parentNav('home');
+  };
+
+  function removeChildNav(){
+    document.querySelectorAll('.rw31-bottom-nav,#rw31GlobalBottomNav').forEach(n=>n.remove());
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',removeChildNav,{once:true});
+  }else{
+    removeChildNav();
+  }
+
+  new MutationObserver(removeChildNav).observe(document.documentElement,{childList:true,subtree:true});
+})();
+</script>
+
+
+<script id="rusweo-booking-modal-fit-test-v1">
+(function(){
+  let isModal=false;
+  try{isModal=new URLSearchParams(location.search).get('modal')==='1'}catch(e){}
+  if(!isModal)return;
+
+  const MIN_SCALE=.74;
+  const COMPACT_MIN_SCALE=.68;
+  let fitTimer=0;
+
+  function targetPanel(){
+    const success=document.getElementById('successCard');
+    if(success&&!success.classList.contains('hidden'))return success;
+    return document.getElementById('bookingCard');
+  }
+
+  function clearFit(el){
+    if(!el)return;
+    el.style.transform='';
+    el.style.width='';
+    el.style.maxWidth='';
+  }
+
+  function fitModalStep(){
+    clearTimeout(fitTimer);
+    const el=targetPanel();
+    if(!el)return;
+
+    clearFit(el);
+
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      const available=Math.max(100,(window.innerHeight||document.documentElement.clientHeight||0)-20);
+      const natural=Math.max(el.scrollHeight,el.getBoundingClientRect().height);
+
+      if(!(available>100&&natural>100))return;
+
+      let scale=Math.min(1,available/natural);
+      const compactTarget=
+        el.id==='successCard' ||
+        !!document.querySelector('#bookingStep5.active');
+      scale=Math.max(compactTarget?COMPACT_MIN_SCALE:MIN_SCALE,scale);
+
+      if(scale<.999){
+        el.style.transform='scale('+scale.toFixed(5)+')';
+        el.style.transformOrigin='top left';
+        el.style.width='calc(100% / '+scale.toFixed(5)+')';
+        el.style.maxWidth='none';
+      }
+
+      /*
+        Scrolling is ALWAYS available in modal mode on every wizard step.
+        If a step is longer than the viewport, the user can simply swipe down.
+        The parent Home never scrolls while the booking modal is open.
+      */
+      window.scrollTo(0,0);
+    }));
+  }
+
+  window.rw2FitBookingModal=fitModalStep;
+
+  document.addEventListener('DOMContentLoaded',()=>{
+    fitTimer=setTimeout(fitModalStep,80);
+  },{once:true});
+
+  /*
+    Refit only for a real wizard-step or booking/success-panel transition.
+    Async price/calendar status changes must never rescale the entire modal.
+  */
+  const bootObserver=()=>{
+    const card=document.getElementById('bookingCard');
+    const success=document.getElementById('successCard');
+    const steps=Array.from(document.querySelectorAll('.booking-step'));
+
+    const scheduleFit=()=>{
+      clearTimeout(fitTimer);
+      fitTimer=setTimeout(fitModalStep,70);
+    };
+
+    const obs=new MutationObserver(scheduleFit);
+
+    steps.forEach(step=>{
+      obs.observe(step,{
+        attributes:true,
+        attributeFilter:['class']
+      });
+    });
+
+    if(card){
+      obs.observe(card,{
+        attributes:true,
+        attributeFilter:['class']
+      });
+    }
+
+    if(success){
+      obs.observe(success,{
+        attributes:true,
+        attributeFilter:['class']
+      });
+    }
+  };
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',bootObserver,{once:true});
+  }else{
+    bootObserver();
+  }
+})();
+</script>
+
+
+<script id="rusweo-booking-six-step-contacts-v1">
+/*
+  Booking UX rule:
+  Step 4 = Route only.
+  Step 5 = Contacts only.
+  Step 6 = Review/submit.
+  Existing field IDs and backend payload remain unchanged.
+*/
+</script>
+
+
+<script id="rusweo-booking-compact-contact-success-note-v3">
+/*
+  Contacts (5/6) and the final success/operator screen are compacted to fit a
+  normal mobile modal without requiring a swipe. Scrolling remains available
+  as a fallback for unusually short screens or enlarged system text.
+*/
+</script>
+
+</body></html>

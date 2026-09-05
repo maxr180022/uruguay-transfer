@@ -1586,7 +1586,11 @@ function openBooking(){
   if(!modal||!f)return;
 
   const corporate=(new URLSearchParams(location.search).get('mode')==='corporate');
-  f.src='booking.html?embedded=1&modal=1&vehicle_class=standard'+(corporate?'&mode=corporate':'')+'&_='+Date.now()+(window.location.hash||'');
+  const bookingParams=new URLSearchParams({embedded:'1',modal:'1',vehicle_class:'standard',_:String(Date.now())});
+  if(corporate)bookingParams.set('mode','corporate');
+  const initData=String(tg&&tg.initData||'').trim();
+  if(initData)bookingParams.set('init_data',initData);
+  f.src='booking.html?'+bookingParams.toString()+(window.location.hash||'');
 
   document.body.classList.add('rw2-booking-modal-open');
   modal.classList.add('active');

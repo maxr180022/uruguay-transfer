@@ -1066,7 +1066,7 @@ html.rw2-modal-booking main.wrap{
 <iframe name="booking_sink" id="bookingSink" style="display:none"></iframe>
 <script>
 const BACKEND_URL='https://script.google.com/macros/s/AKfycbzWkerEeWR-3EjY1QW44Az6pj1TjJK9_ktfnrdcgFILlD6Cnqb4z2X97zSknKRJw-i3jw/exec';
-const RW_EXPECTED_BACKEND_BUILD='RUSWEO_2.5_CORPORATE_ACCESS_FIX_20260904_2048';
+const RW_EXPECTED_BACKEND_BUILD='RUSWEO_2.7_CODE75_FINANCE_CORPORATE_FINAL_20260905';
 const tg=window.Telegram?.WebApp;const isAndroid=!!(window.UruWayAndroid&&typeof window.UruWayAndroid.getPlatform==='function');const params=new URLSearchParams(location.search);const corporateRequested=params.get('mode')==='corporate';let corporateMode=corporateRequested;
 if(tg){try{tg.ready();tg.expand()}catch(e){}}
 const $=id=>document.getElementById(id);
@@ -1573,12 +1573,20 @@ function getRouteData(){
   return {route_mode:'abc',from:A.address,to:C.address,via:B.address,route_text:A.address+' → '+B.address+' → '+C.address,route_a_city:A.city||'',route_a_street:A.street||'',route_a_house:A.house||'',route_a_fixed:A.fixedKey||'',route_b_city:B.city||'',route_b_street:B.street||'',route_b_house:B.house||'',route_b_fixed:B.fixedKey||'',route_c_city:C.city||'',route_c_street:C.street||'',route_c_house:C.house||''};
 }
 
-function profile(){let u=tg?.initDataUnsafe?.user||null;if(!u){try{let h=parent!==window?parent.location.hash:location.hash;let o=new URLSearchParams(String(h||'').replace(/^#/,'').replace(/^\?/,''));let raw=o.get('tgWebAppData');if(raw){let x=new URLSearchParams(raw),ru=x.get('user');if(ru)u=JSON.parse(ru)}}catch(e){}}if(!u&&isAndroid){u={id:localStorage.getItem('uruway_auth_telegram_user_id')||'',first_name:localStorage.getItem('uruway_auth_first_name')||'',last_name:localStorage.getItem('uruway_auth_last_name')||'',username:localStorage.getItem('uruway_auth_username')||''};}return {id:String(u?.id||'').trim(),first:String(u?.first_name||'').trim(),last:String(u?.last_name||'').trim(),username:String(u?.username||'').trim().replace(/^@/,'')};}
+function profile(){
+  let u=tg?.initDataUnsafe?.user||null;
+  if(!u){try{let h=parent!==window?parent.location.hash:location.hash;let o=new URLSearchParams(String(h||'').replace(/^#/,'').replace(/^\?/,''));let raw=o.get('tgWebAppData');if(raw){let x=new URLSearchParams(raw),ru=x.get('user');if(ru)u=JSON.parse(ru)}}catch(e){}}
+  if(!u&&!isAndroid){try{const ru=new URLSearchParams(telegramInitData()).get('user');if(ru)u=JSON.parse(ru)}catch(e){}}
+  if(!u&&isAndroid){u={id:params.get('telegram_user_id')||localStorage.getItem('uruway_auth_telegram_user_id')||'',first_name:params.get('telegram_first_name')||params.get('first_name')||localStorage.getItem('uruway_auth_first_name')||'',last_name:params.get('telegram_last_name')||params.get('last_name')||localStorage.getItem('uruway_auth_last_name')||'',username:params.get('telegram_username')||params.get('username')||localStorage.getItem('uruway_auth_username')||''};}
+  return {id:String(u?.id||'').trim(),first:String(u?.first_name||'').trim(),last:String(u?.last_name||'').trim(),username:String(u?.username||'').trim().replace(/^@/,'')};
+}
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function money(n,c){return Number(n).toLocaleString('ru-RU')+' '+c}
 function jsonp(url){return new Promise((resolve,reject)=>{const cb='uru_'+Date.now()+'_'+Math.floor(Math.random()*1e6),s=document.createElement('script');window[cb]=d=>{delete window[cb];s.remove();resolve(d)};s.onerror=()=>{delete window[cb];s.remove();reject(new Error('Ошибка соединения с сервером'))};s.src=url+(url.includes('?')?'&':'?')+'callback='+cb;document.head.appendChild(s)})}
 function telegramInitData(){
   let raw=String(tg?.initData||'').trim();
+  if(raw)return raw;
+  raw=String(params.get('init_data')||params.get('tgWebAppData')||'').trim();
   if(raw)return raw;
   try{
     let h=parent!==window?parent.location.hash:location.hash;
@@ -1596,7 +1604,7 @@ async function loadCorporateAccess(){
   try{
     let url=BACKEND_URL+'?action=corporate_access';
     if(isAndroid){
-      const session=String(localStorage.getItem('uruway_auth_session')||'').trim();
+      const session=String(params.get('app_session')||localStorage.getItem('uruway_auth_session')||'').trim();
       if(!session)return corporateMode;
       url+='&app_session='+encodeURIComponent(session);
     }else{
@@ -1605,7 +1613,8 @@ async function loadCorporateAccess(){
       url+='&init_data='+encodeURIComponent(initData);
     }
     const r=await jsonp(url);
-    const allowed=!!(r&&r.ok===true&&r.is_corporate===true);
+    if(!r||r.ok!==true)throw new Error(r&&r.error?r.error:'Не удалось проверить корпоративный доступ');
+    const allowed=r.is_corporate===true;
     if(allowed!==corporateMode){
       corporateMode=allowed;
       renderMenu();
@@ -1805,7 +1814,7 @@ $('submit').onclick=async()=>{
     btn.disabled=true;btn.textContent='Отправляем заявку…';
     let basePrice=selected.manual?'':(selected.id==='grid_one'?(rwGridQuote?(rwGridQuote.client_price_usd||rwGridQuote.price_usd):''):(selected.id==='hourly'?600*Number($('hours').value||3):selected.p));
     let currency=selected.id==='hourly'?'UYU':(selected.id==='grid_one'?'USD':(selected.c||''));
-    let data={service:selected.id,service_name:selected.n,date:$('date').value,time:$('time').value,hours:$('hours').value||3,...route,passengers:$('passengers').value,bags:$('bags').value,booster:$('booster').value,final_payment:$('finalPayment').value,telegram:$('telegram').value.trim(),phone:$('phone').value.trim(),whatsapp:$('whatsapp').value.trim(),telegram_user_id:p.id,telegram_first_name:p.first,telegram_last_name:p.last,telegram_username:p.username,corporate_passenger_name:$('corpPassenger').value.trim(),comment:$('orderComment').value.trim()||$('corpComment').value.trim(),price:String(basePrice),currency,source:(isAndroid?'android':'telegram_mini_app'),request_token:rt,vehicle_class:'standard',app_session:(isAndroid?String(localStorage.getItem('uruway_auth_session')||''):'')};
+    let data={service:selected.id,service_name:selected.n,date:$('date').value,time:$('time').value,hours:$('hours').value||3,...route,passengers:$('passengers').value,bags:$('bags').value,booster:$('booster').value,final_payment:$('finalPayment').value,telegram:$('telegram').value.trim(),phone:$('phone').value.trim(),whatsapp:$('whatsapp').value.trim(),telegram_user_id:p.id,telegram_first_name:p.first,telegram_last_name:p.last,telegram_username:p.username,corporate_passenger_name:$('corpPassenger').value.trim(),comment:$('orderComment').value.trim()||$('corpComment').value.trim(),price:String(basePrice),currency,source:(isAndroid?'android':'telegram_mini_app'),request_token:rt,vehicle_class:'standard',app_session:(isAndroid?String(params.get('app_session')||localStorage.getItem('uruway_auth_session')||''):''),init_data:(isAndroid?'':telegramInitData())};
     let form=document.createElement('form');form.method='POST';form.action=BACKEND_URL;form.target='booking_sink';form.style.display='none';
     let inp=document.createElement('input');inp.type='hidden';inp.name='payload';inp.value=JSON.stringify(data);form.appendChild(inp);document.body.appendChild(form);form.submit();form.remove();
     let result=await waitResult(rt);if(!result||result.ok!==true)throw new Error(result?.error||result?.message||'Не удалось создать заявку.');

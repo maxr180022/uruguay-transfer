@@ -651,9 +651,9 @@
    ============================================================ */
 (function(){
   'use strict';
-  if(window.RusWeo&&window.RusWeo.guard&&window.RusWeo.guard.patch==='FIX15_GLOBAL_RETRY_DIAGNOSTICS_20260925')return;
+  if(window.RusWeo&&window.RusWeo.guard&&window.RusWeo.guard.patch==='FIX21_GLOBAL_RETRY_DIAGNOSTICS_20260925')return;
 
-  var PATCH='FIX15_GLOBAL_RETRY_DIAGNOSTICS_20260925';
+  var PATCH='FIX21_GLOBAL_RETRY_DIAGNOSTICS_20260925';
   var APP_VERSION='3.1.42';
   var WEB_REVISION='31116';
   var API_FALLBACK='https://script.google.com/macros/s/AKfycbzWkerEeWR-3EjY1QW44Az6pj1TjJK9_ktfnrdcgFILlD6Cnqb4z2X97zSknKRJw-i3jw/exec';
@@ -728,9 +728,30 @@
     if(/chat|message|send/.test(st))return 'Не удалось выполнить операцию с сообщением после повторной попытки';
     if(/order|booking/.test(st))return 'Не удалось выполнить операцию с заказом после повторной попытки';
     if(/news/.test(st))return 'Не удалось загрузить данные после повторной попытки';
+    if(/runtime_js|runtime_promise/.test(st))return 'Обнаружена ошибка интерфейса приложения';
+    if(/resource_load/.test(st))return 'Не удалось загрузить ресурс интерфейса';
     return 'Действие не выполнилось после автоматической повторной попытки';
   }
-  function queueRead(){try{var x=JSON.parse(localStorage.getItem(QUEUE_KEY)||'[]');return Array.isArray(x)?x:[]}catch(_){return []}}
+  function queueRead(){
+    try{
+      var x=JSON.parse(localStorage.getItem(QUEUE_KEY)||'[]');if(!Array.isArray(x))return [];
+      var cleaned=[],dirty=false;
+      x.forEach(function(item){
+        if(isSelfDiagnosticPayload(item)){dirty=true;return;}
+        if(item&&typeof item==='object'){
+          var before=JSON.stringify(item);
+          item.error=sanitizeDiagnosticText(item.error||'',700);
+          item.context=sanitizeDiagnosticText(item.context||'',500);
+          item.route=sanitizeDiagnosticText(item.route||'',500);
+          item.request_signature=sanitizeDiagnosticText(item.request_signature||'',500);
+          if(JSON.stringify(item)!==before)dirty=true;
+        }
+        cleaned.push(item);
+      });
+      if(dirty||cleaned.length!==x.length){try{localStorage.setItem(QUEUE_KEY,JSON.stringify(cleaned.slice(-30)))}catch(_){ }}
+      return cleaned;
+    }catch(_){return []}
+  }
   function queueWrite(items){try{localStorage.setItem(QUEUE_KEY,JSON.stringify((items||[]).slice(-30)))}catch(_){ }}
   function queuePush(payload){var q=queueRead();q.push(payload);queueWrite(q)}
   function fingerprint(payload){return [payload.page,payload.stage,payload.client_action,payload.error,payload.context].join('|').slice(0,900)}
@@ -746,12 +767,12 @@
       client_action:safe(meta.action||meta.operation||'',120),
       friendly:friendly(meta,err),
       cause:safe(meta.cause||cause(err),180),
-      error:safe(err&&err.message?err.message:err||'Неизвестная ошибка',700),
+      error:sanitizeDiagnosticText(err&&err.message?err.message:err||'Неизвестная ошибка',700),
       platform:platform(),page:safe(meta.page||page(),100),device:device(),
       app_version:APP_VERSION,web_revision:WEB_REVISION,
-      context:safe(meta.context||meta.order_id||meta.id||'',500),
-      route:safe(meta.route||'',500),
-      request_signature:safe(meta.request_signature||'',500),
+      context:sanitizeDiagnosticText(meta.context||meta.order_id||meta.id||'',500),
+      route:sanitizeDiagnosticText(meta.route||'',500),
+      request_signature:sanitizeDiagnosticText(meta.request_signature||'',500),
       client_attempt:String(Math.max(1,Number(meta.attempt||meta.client_attempt||2))),
       target_telegram_user_id:safe(meta.target_user_id||'',80),
       target_telegram_username:safe(meta.target_username||'',120),
@@ -780,6 +801,7 @@
   async function reportFinal(err,meta){
     try{if(err&&typeof err==='object'&&err.rwGuardReported===true)return false;if(err&&typeof err==='object')err.rwGuardReported=true}catch(_){ }
     var payload=basePayload(err,meta);
+    if(isSelfDiagnosticPayload(payload))return false;
     if(shouldSuppress(payload))return false;
     try{await sendReport(payload);return true}catch(_){queuePush(payload);return false}
   }
@@ -796,6 +818,25 @@
     throw last||new Error('operation_failed');
   }
   function parseUrl(input){try{return new URL(typeof input==='string'?input:input&&input.url||'',location.href)}catch(_){return null}}
+  function isSensitiveQueryKey(key){return /^(init_data|session_token|operator_init_data|operator_app_session|auth|authorization|token|access_token|callback|rw_request_id)$/i.test(String(key||''))}
+  function sanitizeResourceRef(raw){
+    var u=parseUrl(raw);if(!u)return safe(raw,300);
+    var action=String(u.searchParams.get('action')||'').trim();
+    var out=u.origin+u.pathname;
+    if(action)out+='?action='+encodeURIComponent(action);
+    return safe(out,300);
+  }
+  function sanitizeDiagnosticText(v,n){
+    var s=safe(v,Math.max(700,Number(n||700)*2));
+    s=s.replace(/([?&](?:init_data|session_token|operator_init_data|operator_app_session|auth|authorization|token|access_token|callback|rw_request_id)=)[^&\s]*/gi,'$1[redacted]');
+    return safe(s,n||700);
+  }
+  function isSelfDiagnosticResource(raw){var u=parseUrl(raw);return !!(u&&String(u.searchParams.get('action')||'')==='client_error_report_v116')}
+  function isSelfDiagnosticPayload(payload){
+    if(!payload)return false;
+    var blob=[payload.error,payload.context,payload.route,payload.request_signature].join(' ');
+    return /action=client_error_report_v116/i.test(String(blob||''));
+  }
   function mutationRetrySafe(url){
     if(!url)return false;var action=String(url.searchParams.get('action')||''),mode=String(url.searchParams.get('mode')||'').toLowerCase();
     if(action==='booking_edit_save_v97')return true;
@@ -845,11 +886,26 @@
 
   window.RusWeo=window.RusWeo||{};
   window.RusWeo.guard={patch:PATCH,run:run,reportFinal:reportFinal,flush:flush,device:device,newRequestId:nowId,isTechnicalPayload:isTechnicalPayload,payloadError:payloadError};
+  window.RusWeo.guardFix21Qa={sanitizeResourceRef:sanitizeResourceRef,sanitizeDiagnosticText:sanitizeDiagnosticText,isSelfDiagnosticResource:isSelfDiagnosticResource};
 
   window.addEventListener('error',function(ev){
     try{
-      if(ev&&ev.target&&ev.target!==window){var tag=String(ev.target.tagName||'');if(tag==='SCRIPT'||tag==='LINK')reportFinal(new Error('Не загрузился ресурс: '+safe(ev.target.src||ev.target.href||tag,300)),{stage:'resource_load',action:tag,attempt:1});return}
-      var er=ev&&ev.error?ev.error:new Error(String(ev&&ev.message||'JavaScript runtime error'));
+      if(ev&&ev.target&&ev.target!==window){
+        var tag=String(ev.target.tagName||'');
+        if(tag==='SCRIPT'||tag==='LINK'){
+          var rawResource=String(ev.target.src||ev.target.href||tag);
+          // FIX21: the diagnostic transport must never diagnose its own SCRIPT
+          // failure. Otherwise one failed client_error_report creates an
+          // unbounded resource_load -> client_error_report recursion.
+          if(isSelfDiagnosticResource(rawResource))return;
+          reportFinal(new Error('Не загрузился ресурс: '+sanitizeResourceRef(rawResource)),{stage:'resource_load',action:tag,attempt:1});
+          return;
+        }
+      }
+      var msg=String(ev&&ev.message||'').trim();
+      var opaque=/^Script error\.?$/i.test(msg)&&!(ev&&ev.error)&&!String(ev&&ev.filename||'').trim()&&!Number(ev&&ev.lineno||0)&&!Number(ev&&ev.colno||0);
+      if(opaque)return;
+      var er=ev&&ev.error?ev.error:new Error(msg||'JavaScript runtime error');
       reportFinal(er,{stage:'runtime_js',action:'window.error',context:safe((ev&&ev.filename||'')+':'+(ev&&ev.lineno||''),220),attempt:1});
     }catch(_){ }
   },true);

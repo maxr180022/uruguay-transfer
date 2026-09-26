@@ -11,7 +11,7 @@
 <meta name="rusweo-ui-policy" content="single-design-v3-driver-android-telegram">
 <meta name="rusweo-runtime-policy" content="driver-root-back-minimize-v2">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="rusweo-platform.js?v=31116fix15"></script>
+<script src="rusweo-platform.js?v=31116fix21"></script>
 <script src="rusweo-auth.js?v=31116"></script>
 <!-- RusWeo 3.1.42 / V115 · explicit final-point wait + return-home departure lifecycle -->
 
@@ -1093,6 +1093,7 @@ button{
 })();
 </script>
 
+<!-- RUSWEO V116 FIX20 — HOURLY AVAILABILITY + STABLE FINANCE GRID + OPAQUE ERROR FILTER -->
 <body>
 <div id="rwTgDriverGate" style="position:fixed;inset:0;z-index:2147483647;background:#eef7ff;display:flex;align-items:center;justify-content:center;padding:22px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif">
   <div style="width:min(100%,420px);background:#fff;border:1px solid #d9e6f1;border-radius:22px;padding:24px;text-align:center;box-shadow:0 14px 40px rgba(22,60,95,.12)">
@@ -1900,9 +1901,15 @@ async function rwFinanceMutateV95(accountingAction,payload){
   body.accounting_action=String(accountingAction||'');
   if(!body.rw_request_id)body.rw_request_id=(window.RusWeo&&window.RusWeo.guard&&window.RusWeo.guard.newRequestId)?window.RusWeo.guard.newRequestId():('rw15_fin_'+Date.now()+'_'+Math.random().toString(36).slice(2,9));
   const timeout=body.accounting_action==='export_month_pdf'?120000:45000;
-  const telegramFinance=window.RusWeoTelegramDriverBridge===true&&typeof window.rwTelegramFinanceActionV116==='function';
+  // FIX22: lifecycle snoozes are non-idempotent time mutations. Never route
+  // them through the Telegram compatibility bridge because that bridge has its
+  // own automatic retry. Use the same direct authenticated JSONP transport in
+  // both containers and issue exactly one request.
+  const timeMutation=(body.accounting_action==='home_snooze_v115'||body.accounting_action==='return_home_snooze_v116');
+  const telegramFinance=!timeMutation&&window.RusWeoTelegramDriverBridge===true&&typeof window.rwTelegramFinanceActionV116==='function';
+  const maxAttempts=timeMutation?1:2;
   let last=null;
-  for(let attempt=1;attempt<=2;attempt++){
+  for(let attempt=1;attempt<=maxAttempts;attempt++){
     try{
       const data=telegramFinance
         ? await window.rwTelegramFinanceActionV116(String(accountingAction||''),body)
@@ -1910,9 +1917,9 @@ async function rwFinanceMutateV95(accountingAction,payload){
       if(!data||data.ok!==true)throw new Error(rwFinanceFriendlyErrorV95(data,'Ошибка учёта'));
       if(!rwFinanceBuildOkV95(data))throw new Error('Backend RusWeo V95+ не активен. Обновите Code.gs и deployment Apps Script.');
       return data;
-    }catch(e){last=e;if(attempt<2)await new Promise(function(r){setTimeout(r,350)})}
+    }catch(e){last=e;if(attempt<maxAttempts)await new Promise(function(r){setTimeout(r,350)})}
   }
-  try{if(window.RusWeo&&window.RusWeo.guard)window.RusWeo.guard.reportFinal(last,{stage:'driver_finance_mutation',action:body.accounting_action,context:String(body.id||body.month||''),friendly:'Финансовое действие не выполнилось после автоматической повторной попытки',attempt:2}).catch(()=>{})}catch(_){ }
+  try{if(window.RusWeo&&window.RusWeo.guard)window.RusWeo.guard.reportFinal(last,{stage:'driver_finance_mutation',action:body.accounting_action,context:String(body.id||body.month||''),friendly:maxAttempts>1?'Финансовое действие не выполнилось после автоматической повторной попытки':'Действие не выполнилось. Повторите его вручную.',attempt:maxAttempts}).catch(()=>{})}catch(_){ }
   throw last||new Error('Ошибка учёта');
 }
 let rwFinanceReportSeqV95=0;
@@ -3066,7 +3073,10 @@ function submitDriverActionV23(){
     const minutes=Math.round(Number(el&&el.value||0));
     if([10,15,20].indexOf(minutes)===-1){alert('Выберите 10, 15 или 20 минут.');return;}
     closeDriverActionV23();
-    driverAction(state.orderId,'return_home_snooze_v116',{snooze_minutes:minutes});
+    // FIX22: the installed Android JS bridge can drop newly introduced JSON
+    // fields such as snooze_minutes. Use the proven full-payload JSONP/session
+    // transport already used by V113 charging/departure adjustments.
+    accountingActionV24('return_home_snooze_v116',{id:state.orderId,snooze_minutes:minutes});
     return;
   }
 
@@ -3079,7 +3089,8 @@ function submitDriverActionV23(){
     mins=Math.round(Number(mins));
     if(!(mins>0&&mins<=240)){alert('Укажите от 1 до 240 минут.');return;}
     closeDriverActionV23();
-    driverAction(state.orderId,'home_snooze_v115',{snooze_minutes:mins});
+    // FIX22: bypass legacy Android driverActionV23 payload filtering.
+    accountingActionV24('home_snooze_v115',{id:state.orderId,snooze_minutes:mins});
     return;
   }
 
@@ -8441,7 +8452,7 @@ body .order-card.rw3-live-card .driver-detail-tabs-v24{display:none!important}
   window.cancelUberV69=function(){const a=active();if(!a)return;if(!confirm('Отменить ошибочно начатую смену Uber? Она не попадёт в статистику.'))return;call('uber_cancel',{shift_id:String(a.id||''),month:String(a.month||monthKey())})};
   function calendarHtml(r){r=r||{};const month=String(r.month||monthKey()),m=month.match(/^(\d{4})-(\d{2})$/);if(!m)return '';const year=Number(m[1]),mon=Number(m[2]),days=new Date(year,mon,0).getDate(),first=(new Date(year,mon-1,1).getDay()+6)%7,map={};(Array.isArray(r.work_calendar_days)?r.work_calendar_days:[]).forEach(d=>map[String(d.date||'')]=d);let cells='';for(let i=0;i<first;i++)cells+='<div class="rw-workcal-v69-day empty"></div>';for(let day=1;day<=days;day++){const key=month+'-'+String(day).padStart(2,'0'),d=map[key]||{},th=n(d.transfer_hours),uh=n(d.uber_hours),cls=th>0&&uh>0?'both':(th>0?'transfer':(uh>0?'uber':''));cells+='<div class="rw-workcal-v69-day '+cls+'"><div class="d">'+day+'</div>'+(th>0?'<div class="t">🚘 '+e(hours(th))+'</div>':'')+(uh>0?'<div class="t">🚕 '+e(hours(uh))+'</div>':'')+'</div>'}return '<div class="finance-card-v25 rw-workcal-v69"><h3>📅 Рабочий календарь</h3><div class="rw-workcal-v69-head"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div><div class="rw-workcal-v69-grid">'+cells+'</div><div class="rw-workcal-v69-legend">🚘 RusWeo · 🚕 Uber · календарь показывает фактическую работу. Uber не блокирует свободное время для заявок.</div></div>'}
   function cards(data){const r=data&&data.report?data.report:{};return '<div id="rwUberFinanceV69" class="finance-card-v25 rw-uber-v69-card"><h3>🚕 Uber</h3><div class="finance-kpis-v25"><div class="finance-kpi-v25 rw-uber-v69-main"><small>Заработано Uber</small><strong>'+e(money(r.uber_income_uyu))+' UYU</strong></div><div class="finance-kpi-v25 rw-uber-v69-main"><small>Отработано Uber</small><strong>'+e(hours(r.uber_hours))+'</strong></div><div class="finance-kpi-v25"><small>Пробег Uber</small><strong>'+e(money(r.uber_km))+' км</strong></div><div class="finance-kpi-v25"><small>Резерв авто</small><strong>−'+e(money(r.uber_km_cost_uyu))+' UYU</strong></div><div class="finance-kpi-v25"><small>После резерва авто</small><strong>'+e(money(r.uber_net_uyu))+' UYU</strong></div><div class="finance-kpi-v25"><small>Uber доход/час</small><strong>'+e(money(r.uber_income_per_hour_uyu))+' UYU/ч</strong></div></div><div class="rw-uber-v69-note">Смен: '+e(String(r.uber_shifts||0))+' · стоимость 1 км: '+e(money(r.vehicle_cost_per_km_uyu))+' UYU. Та же стоимость, что в поездках.</div></div><div id="rwAllWorkFinanceV69" class="finance-card-v25"><h3>📊 Вся работа за месяц</h3><div class="finance-kpis-v25"><div class="finance-kpi-v25"><small>Общие часы</small><strong>'+e(hours(r.total_work_hours))+'</strong></div><div class="finance-kpi-v25"><small>Общий пробег</small><strong>'+e(money(r.total_work_km))+' км</strong></div><div class="finance-kpi-v25"><small>Весь доход</small><strong>'+e(money(r.total_all_income_uyu))+' UYU</strong></div><div class="finance-kpi-v25"><small>Общий чистый итог</small><strong>'+e(money(r.total_all_net_uyu))+' UYU</strong></div><div class="finance-kpi-v25"><small>Общий чистый доход/час</small><strong>'+e(money(r.total_all_net_per_hour_uyu))+' UYU/ч</strong></div><button type="button" class="finance-kpi-v25 rw-new-car-reserve-v116" onclick="openNewCarReserveHistoryV116()" title="Открыть помесячную историю накоплений. Резерв уже учтён в себестоимости 12,616 UYU/км и повторно из чистого итога не вычитается."><small>На новую машину за месяц</small><strong>$'+e(money(r.new_car_reserve_usd))+'</strong><span class="rw-new-car-open-v116">История накоплений ›</span></button></div><div class="rw-uber-v69-note rw-new-car-note-v116">Накопление только на новую машину: '+e(money(r.total_work_km))+' км × '+e(money(r.new_car_reserve_per_km_uyu))+' UYU/км · курс '+e(money(r.new_car_reserve_usd_rate))+' UYU/USD. Новый месяц начинается с 0; прошлые месяцы сохраняются в истории.</div></div>'+calendarHtml(r)}
-  function augmentFinance(){if(!lastData||!lastData.report)return;const root=document.querySelector('.finance-v25');if(!root)return;const grid=root.querySelector('.finance-grid-v25');if(grid&&!document.getElementById('rwUberFinanceButtonV69')){const b=document.createElement('button');b.id='rwUberFinanceButtonV69';b.className='finance-btn-v25 rw-uber-v69-btn';b.setAttribute('onclick','openUberV69()');b.innerHTML='<strong class="rw-uber-v112-title">🚕 Uber</strong><span>Выйти на линию · одометр · заработок</span>';grid.insertBefore(b,grid.firstChild)}['rwUberFinanceV69','rwAllWorkFinanceV69','rwWorkCalendarCardV69'].forEach(id=>{const x=document.getElementById(id);if(x)x.remove()});const h=document.createElement('div');h.innerHTML=cards(lastData);const nodes=Array.from(h.children);if(nodes[2])nodes[2].id='rwWorkCalendarCardV69';if(grid){let ref=grid.nextSibling;nodes.forEach(node=>root.insertBefore(node,ref))}}
+  function augmentFinance(){const root=document.querySelector('.finance-v25');if(!root)return;const grid=root.querySelector('.finance-grid-v25');if(grid&&!document.getElementById('rwUberFinanceButtonV69')){const b=document.createElement('button');b.id='rwUberFinanceButtonV69';b.className='finance-btn-v25 rw-uber-v69-btn';b.setAttribute('onclick','openUberV69()');b.innerHTML='<strong class="rw-uber-v112-title">🚕 Uber</strong><span>Выйти на линию · одометр · заработок</span>';grid.insertBefore(b,grid.firstChild)}if(!lastData||!lastData.report)return;['rwUberFinanceV69','rwAllWorkFinanceV69','rwWorkCalendarCardV69'].forEach(id=>{const x=document.getElementById(id);if(x)x.remove()});const h=document.createElement('div');h.innerHTML=cards(lastData);const nodes=Array.from(h.children);if(nodes[2])nodes[2].id='rwWorkCalendarCardV69';if(grid){let ref=grid.nextSibling;nodes.forEach(node=>root.insertBefore(node,ref))}}
   function augmentReport(){if(!lastData||!lastData.report)return;const body=document.getElementById('driverReportBodyV23');if(!body)return;const old=document.getElementById('rwUberReportExtraV69');if(old)old.remove();const x=document.createElement('div');x.id='rwUberReportExtraV69';x.innerHTML=cards(lastData);body.appendChild(x)}
   const baseMonth=window.UruWayApp&&window.UruWayApp.onDriverMonthReportV23;if(typeof baseMonth==='function'){window.UruWayApp.onDriverMonthReportV23=function(raw){const d=parse(raw);if(d&&d.ok===true&&d.report){lastData=d;uberBusy=false}const r=baseMonth.call(this,raw);setTimeout(()=>{augmentFinance();augmentReport();const o=document.getElementById('driverUberOverlayV69');if(o&&o.classList.contains('open'))renderUber()},0);return r}}
   const baseAcct=window.UruWayApp&&window.UruWayApp.onDriverAccountingActionV24;if(typeof baseAcct==='function'){window.UruWayApp.onDriverAccountingActionV24=function(raw){const d=parse(raw);if(d&&d.ok===true&&d.report){lastData=d;uberBusy=false}else if(d&&d.ok===false)uberBusy=false;const r=baseAcct.call(this,raw);setTimeout(()=>{augmentFinance();augmentReport();const o=document.getElementById('driverUberOverlayV69');if(o&&o.classList.contains('open'))renderUber()},0);return r}}
@@ -10093,6 +10104,17 @@ window.RusWeoV116Fix11TripNewCarReserve={
   informationalOnly:true,
   doubleDeduction:false
 };
+</script>
+
+<script id="RUSWEO_V116_FIX22_SNOOZE_TRANSPORT_CONTRACT">
+(function(){
+  'use strict';
+  window.RusWeoV116Fix22={
+    homeSnoozeTransport:'driver_finance_action_v95/full_payload',
+    returnHomeSnoozeTransport:'driver_finance_action_v95/full_payload',
+    blindRetryForTimeMutation:false
+  };
+})();
 </script>
 </body>
 </html>

@@ -2579,7 +2579,7 @@ function renderOrderCard(order){
           '🏠 До Pando ≈<strong>'+escHtml(rw116DurationV23(remaining))+'</strong> · ETA <strong>'+escHtml(etaText)+'</strong>'+
           (travel>0?' · дорога ≈'+escHtml(rw116DurationV23(travel)):'')+
           '</div>'+
-          '<button class="driver-secondary-action-v115" onclick="openReturnHomeSnoozeV116(\''+escHtml(id)+'\')">⏱ Пробка / задержка · +10 / +15 / +20 мин</button>';
+          '<button class="driver-secondary-action-v115 rw116-delay-compact" onclick="openReturnHomeSnoozeV116(\''+escHtml(id)+'\')">⏱ Задержка</button>';
       }else{
         actions +='<div class="rw116-home-eta">🏠 Возврат в Pando · маршрут не определён. Напоминание о прибытии автоматически не запускается.</div>';
       }
@@ -7742,9 +7742,10 @@ body .order-card.rw3-live-card .driver-detail-tabs-v24{display:none!important}
 
 
 <style id="rusweo-v116-home-eta-style">
-.rw116-home-eta{margin:12px 0;padding:12px 14px;border-radius:13px;
-  background:#edf8f1;color:#144c3a;font-size:15px;line-height:1.45}
+.rw116-home-eta{margin:7px 0 3px;padding:7px 9px;border-radius:10px;
+  background:#edf8f1;color:#144c3a;font-size:12px;line-height:1.3}
 .rw116-home-eta strong{font-weight:800}
+.driver-secondary-action-v115.rw116-delay-compact{display:inline-flex;width:auto;min-height:34px;margin:4px 0 2px;padding:7px 10px;border-radius:10px;font-size:12px;line-height:1.2;align-items:center;justify-content:center}
 </style>
 <script id="rusweo-v116-home-timer">
 (function(){'use strict';
@@ -10186,6 +10187,18 @@ window.RusWeoV116Fix11TripNewCarReserve={
   };
 })();
 </script>
+<script id="RUSWEO_V116_FIX24_UI_SCOPE_CONTRACT">
+(function(){
+  'use strict';
+  window.RusWeoV116Fix24={
+    scope:'return_home_ui_only',
+    delayLabel:'Задержка',
+    delayChoicesStayInModal:true,
+    lifecycleBehaviorChanged:false
+  };
+})();
+</script>
+
 </body>
 </html>
 

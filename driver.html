@@ -2345,6 +2345,48 @@ function orderPrice(order){
 }
 
 
+/* RUSWEO V116 FIX23 — RETURN-HOME CARD RENDER SAFETY
+   These helpers MUST stay in global scope. The previous rw31* helpers live
+   inside RUSWEO_3_LIVE_COMPACT_V3 and are not visible to the base card renderer. */
+function rw116DurationV23(value){
+  const minutes=Math.max(0,Math.round(Number(value||0)));
+  const h=Math.floor(minutes/60),m=minutes%60;
+  return h+':'+String(m).padStart(2,'0');
+}
+
+function rw116MontevideoClockV23(iso,fallback){
+  const direct=String(fallback||'').trim();
+  if(direct)return direct;
+  const raw=String(iso||'').trim();
+  if(!raw)return '';
+  try{
+    const d=new Date(raw);
+    if(isNaN(d.getTime()))return '';
+    return new Intl.DateTimeFormat('ru-RU',{
+      timeZone:'America/Montevideo',hour:'2-digit',minute:'2-digit',hour12:false
+    }).format(d);
+  }catch(_){return '';}
+}
+
+function rw116FallbackOrderCardV23(order,error){
+  order=order||{};
+  const id=String(order.id||'');
+  const number=String(order.number||id||'');
+  const status=String(order.status||'');
+  const name=String(order.client_name||order.name||order.clientName||'Клиент');
+  const route=String(order.route_text||'').trim()||[order.from,order.via,order.to].filter(Boolean).join(' → ');
+  const next=order.next_action||null;
+  let action='';
+  if(driverTab==='accepted'&&next&&next.action){
+    action='<button class="driver-primary-action-v23 green" onclick="driverRunNextActionV23(\''+escHtml(id)+'\')">'+escHtml(String(next.label||'Продолжить'))+'</button>';
+  }
+  return '<div class="order-card rw-v116-render-fallback" data-rw-order-id="'+escHtml(id)+'">'+
+    '<div class="order-top"><div><strong>№'+escHtml(number)+' · '+escHtml(name)+'</strong><div class="order-status">'+escHtml(statusText(order))+'</div></div></div>'+
+    (route?'<div class="order-route-v23">'+escHtml(route)+'</div>':'')+
+    '<div class="rw-v113-info">Карточка открыта в безопасном режиме. Основное действие заказа доступно.</div>'+
+    action+'</div>';
+}
+
 function renderDriverOrders(){
 
   const box =
@@ -2376,10 +2418,26 @@ function renderDriverOrders(){
 
   }
 
-  box.innerHTML =
-    orders
-      .map(renderOrderCard)
-      .join('');
+  const rendered=[];
+  orders.forEach(function(order){
+    try{
+      rendered.push(renderOrderCard(order));
+    }catch(error){
+      try{
+        if(window.RusWeo&&window.RusWeo.guard){
+          window.RusWeo.guard.reportFinal(error,{
+            stage:'driver_card_render',
+            action:String(order&&order.status||'unknown'),
+            context:'order '+String(order&&order.number||order&&order.id||''),
+            friendly:'Не удалось полностью отрисовать карточку заказа; включён безопасный режим.',
+            attempt:1
+          }).catch(function(){});
+        }
+      }catch(_){ }
+      rendered.push(rw116FallbackOrderCardV23(order,error));
+    }
+  });
+  box.innerHTML=rendered.join('');
 
 }
 
@@ -2515,11 +2573,11 @@ function renderOrderCard(order){
       const homeEta=Number(order.return_home_eta_ms||0);
       const travel=Number(order.return_home_travel_minutes||0);
       if(homeEta>0){
-        const etaText=rw31MontevideoTime(order.return_home_eta,'');
+        const etaText=rw116MontevideoClockV23(order.return_home_eta,'');
         const remaining=Math.max(0,Math.ceil((homeEta-Date.now())/60000));
         actions +='<div class="rw116-home-eta" role="status" data-rw116-home-eta="'+homeEta+'">'+
-          '🏠 До Pando ≈<strong>'+escHtml(rw31Min(remaining))+'</strong> · ETA <strong>'+escHtml(etaText)+'</strong>'+
-          (travel>0?' · дорога ≈'+escHtml(rw31Min(travel)):'')+
+          '🏠 До Pando ≈<strong>'+escHtml(rw116DurationV23(remaining))+'</strong> · ETA <strong>'+escHtml(etaText)+'</strong>'+
+          (travel>0?' · дорога ≈'+escHtml(rw116DurationV23(travel)):'')+
           '</div>'+
           '<button class="driver-secondary-action-v115" onclick="openReturnHomeSnoozeV116(\''+escHtml(id)+'\')">⏱ Пробка / задержка · +10 / +15 / +20 мин</button>';
       }else{
@@ -10104,6 +10162,18 @@ window.RusWeoV116Fix11TripNewCarReserve={
   informationalOnly:true,
   doubleDeduction:false
 };
+</script>
+
+<script id="RUSWEO_V116_FIX23_ACCEPTED_RENDER_CONTRACT">
+(function(){
+  'use strict';
+  window.RusWeoV116Fix23={
+    returningHomeHelpersGlobal:true,
+    acceptedCardFaultIsolation:true,
+    oneBrokenCardCannotBlankAcceptedList:true,
+    emergencyLifecycleFallback:true
+  };
+})();
 </script>
 
 <script id="RUSWEO_V116_FIX22_SNOOZE_TRANSPORT_CONTRACT">

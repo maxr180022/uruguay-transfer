@@ -2962,6 +2962,14 @@ function driverRunNextActionV23(orderId){
     return;
   }
 
+  // FIX25: departure from the final client point uses the same resilient,
+  // authenticated full-payload transport as V113/V115/V116 timing actions.
+  // Do not depend on the native BookingApi request path for this critical step.
+  if(next.action==='depart_home'){
+    accountingActionV24('depart_home_v116',{id:String(orderId||'')});
+    return;
+  }
+
   driverAction(orderId,next.action,{});
 }
 
@@ -10199,6 +10207,18 @@ window.RusWeoV116Fix11TripNewCarReserve={
 })();
 </script>
 
+
+<script id="RUSWEO_V116_FIX25_LIFECYCLE_TRANSPORT_CONTRACT">
+(function(){
+  'use strict';
+  window.RusWeoV116Fix25={
+    departHomeTransport:'driver_finance_action_v95/full_payload',
+    staleFinishClientIdempotent:true,
+    staleDepartHomeIdempotent:true,
+    uiChanged:false
+  };
+})();
+</script>
 </body>
 </html>
 

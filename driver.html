@@ -1032,8 +1032,9 @@ button{
 <style id="rusweo-v72-operator-booking-style">
 .driver-operator-booking-v72{width:100%;min-height:48px;border:1px solid #b7d9ef;border-radius:18px;background:#eef8ff;color:#145783;padding:12px 10px;font-size:13px;font-weight:950}
 .rw72-operator-field{display:grid;gap:7px;margin:13px 0}.rw72-operator-field label{font-size:12px;font-weight:900;color:#334155}.rw72-operator-field input{width:100%;box-sizing:border-box;border:1px solid #d1d5db;border-radius:14px;padding:12px 13px;font-size:15px;background:#fff;color:#111827}
-.rw72-operator-status{display:none;margin:10px 0;padding:11px 12px;border-radius:13px;font-size:12px;line-height:1.45}.rw72-operator-status.show{display:block}.rw72-operator-status.ok{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534}.rw72-operator-status.bad{background:#fff1f2;border:1px solid #fecdd3;color:#9f1239}
+.rw72-operator-status{display:none;margin:10px 0;padding:11px 12px;border-radius:13px;font-size:12px;line-height:1.45}.rw72-operator-status.show{display:block}.rw72-operator-status.ok{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534}.rw72-operator-status.bad{background:#fff1f2;border:1px solid #fecdd3;color:#9f1239}.rw37-operator-candidates{display:grid;gap:7px;margin-top:9px}.rw37-operator-candidate{width:100%;border:1px solid #b9d8ee;background:#fff;color:#16344d;border-radius:11px;padding:9px 10px;text-align:left;font:inherit;font-weight:800}.rw37-operator-candidate small{display:block;margin-top:2px;color:#6b7f90;font-weight:650}
 .rw72-operator-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}.rw72-operator-actions button{min-height:48px;border:0;border-radius:14px;font-weight:950}.rw72-operator-find{background:#e8f4fd;color:#17608f}.rw72-operator-create{background:#0a7fe8;color:#fff}.rw72-operator-create:disabled{opacity:.45}.rw72-operator-help{font-size:11px;color:#64748b;line-height:1.45;margin-top:7px}
+.rw38-operator-unlinked{grid-column:1/-1;background:#eef2ff;color:#3730a3;border:1px solid #c7d2fe!important}.rw38-operator-unlinked b{display:block;font-size:13px}.rw38-operator-unlinked small{display:block;margin-top:2px;font-size:10.5px;font-weight:750;color:#64748b}
 </style>
 
 <!-- RUSWEO V73 — operator booking lives in Finance next to Past Orders; shared Android/Telegram -->
@@ -1635,24 +1636,27 @@ button{
 </div>
 
 
+<!-- RUSWEO_V116_FIX37_CLIENT_PHONE_LOOKUP -->
+<!-- RUSWEO_V116_FIX38_CLIENT_ORDER_CONFIRM_LINK -->
 <div id="driverOperatorOverlayV72" class="driver-modal-v23">
   <div class="driver-modal-sheet-v23">
     <div class="driver-modal-head-v23">
       <div>
         <strong>👤 Оформить заказ клиенту</strong>
-        <div class="health-summary-v43">Клиент должен хотя бы один раз запустить бот RusWeo.</div>
+        <div class="health-summary-v43">Можно оформить заказ даже без Telegram ID и @username.</div>
       </div>
       <button type="button" class="driver-modal-close-v23" onclick="closeDriverOperatorBookingV72()">×</button>
     </div>
     <div class="rw72-operator-field">
-      <label for="driverOperatorClientV72">Telegram @username или Telegram ID</label>
-      <input id="driverOperatorClientV72" type="text" autocomplete="off" placeholder="@username или 123456789">
+      <label for="driverOperatorClientV72">Telegram @username, Telegram ID или телефон</label>
+      <input id="driverOperatorClientV72" type="text" autocomplete="off" inputmode="text" placeholder="@username, 123456789 или +598…">
     </div>
     <div id="driverOperatorStatusV72" class="rw72-operator-status"></div>
-    <div class="rw72-operator-help">Система не подменяет Telegram ID в браузере: backend сначала подтверждает ваш водительский доступ, затем сам находит клиента в базе пользователей бота.</div>
+    <div class="rw72-operator-help">Если клиент уже есть в RusWeo — найдите его по Telegram или телефону. Если это новый клиент или найти его невозможно, оформите заказ без Telegram: после создания RusWeo даст ссылку, клиент откроет её и сам подтвердит заказ.</div>
     <div class="rw72-operator-actions">
       <button type="button" class="rw72-operator-find" onclick="findDriverOperatorClientV72()">Найти клиента</button>
-      <button id="driverOperatorCreateV72" type="button" class="rw72-operator-create" onclick="startDriverOperatorBookingV72()" disabled>Оформить заказ</button>
+      <button id="driverOperatorCreateV72" type="button" class="rw72-operator-create" onclick="startDriverOperatorBookingV72()" disabled>Оформить найденному</button>
+      <button type="button" class="rw38-operator-unlinked" onclick="startDriverOperatorUnlinkedBookingFix38()"><b>🔗 Оформить без Telegram</b><small>После создания отправите клиенту ссылку на подтверждение</small></button>
     </div>
   </div>
 </div>
@@ -1671,6 +1675,7 @@ let driverOrders = [];
 let currentChatOrder = null;
 
 let driverOperatorClientV72 = null;
+let rwOperatorCandidatesFix37 = [];
 
 let chatPollTimer = null;
 
@@ -1906,7 +1911,7 @@ function rwFinanceJsonpOnceV95(action,extra,timeoutMs){
 }
 function rwFinanceBuildOkV95(data){
   const build=String(data&&data.backend_build||'');
-  return build.indexOf('RUSWEO_3_1_V95_')===0 || build==='RUSWEO_3_1_V97_ORDER_EDIT_20260916' || build==='RUSWEO_3_1_V99_DIAGNOSTICS_E2E_20260916' || build==='RUSWEO_3_1_V100_ROLE_ISOLATION_20260916' || build==='RUSWEO_3_1_V103_CORPORATE_CALENDAR_20260916' || build==='RUSWEO_3_1_V104_LOYALTY_PRICE_REMINDER_20260918' || build==='RUSWEO_3_1_V105_FINAL_PRICE_20260918' || build==='RUSWEO_3_1_V106_POINT_ETA_REMINDER_20260918' || build==='RUSWEO_3_1_V107_DRIVER_UI_SAFETY_20260919' || build==='RUSWEO_3_1_V108_HISTORY_ACTION_ROW_20260919' || build==='RUSWEO_3_1_V109_DRIVER_FINANCE_ALIGNMENT_20260919' || build==='RUSWEO_3_1_V110_DRIVER_HOME_COMPACT_20260919' || build==='RUSWEO_3_1_V111_MONEY_INPUT_TRANSPORT_20260919' || build==='RUSWEO_3_1_V112_ANDROID_NOTIFICATION_FINANCE_ALIGNMENT_20260919' || build==='RUSWEO_3_1_V113_TERMINAL_EV_ANALYTICS_20260921' || build==='RUSWEO_3_1_V114_LEGAL_TERMS_UI_20260922' || build==='RUSWEO_3_1_V115_HOME_DEPARTURE_LIFECYCLE_20260922' || build==='RUSWEO_3_1_V116_RETURN_HOME_ETA_20260923' || build==='RUSWEO_3_1_V116_FIX36_MONITORING_E2E_20260927';
+  return build.indexOf('RUSWEO_3_1_V95_')===0 || build==='RUSWEO_3_1_V97_ORDER_EDIT_20260916' || build==='RUSWEO_3_1_V99_DIAGNOSTICS_E2E_20260916' || build==='RUSWEO_3_1_V100_ROLE_ISOLATION_20260916' || build==='RUSWEO_3_1_V103_CORPORATE_CALENDAR_20260916' || build==='RUSWEO_3_1_V104_LOYALTY_PRICE_REMINDER_20260918' || build==='RUSWEO_3_1_V105_FINAL_PRICE_20260918' || build==='RUSWEO_3_1_V106_POINT_ETA_REMINDER_20260918' || build==='RUSWEO_3_1_V107_DRIVER_UI_SAFETY_20260919' || build==='RUSWEO_3_1_V108_HISTORY_ACTION_ROW_20260919' || build==='RUSWEO_3_1_V109_DRIVER_FINANCE_ALIGNMENT_20260919' || build==='RUSWEO_3_1_V110_DRIVER_HOME_COMPACT_20260919' || build==='RUSWEO_3_1_V111_MONEY_INPUT_TRANSPORT_20260919' || build==='RUSWEO_3_1_V112_ANDROID_NOTIFICATION_FINANCE_ALIGNMENT_20260919' || build==='RUSWEO_3_1_V113_TERMINAL_EV_ANALYTICS_20260921' || build==='RUSWEO_3_1_V114_LEGAL_TERMS_UI_20260922' || build==='RUSWEO_3_1_V115_HOME_DEPARTURE_LIFECYCLE_20260922' || build==='RUSWEO_3_1_V116_RETURN_HOME_ETA_20260923' || build==='RUSWEO_3_1_V116_FIX36_MONITORING_E2E_20260927' || build==='RUSWEO_3_1_V116_FIX37_CLIENT_PHONE_LOOKUP_20260927' || build==='RUSWEO_3_1_V116_FIX38_CLIENT_ORDER_CONFIRM_LINK_20260927';
 }
 
 async function rwFinanceReadV95(month){
@@ -1979,7 +1984,7 @@ function rwOperatorStatusV72(message,ok){
   box.innerHTML=message;
 }
 function openDriverOperatorBookingV72(){
-  driverOperatorClientV72=null;
+  driverOperatorClientV72=null;rwOperatorCandidatesFix37=[];
   const input=document.getElementById('driverOperatorClientV72');if(input)input.value='';
   const create=document.getElementById('driverOperatorCreateV72');if(create)create.disabled=true;
   const status=document.getElementById('driverOperatorStatusV72');if(status){status.className='rw72-operator-status';status.textContent=''}
@@ -1989,28 +1994,62 @@ function openDriverOperatorBookingV72(){
 function closeDriverOperatorBookingV72(){
   const modal=document.getElementById('driverOperatorOverlayV72');if(modal)modal.classList.remove('open');
 }
+function rwOperatorClientLabelFix37(d){
+  const u=d&&d.user||{};
+  const name=[u.first_name||'',u.last_name||''].filter(Boolean).join(' ').trim();
+  const username=u.username?'@'+u.username:'';
+  return [name,username,'ID '+String(u.id||'')].filter(Boolean).join(' · ');
+}
+function rwOperatorApplyClientFix37(d){
+  const create=document.getElementById('driverOperatorCreateV72');
+  driverOperatorClientV72=d;rwOperatorCandidatesFix37=[];
+  const loyalty=d&&d.loyalty||{};
+  const lp=Number(loyalty.nextCyclePosition||((Number(loyalty.paidCount||0)%4)+1));
+  const loyaltyText=Number(loyalty.discountPercent||0)===10?' · 🎁 следующий заказ: 4 из 4 · скидка 10%':' · лояльность: '+lp+' из 4 · учтено поездок: '+Number(loyalty.qualifiedCount==null?loyalty.paidCount:loyalty.qualifiedCount||0);
+  const matched=String(d&&d.matched_by||'')==='phone'?' <small>· найден по телефону</small>':(String(d&&d.matched_by||'')==='whatsapp'?' <small>· найден по WhatsApp</small>':'');
+  rwOperatorStatusV72('<b>Клиент найден:</b> '+escHtml(rwOperatorClientLabelFix37(d))+(d&&d.is_corporate?' · 🏢 корпоративный':'')+escHtml(loyaltyText)+matched,true);
+  if(create)create.disabled=false;
+}
+function selectDriverOperatorCandidateFix37(index){
+  const d=rwOperatorCandidatesFix37[Number(index)];
+  if(d&&d.user&&d.user.id)rwOperatorApplyClientFix37(d);
+}
+window.selectDriverOperatorCandidateFix37=selectDriverOperatorCandidateFix37;
+function rwOperatorCandidateListHtmlFix37(items){
+  return '<div class="rw37-operator-candidates">'+items.map(function(d,i){
+    const meta=String(d&&d.matched_by||'')==='whatsapp'?'WhatsApp':'телефон';
+    const contact=String(d&&d.matched_contact||'').trim();
+    return '<button type="button" class="rw37-operator-candidate" onclick="selectDriverOperatorCandidateFix37('+i+')">'+escHtml(rwOperatorClientLabelFix37(d))+'<small>'+escHtml(meta+(contact?' · '+contact:''))+'</small></button>';
+  }).join('')+'</div>';
+}
+function rwOperatorLookupErrorFix37(d){
+  const code=String(d&&d.error||'');
+  if(code==='client_not_registered')return String(d&&d.message||'Клиент не найден. По телефону доступен поиск только по номеру или WhatsApp, который уже был указан в заявке RusWeo.');
+  if(code==='multiple_client_matches')return String(d&&d.message||'Этот номер встречается у нескольких клиентов.');
+  return String(d&&d.message||d&&d.error||'Клиент не найден');
+}
 async function findDriverOperatorClientV72(){
   const input=document.getElementById('driverOperatorClientV72');
   const value=String(input&&input.value||'').trim();
   const create=document.getElementById('driverOperatorCreateV72');
-  driverOperatorClientV72=null;if(create)create.disabled=true;
-  if(!value){rwOperatorStatusV72('Введите @username или Telegram ID клиента.',false);return}
-  rwOperatorStatusV72('Ищу клиента в базе пользователей бота…',true);
+  driverOperatorClientV72=null;rwOperatorCandidatesFix37=[];if(create)create.disabled=true;
+  if(!value){rwOperatorStatusV72('Введите @username, Telegram ID или номер телефона клиента.',false);return}
+  rwOperatorStatusV72('Ищу клиента в базе RusWeo…',true);
   try{
     const d=await rwOperatorApiV72('driver_client_lookup_v72',{client:value});
-    if(!d||d.ok!==true||!d.user)throw new Error(d&&d.message||d&&d.error||'Клиент не найден');
-    driverOperatorClientV72=d;
-    const u=d.user||{};
-    const name=[u.first_name||'',u.last_name||''].filter(Boolean).join(' ').trim();
-    const username=u.username?'@'+u.username:'';
-    const loyalty=d.loyalty||{};
-    const lp=Number(loyalty.nextCyclePosition||((Number(loyalty.paidCount||0)%4)+1));const loyaltyText=Number(loyalty.discountPercent||0)===10?' · 🎁 следующий заказ: 4 из 4 · скидка 10%':' · лояльность: '+lp+' из 4 · учтено поездок: '+Number(loyalty.qualifiedCount==null?loyalty.paidCount:loyalty.qualifiedCount||0);
-    rwOperatorStatusV72('<b>Клиент найден:</b> '+escHtml([name,username,'ID '+String(u.id||'')].filter(Boolean).join(' · '))+(d.is_corporate?' · 🏢 корпоративный':'')+escHtml(loyaltyText),true);
-    if(create)create.disabled=false;
+    if(d&&d.ok===true&&d.user){rwOperatorApplyClientFix37(d);return}
+    if(d&&d.error==='multiple_client_matches'&&Array.isArray(d.candidates)&&d.candidates.length){
+      rwOperatorCandidatesFix37=d.candidates.filter(function(x){return x&&x.user&&x.user.id});
+      if(!rwOperatorCandidatesFix37.length)throw new Error(rwOperatorLookupErrorFix37(d));
+      rwOperatorStatusV72('<b>'+escHtml(rwOperatorLookupErrorFix37(d))+'</b>'+rwOperatorCandidateListHtmlFix37(rwOperatorCandidatesFix37),true);
+      return;
+    }
+    throw new Error(rwOperatorLookupErrorFix37(d));
   }catch(e){
     rwOperatorStatusV72('Не удалось найти клиента: '+escHtml(String(e&&e.message||e)),false);
   }
 }
+
 function startDriverOperatorBookingV72(){
   const d=driverOperatorClientV72;
   if(!d||!d.user||!d.user.id){rwOperatorStatusV72('Сначала найдите клиента.',false);return}
@@ -2028,6 +2067,25 @@ function startDriverOperatorBookingV72(){
   closeDriverOperatorBookingV72();
   openScreen('booking');
 }
+function startDriverOperatorUnlinkedBookingFix38(){
+  const input=document.getElementById('driverOperatorClientV72');
+  const contact=String(input&&input.value||'').trim();
+  window.rwOperatorBookingContextV72={
+    version:72,
+    claim_mode_fix38:true,
+    target_input:'',
+    target_user:null,
+    prefill_contact_fix38:contact,
+    is_corporate:false,
+    loyalty:{},
+    operator_init_data:rwDriverInitDataV72(),
+    operator_app_session:rwDriverAppSessionV72()
+  };
+  const frame=document.getElementById('bookingFrame');
+  frame.src='booking.html?vehicle_class=standard&operator_booking=1&client_claim=1&v=31116';
+  closeDriverOperatorBookingV72();
+  openScreen('booking');
+}
 function rwReturnFromOperatorBookingV72(){
   const frame=document.getElementById('bookingFrame');if(frame)frame.src='';
   window.rwOperatorBookingContextV72=null;
@@ -2037,6 +2095,7 @@ function rwReturnFromOperatorBookingV72(){
 }
 window.openDriverOperatorBookingV72=openDriverOperatorBookingV72;
 window.closeDriverOperatorBookingV72=closeDriverOperatorBookingV72;
+window.startDriverOperatorUnlinkedBookingFix38=startDriverOperatorUnlinkedBookingFix38;
 window.findDriverOperatorClientV72=findDriverOperatorClientV72;
 window.startDriverOperatorBookingV72=startDriverOperatorBookingV72;
 window.rwReturnFromOperatorBookingV72=rwReturnFromOperatorBookingV72;
@@ -6701,7 +6760,7 @@ window.UruWayApp.handleNativeBack=function(){
           '<button class="finance-btn-v25" onclick="openDriverGeneralExpenseV25()">🧾 Общие расходы<span>Налоги · фактуры · покупки · сервисы</span></button>'+
           '<button class="finance-btn-v25" onclick="openFinanceAdditionalIncomeV25()">💵 Доп. доход<span>Комиссия риэлтора и другие доходы</span></button>'+
           '<button class="finance-btn-v25" onclick="switchDriverTab(\'history\')">🗂 Прошлые заказы<span>Завершённые · добавить данные</span></button>'+
-          '<button id="driverOperatorBookingBtnV72" class="finance-btn-v25 rw-operator-finance-v73" onclick="openDriverOperatorBookingV72()">👤 Оформить заказ клиенту<span>Клиент из базы бота · уведомления ему</span></button>'+
+          '<button id="driverOperatorBookingBtnV72" class="finance-btn-v25 rw-operator-finance-v73" onclick="openDriverOperatorBookingV72()">👤 Оформить заказ клиенту<span>Найти клиента или оформить по ссылке</span></button>'+
           '<button id="driverPartnersBtnV85" class="finance-btn-v25" onclick="openDriverPartnersV85()">🤝 Партнёры<span>Подтверждённые лиды · по месяцам</span></button>'+
         '</div>'+
         '<div class="finance-card-v25"><h3>Месяц</h3><div class="finance-kpis-v25">'+

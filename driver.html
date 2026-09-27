@@ -1638,6 +1638,7 @@ button{
 
 <!-- RUSWEO_V116_FIX37_CLIENT_PHONE_LOOKUP -->
 <!-- RUSWEO_V116_FIX38_CLIENT_ORDER_CONFIRM_LINK -->
+<!-- RUSWEO_V116_FIX39_UI_SOURCE_ANALYTICS_E2E -->
 <div id="driverOperatorOverlayV72" class="driver-modal-v23">
   <div class="driver-modal-sheet-v23">
     <div class="driver-modal-head-v23">
@@ -1911,7 +1912,7 @@ function rwFinanceJsonpOnceV95(action,extra,timeoutMs){
 }
 function rwFinanceBuildOkV95(data){
   const build=String(data&&data.backend_build||'');
-  return build.indexOf('RUSWEO_3_1_V95_')===0 || build==='RUSWEO_3_1_V97_ORDER_EDIT_20260916' || build==='RUSWEO_3_1_V99_DIAGNOSTICS_E2E_20260916' || build==='RUSWEO_3_1_V100_ROLE_ISOLATION_20260916' || build==='RUSWEO_3_1_V103_CORPORATE_CALENDAR_20260916' || build==='RUSWEO_3_1_V104_LOYALTY_PRICE_REMINDER_20260918' || build==='RUSWEO_3_1_V105_FINAL_PRICE_20260918' || build==='RUSWEO_3_1_V106_POINT_ETA_REMINDER_20260918' || build==='RUSWEO_3_1_V107_DRIVER_UI_SAFETY_20260919' || build==='RUSWEO_3_1_V108_HISTORY_ACTION_ROW_20260919' || build==='RUSWEO_3_1_V109_DRIVER_FINANCE_ALIGNMENT_20260919' || build==='RUSWEO_3_1_V110_DRIVER_HOME_COMPACT_20260919' || build==='RUSWEO_3_1_V111_MONEY_INPUT_TRANSPORT_20260919' || build==='RUSWEO_3_1_V112_ANDROID_NOTIFICATION_FINANCE_ALIGNMENT_20260919' || build==='RUSWEO_3_1_V113_TERMINAL_EV_ANALYTICS_20260921' || build==='RUSWEO_3_1_V114_LEGAL_TERMS_UI_20260922' || build==='RUSWEO_3_1_V115_HOME_DEPARTURE_LIFECYCLE_20260922' || build==='RUSWEO_3_1_V116_RETURN_HOME_ETA_20260923' || build==='RUSWEO_3_1_V116_FIX36_MONITORING_E2E_20260927' || build==='RUSWEO_3_1_V116_FIX37_CLIENT_PHONE_LOOKUP_20260927' || build==='RUSWEO_3_1_V116_FIX38_CLIENT_ORDER_CONFIRM_LINK_20260927';
+  return build.indexOf('RUSWEO_3_1_V95_')===0 || build==='RUSWEO_3_1_V97_ORDER_EDIT_20260916' || build==='RUSWEO_3_1_V99_DIAGNOSTICS_E2E_20260916' || build==='RUSWEO_3_1_V100_ROLE_ISOLATION_20260916' || build==='RUSWEO_3_1_V103_CORPORATE_CALENDAR_20260916' || build==='RUSWEO_3_1_V104_LOYALTY_PRICE_REMINDER_20260918' || build==='RUSWEO_3_1_V105_FINAL_PRICE_20260918' || build==='RUSWEO_3_1_V106_POINT_ETA_REMINDER_20260918' || build==='RUSWEO_3_1_V107_DRIVER_UI_SAFETY_20260919' || build==='RUSWEO_3_1_V108_HISTORY_ACTION_ROW_20260919' || build==='RUSWEO_3_1_V109_DRIVER_FINANCE_ALIGNMENT_20260919' || build==='RUSWEO_3_1_V110_DRIVER_HOME_COMPACT_20260919' || build==='RUSWEO_3_1_V111_MONEY_INPUT_TRANSPORT_20260919' || build==='RUSWEO_3_1_V112_ANDROID_NOTIFICATION_FINANCE_ALIGNMENT_20260919' || build==='RUSWEO_3_1_V113_TERMINAL_EV_ANALYTICS_20260921' || build==='RUSWEO_3_1_V114_LEGAL_TERMS_UI_20260922' || build==='RUSWEO_3_1_V115_HOME_DEPARTURE_LIFECYCLE_20260922' || build==='RUSWEO_3_1_V116_RETURN_HOME_ETA_20260923' || build==='RUSWEO_3_1_V116_FIX36_MONITORING_E2E_20260927' || build==='RUSWEO_3_1_V116_FIX37_CLIENT_PHONE_LOOKUP_20260927' || build==='RUSWEO_3_1_V116_FIX38_CLIENT_ORDER_CONFIRM_LINK_20260927' || build==='RUSWEO_3_1_V116_FIX39_UI_SOURCE_ANALYTICS_E2E_20260927';
 }
 
 async function rwFinanceReadV95(month){
@@ -10610,6 +10611,53 @@ body .rw-fix33-accepted-compact .rw-v113-action-row{
   window.RusWeoV116Fix33AcceptedCompact={installed:true,threeColumnActions:true,navigationChooser:true};
 })();
 </script>
+
+<!-- RUSWEO V116 FIX39 — restore FIX35 accepted-action 3-column geometry -->
+<style id="RUSWEO_V116_FIX39_ACCEPTED_GRID_STYLE">
+body .rw-fix35-row-primary{
+  grid-template-columns:minmax(0,1.04fr) minmax(0,1fr) minmax(0,1.04fr);
+}
+body .rw-fix35-row-operational{
+  grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr) minmax(0,1fr);
+}
+body .rw-fix35-row-secondary{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+}
+/* data-count=1/2 rules from FIX33 intentionally retain higher specificity,
+   so incomplete rows still collapse cleanly instead of leaving empty columns. */
+</style>
+<script id="RUSWEO_V116_FIX39_ACCEPTED_GRID_CONTRACT">
+(function(){
+  'use strict';
+  const prior=window.rwLocalDriverChecksV43;
+  if(typeof prior==='function'){
+    window.rwLocalDriverChecksV43=function(){
+      const rows=prior.apply(this,arguments)||[];
+      const style=document.getElementById('RUSWEO_V116_FIX39_ACCEPTED_GRID_STYLE');
+      const css=style?String(style.textContent||''):'';
+      rows.push({
+        name:'WEB · FIX39 Accepted 3-колоночная сетка',
+        ok:!!style &&
+          css.indexOf('.rw-fix35-row-primary')!==-1 &&
+          css.indexOf('.rw-fix35-row-operational')!==-1 &&
+          css.indexOf('.rw-fix35-row-secondary')!==-1 &&
+          css.indexOf('repeat(3,minmax(0,1fr))')!==-1,
+        detail:'primary/chat/edit · navigation/expense/cancel · secondary ≤3',
+        latency_ms:0
+      });
+      return rows;
+    };
+  }
+  window.RusWeoV116Fix39AcceptedGrid={
+    installed:true,
+    primary:'primary/chat/edit',
+    operational:'navigation/expense/cancel',
+    secondary:'price/snooze/phone_or_charge',
+    threeColumns:true
+  };
+})();
+</script>
+
 </body>
 </html>
 

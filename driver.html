@@ -10331,6 +10331,226 @@ window.RusWeoV116Fix11TripNewCarReserve={
   };
 })();
 </script>
+
+
+<!-- RUSWEO V116 FIX33 — ACCEPTED CARD COMPACT + 3-COLUMN ACTIONS + NAV CHOOSER -->
+<style id="RUSWEO_V116_FIX33_ACCEPTED_COMPACT_STYLE">
+/* FIX33 is deliberately scoped to Accepted cards only. It must not alter History/New/Finance layouts. */
+body .order-card.rw3-live-card.rw-fix33-accepted-compact{
+  padding:9px 10px 10px!important;
+}
+body .rw-fix33-accepted-compact .order-top{
+  gap:7px!important;margin-bottom:5px!important;
+}
+body .rw-fix33-accepted-compact .order-number{font-size:17px!important;line-height:1.05!important}
+body .rw-fix33-accepted-compact .status-pill{
+  padding:4px 7px!important;font-size:10.5px!important;line-height:1.12!important;
+}
+body .rw-fix33-accepted-compact .rw3-live-route{
+  margin:4px 0!important;padding:6px 8px!important;border-radius:10px!important;
+  font-size:11.2px!important;line-height:1.28!important;
+}
+body .rw-fix33-accepted-compact .rw3-live-route div+div{margin-top:2px!important}
+body .rw-fix33-accepted-compact .rw3-live-meta{
+  margin:4px 0 5px!important;font-size:10.8px!important;line-height:1.22!important;
+}
+body .rw-fix33-accepted-compact .rw3-live-client{
+  margin:0 0 4px!important;font-size:11px!important;line-height:1.23!important;
+}
+body .rw-fix33-accepted-compact .rw3-metric-block{margin:4px 0 0!important}
+body .rw-fix33-accepted-compact .rw3-metric-title{
+  margin:0 0 3px!important;font-size:9px!important;line-height:1.05!important;letter-spacing:.045em!important;
+}
+body .rw-fix33-accepted-compact .rw3-metric-grid{border-radius:9px!important}
+body .rw-fix33-accepted-compact .rw3-metric-cell{
+  min-height:39px!important;padding:4px 5px!important;
+}
+body .rw-fix33-accepted-compact .rw3-metric-label{
+  font-size:clamp(8.5px,2.25vw,9.5px)!important;line-height:1.08!important;
+}
+body .rw-fix33-accepted-compact .rw3-metric-value{
+  margin-top:2px!important;font-size:clamp(10.5px,2.75vw,12px)!important;line-height:1.1!important;
+}
+body .rw-fix33-accepted-compact .rw3-metric-subvalue{
+  margin-top:1px!important;font-size:8.5px!important;line-height:1.05!important;
+}
+body .rw-fix33-accepted-compact .rw3-metric-cell.rw3-wide{min-height:36px!important}
+body .rw-fix33-accepted-compact .order-price{
+  margin:6px 0 5px!important;font-size:22px!important;line-height:1.05!important;
+}
+body .rw-fix33-accepted-compact .rw-v113-info{
+  margin:5px 0!important;padding:5px 7px!important;font-size:10.5px!important;line-height:1.2!important;
+}
+body .rw-fix33-accepted-compact .order-section-v23{margin-top:6px!important}
+body .rw-fix33-accepted-compact .order-section-title-v23{margin-bottom:3px!important}
+
+body .rw-fix33-actions{display:grid;gap:5px;margin-top:6px;min-width:0}
+body .rw-fix33-action-row{display:grid;gap:5px;min-width:0;align-items:stretch}
+body .rw-fix33-row-primary{grid-template-columns:minmax(0,1.04fr) minmax(0,1fr) minmax(0,1.04fr)}
+body .rw-fix33-row-operational{grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr) minmax(0,1fr)}
+body .rw-fix33-row-service{grid-template-columns:repeat(3,minmax(0,1fr))}
+body .rw-fix33-action-row[data-count="1"]{grid-template-columns:minmax(0,1fr)}
+body .rw-fix33-action-row[data-count="2"]{grid-template-columns:repeat(2,minmax(0,1fr))}
+body .rw-fix33-action-row>button{
+  width:100%!important;min-width:0!important;min-height:40px!important;height:auto!important;
+  margin:0!important;padding:5px 4px!important;border-radius:11px!important;
+  font-size:clamp(9.4px,2.55vw,11.2px)!important;line-height:1.08!important;font-weight:900!important;
+  white-space:normal!important;overflow-wrap:anywhere!important;word-break:normal!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;
+  box-sizing:border-box!important;
+}
+body .rw-fix33-action-row .driver-primary-action-v23{
+  background:linear-gradient(135deg,#0b2d52,#0b76c7)!important;color:#fff!important;
+}
+body .rw-fix33-action-row .rw-fix33-nav-btn,
+body .rw-fix33-action-row .rw-v113-mini-btn{
+  border:1px solid transparent!important;
+  background:linear-gradient(#f7fbff,#f7fbff) padding-box,var(--rw107-brand-gradient) border-box!important;
+  color:#155d8d!important;box-shadow:none!important;
+}
+body .rw-fix33-action-row .btn-red{
+  background:#fff4f6!important;color:#ad2947!important;border:1px solid #efcbd5!important;box-shadow:none!important;
+}
+body .rw-fix33-accepted-compact .rw-v105-main-row,
+body .rw-fix33-accepted-compact .action-grid,
+body .rw-fix33-accepted-compact .nav-grid,
+body .rw-fix33-accepted-compact .rw-v113-action-row{
+  margin-top:5px;
+}
+
+.rw-fix33-nav-overlay{
+  position:fixed;inset:0;z-index:2147483000;display:none;align-items:flex-end;justify-content:center;
+  padding:16px;background:rgba(15,23,42,.32);box-sizing:border-box;
+}
+.rw-fix33-nav-overlay.open{display:flex}
+.rw-fix33-nav-sheet{
+  width:min(420px,100%);background:#fff;border:1px solid #dbe7f2;border-radius:18px;padding:12px;
+  box-shadow:0 18px 50px rgba(15,23,42,.24);
+}
+.rw-fix33-nav-title{font-size:14px;font-weight:950;color:#173d63;text-align:center;margin:1px 0 9px}
+.rw-fix33-nav-options{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.rw-fix33-nav-options button,.rw-fix33-nav-close{
+  min-height:44px;border-radius:12px;font-weight:900;font-size:13px;
+}
+.rw-fix33-nav-options button{border:1px solid #c9ddeb;background:#f7fbff;color:#155d8d}
+.rw-fix33-nav-close{width:100%;margin-top:7px;border:0;background:#f3f6f8;color:#64748b}
+@media(max-width:390px){
+  body .rw-fix33-accepted-compact{padding-left:8px!important;padding-right:8px!important}
+  body .rw-fix33-actions,body .rw-fix33-action-row{gap:4px}
+  body .rw-fix33-action-row>button{font-size:9.4px!important;padding:4px 3px!important;min-height:38px!important}
+}
+</style>
+<script id="RUSWEO_V116_FIX33_ACCEPTED_COMPACT_ACTIONS">
+(function(){
+  'use strict';
+  const prior=window.renderOrderCard;
+  if(typeof prior!=='function')return;
+
+  function removeIfEmpty(card,selector){
+    Array.from(card.querySelectorAll(selector)).forEach(function(node){
+      if(!node.querySelector('button'))node.remove();
+    });
+  }
+  function pick(card,selector){return card.querySelector(selector)}
+  function append(row,btn){if(btn){row.appendChild(btn);return true}return false}
+  function makeRow(cls,buttons){
+    const row=document.createElement('div');row.className='rw-fix33-action-row '+cls;
+    buttons.forEach(function(btn){if(btn)row.appendChild(btn)});
+    row.setAttribute('data-count',String(row.children.length));
+    return row;
+  }
+  function navAvailable(order){
+    try{return typeof navigationTarget==='function'&&!!navigationTarget(order)}catch(_){return false}
+  }
+
+  window.closeNavigationChooserFix33=function(){
+    const overlay=document.getElementById('rwFix33NavOverlay');if(overlay)overlay.classList.remove('open');
+  };
+  window.openNavigationChooserFix33=function(orderId){
+    let overlay=document.getElementById('rwFix33NavOverlay');
+    if(!overlay){
+      overlay=document.createElement('div');overlay.id='rwFix33NavOverlay';overlay.className='rw-fix33-nav-overlay';
+      overlay.innerHTML='<div class="rw-fix33-nav-sheet" role="dialog" aria-modal="true" aria-label="Навигация">'+
+        '<div class="rw-fix33-nav-title">🧭 Открыть навигацию</div>'+
+        '<div class="rw-fix33-nav-options">'+
+          '<button type="button" data-provider="waze">🧭 Waze</button>'+
+          '<button type="button" data-provider="google">📍 Google Maps</button>'+
+        '</div><button type="button" class="rw-fix33-nav-close">Закрыть</button></div>';
+      overlay.addEventListener('click',function(ev){if(ev.target===overlay)window.closeNavigationChooserFix33()});
+      overlay.querySelector('.rw-fix33-nav-close').addEventListener('click',window.closeNavigationChooserFix33);
+      document.body.appendChild(overlay);
+    }
+    overlay.setAttribute('data-order-id',String(orderId||''));
+    Array.from(overlay.querySelectorAll('[data-provider]')).forEach(function(btn){
+      btn.onclick=function(){
+        const provider=String(btn.getAttribute('data-provider')||'');
+        window.closeNavigationChooserFix33();
+        if(typeof openNavigation==='function')openNavigation(String(orderId||''),provider);
+      };
+    });
+    overlay.classList.add('open');
+  };
+
+  window.renderOrderCard=function(order){
+    const raw=prior.apply(this,arguments);
+    if(typeof raw!=='string'||!order||typeof driverTab==='undefined'||driverTab!=='accepted')return raw;
+    const holder=document.createElement('div');holder.innerHTML=raw;const card=holder.firstElementChild;if(!card)return raw;
+    card.classList.add('rw-fix33-accepted-compact');
+
+    const primary=pick(card,'.driver-primary-action-v23');
+    const edit=pick(card,'button[onclick*="openDriverBookingEditV97"]');
+    const price=pick(card,'.rw-v105-price-btn');
+    const snooze=pick(card,'button[onclick*="openDepartureSnoozeV113"]');
+    const chat=pick(card,'button[onclick*="openDriverChat"]');
+    const expense=pick(card,'button[onclick*="openDriverExpenseV23"]');
+    const phone=pick(card,'button[onclick*="openPhone"]');
+    const charge=pick(card,'.rw-v113-charge-btn');
+    let cancel=null;
+    Array.from(card.querySelectorAll('button')).some(function(btn){
+      const oc=String(btn.getAttribute('onclick')||'');
+      if(oc.indexOf('driverAction')!==-1&&oc.indexOf('cancel')!==-1){cancel=btn;return true}
+      return false;
+    });
+
+    // Replace two permanent navigation buttons with one compact chooser.
+    card.querySelectorAll('button[onclick*="openNavigation("]').forEach(function(btn){btn.remove()});
+    let nav=null;
+    if(navAvailable(order)){
+      nav=document.createElement('button');nav.type='button';nav.className='rw-fix33-nav-btn';
+      nav.setAttribute('onclick',"openNavigationChooserFix33('"+String(order.id||'').replace(/'/g,"\\'")+"')");
+      nav.textContent='🧭 Навигация';
+    }
+
+    const host=document.createElement('div');host.className='rw-fix33-actions';host.setAttribute('data-rw-fix33-actions','1');
+    const row1=makeRow('rw-fix33-row-primary',[primary,edit,price]);if(row1.children.length)host.appendChild(row1);
+    const row2=makeRow('rw-fix33-row-operational',[nav,snooze,chat]);if(row2.children.length)host.appendChild(row2);
+    const row3=makeRow('rw-fix33-row-service',[expense,cancel,phone]);if(row3.children.length)host.appendChild(row3);
+    if(charge){const chargeRow=makeRow('rw-fix33-row-service',[charge]);host.appendChild(chargeRow)}
+
+    // Insert the compact controls where the first primary action originally lived.
+    const priceNode=card.querySelector('.order-price');
+    if(priceNode&&priceNode.nextSibling)priceNode.parentNode.insertBefore(host,priceNode.nextSibling);
+    else if(priceNode)priceNode.parentNode.appendChild(host);
+    else card.appendChild(host);
+
+    removeIfEmpty(card,'.rw-v105-main-row,.action-grid,.nav-grid,.rw-v113-action-row,.rw-v102-quick-grid');
+    return card.outerHTML;
+  };
+  try{renderOrderCard=window.renderOrderCard}catch(_){ }
+
+  const oldChecks=window.rwLocalDriverChecksV43;
+  if(typeof oldChecks==='function'){
+    window.rwLocalDriverChecksV43=function(){
+      const rows=oldChecks.apply(this,arguments)||[];
+      rows.push({name:'WEB · FIX33 компактная Accepted-карточка',ok:!!document.getElementById('RUSWEO_V116_FIX33_ACCEPTED_COMPACT_ACTIONS'),detail:'таблицы/отступы компактнее без изменения бизнес-логики',latency_ms:0});
+      rows.push({name:'WEB · FIX33 действия 3 колонки',ok:typeof window.openNavigationChooserFix33==='function',detail:'основные действия → навигация/выезд/чат → служебные',latency_ms:0});
+      rows.push({name:'WEB · FIX33 единая навигация',ok:String(window.openNavigationChooserFix33).indexOf("openNavigation(String(orderId||''),provider)")!==-1,detail:'Навигация → Waze или Google Maps',latency_ms:0});
+      return rows;
+    };
+  }
+  window.RusWeoV116Fix33AcceptedCompact={installed:true,threeColumnActions:true,navigationChooser:true};
+})();
+</script>
 </body>
 </html>
 

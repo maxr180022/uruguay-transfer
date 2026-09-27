@@ -10714,3 +10714,190 @@ body .rw-fix33-accepted-compact .rw-v113-action-row{
   window.RusWeoV116Fix15NativeCallbacks={installed:true,names:8};
 })();
 </script>
+
+
+<!-- RUSWEO V116 FIX34 — STANDARD DRIVER ACTION SIZE + HISTORY 3-COLUMN GROUPS + CALENDAR PRIORITY -->
+<style id="RUSWEO_V116_FIX34_DRIVER_UI_STANDARD_STYLE">
+/* FIX34 establishes one standard compact action-button geometry for New, Accepted
+   and completed History cards. The large completed-order Calculation selector is
+   an explicit exception and keeps its existing size. */
+:root{
+  --rw-driver-action-h:40px;
+  --rw-driver-action-radius:11px;
+  --rw-driver-action-gap:5px;
+  --rw-driver-action-font:clamp(9.4px,2.55vw,11.2px);
+}
+body .order-card.rw-fix34-standard-card .action-grid{
+  gap:var(--rw-driver-action-gap)!important;
+}
+body .order-card.rw-fix34-standard-card .action-grid>.action-btn,
+body .order-card.rw-fix34-standard-card .rw-fix34-standard-action,
+body .order-card.rw-fix34-standard-card .rw-fix33-action-row>button{
+  width:100%!important;min-width:0!important;
+  min-height:var(--rw-driver-action-h)!important;height:var(--rw-driver-action-h)!important;
+  margin:0!important;padding:4px 4px!important;
+  border-radius:var(--rw-driver-action-radius)!important;
+  font-size:var(--rw-driver-action-font)!important;line-height:1.05!important;font-weight:900!important;
+  white-space:normal!important;overflow-wrap:anywhere!important;word-break:normal!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;
+  box-sizing:border-box!important;
+}
+/* New-order grids use the same compact size as Accepted. Preserve semantic colors. */
+body .order-card.rw-fix34-standard-card.rw-fix34-new-card .action-grid{
+  margin-top:6px!important;
+}
+/* History: Calculation remains unchanged; only the six financial/management actions use the standard size. */
+body .rw3-history-card .rw-fix34-history-actions{
+  display:grid!important;gap:var(--rw-driver-action-gap)!important;margin:7px 0 0!important;min-width:0!important;
+}
+body .rw3-history-card .rw-fix34-history-row{
+  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:var(--rw-driver-action-gap)!important;min-width:0!important;
+}
+body .rw3-history-card .rw-fix34-history-row[data-count="2"]{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+body .rw3-history-card .rw-fix34-history-row[data-count="1"]{grid-template-columns:minmax(0,1fr)!important}
+body .rw3-history-card .rw-fix34-history-row .action-btn{
+  width:100%!important;min-width:0!important;
+  min-height:var(--rw-driver-action-h)!important;height:var(--rw-driver-action-h)!important;
+  margin:0!important;padding:4px 4px!important;
+  border:1px solid transparent!important;border-radius:var(--rw-driver-action-radius)!important;
+  font-size:var(--rw-driver-action-font)!important;line-height:1.05!important;font-weight:900!important;
+  white-space:normal!important;overflow-wrap:anywhere!important;word-break:normal!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;
+  box-sizing:border-box!important;box-shadow:0 3px 9px rgba(11,83,132,.045)!important;
+}
+body .rw3-history-card .rw-fix34-history-row .rw-fix34-price{
+  background:linear-gradient(#f2f8ff,#f2f8ff) padding-box,var(--rw107-brand-gradient) border-box!important;color:#245f9d!important;
+}
+body .rw3-history-card .rw-fix34-history-row .rw-fix34-expense{
+  background:linear-gradient(#fff9ef,#fff9ef) padding-box,var(--rw107-brand-gradient) border-box!important;color:#944514!important;
+}
+body .rw3-history-card .rw-fix34-history-row .rw-fix34-tip{
+  background:linear-gradient(#f1fcf6,#f1fcf6) padding-box,linear-gradient(135deg,#5cb98f,#86c9ad) border-box!important;color:#1d6a48!important;
+}
+@media(max-width:390px){
+  :root{--rw-driver-action-h:38px;--rw-driver-action-gap:4px;--rw-driver-action-font:9.4px}
+  body .rw3-history-card .rw-fix34-history-row .action-btn,
+  body .order-card.rw-fix34-standard-card .action-grid>.action-btn,
+  body .order-card.rw-fix34-standard-card .rw-fix34-standard-action,
+  body .order-card.rw-fix34-standard-card .rw-fix33-action-row>button{padding:3px 3px!important}
+}
+</style>
+<script id="RUSWEO_V116_FIX34_DRIVER_UI_STANDARD">
+(function(){
+  'use strict';
+  const prior=window.renderOrderCard;
+  if(typeof prior!=='function')return;
+
+  function findButton(card,token){
+    return Array.from(card.querySelectorAll('button')).find(function(btn){
+      return String(btn.getAttribute('onclick')||'').indexOf(token)!==-1;
+    })||null;
+  }
+  function detach(btn){
+    if(!btn)return null;
+    const p=btn.parentElement;
+    btn.remove();
+    if(p&&p.parentElement&&!p.querySelector('button')&&(
+      p.matches('.action-grid,.finance-actions-v27,.rw-v108-bottom-actions')
+    ))p.remove();
+    return btn;
+  }
+  function row(cls,buttons){
+    const r=document.createElement('div');r.className='rw-fix34-history-row '+cls;
+    buttons.filter(Boolean).forEach(function(btn){r.appendChild(btn)});
+    r.setAttribute('data-count',String(r.children.length));
+    return r;
+  }
+
+  window.renderOrderCard=function(order){
+    const raw=prior.apply(this,arguments);
+    if(typeof raw!=='string'||!order)return raw;
+    const holder=document.createElement('div');holder.innerHTML=raw;const card=holder.firstElementChild;if(!card)return raw;
+    card.classList.add('rw-fix34-standard-card');
+
+    if(typeof driverTab!=='undefined'&&driverTab==='new'){
+      card.classList.add('rw-fix34-new-card');
+      return card.outerHTML;
+    }
+
+    if(typeof driverTab==='undefined'||driverTab!=='history'||String(order.status||'')!=='completed')return card.outerHTML;
+
+    const price=detach(findButton(card,'openDriverPriceV105'));
+    const toll=detach(findButton(card,'openDriverTollsV70'));
+    const extra=detach(findButton(card,'openDriverExtraHoursV25'));
+    const expense=detach(findButton(card,'openDriverExpenseV23'));
+    const tip=detach(findButton(card,'openDriverTipV24'));
+    const income=detach(findButton(card,'openDriverAdditionalIncomeV25'));
+
+    if(price){price.classList.add('rw-fix34-standard-action','rw-fix34-price');price.textContent='💵 Изменить стоимость'}
+    if(toll)toll.classList.add('rw-fix34-standard-action');
+    if(extra)extra.classList.add('rw-fix34-standard-action');
+    if(expense){expense.classList.add('rw-fix34-standard-action','rw-fix34-expense');expense.textContent='🧾 Расходы поездки'}
+    if(tip)tip.classList.add('rw-fix34-standard-action','rw-fix34-tip');
+    if(income)income.classList.add('rw-fix34-standard-action');
+
+    card.querySelectorAll('.rw-fix34-history-actions').forEach(function(n){n.remove()});
+    const host=document.createElement('div');host.className='rw-fix34-history-actions';host.setAttribute('data-rw-fix34-history-actions','1');
+    const top=row('rw-fix34-history-top',[price,toll,extra]);
+    const money=row('rw-fix34-history-money',[expense,tip,income]);
+    if(top.children.length)host.appendChild(top);
+    if(money.children.length)host.appendChild(money);
+
+    /* Calculation selector is intentionally untouched and stays the same large full-width control. */
+    const calc=card.querySelector('.driver-detail-tabs-v24.rw3-history-calc-only')||card.querySelector('.driver-detail-tabs-v24');
+    const summary=card.querySelector('.finance-order-money-v25');
+    if(calc)calc.insertAdjacentElement('afterend',host);
+    else if(summary&&summary.parentNode)summary.parentNode.insertBefore(host,summary);
+    else card.appendChild(host);
+
+    return card.outerHTML;
+  };
+  try{renderOrderCard=window.renderOrderCard}catch(_){ }
+
+  /* Finance priority: Work calendar must be the first block immediately below the finance buttons,
+     including the Partners / Write-message split. */
+  window.rwFix34PlaceCalendar=function(){
+    try{
+      if(typeof driverTab!=='undefined'&&driverTab!=='finance')return false;
+      const root=document.querySelector('.finance-v25');
+      const grid=root&&root.querySelector('.finance-grid-v25');
+      const cal=document.getElementById('rwWorkCalendarCardV69');
+      if(!root||!grid||!cal||grid.parentNode!==root)return false;
+      if(grid.nextElementSibling!==cal)grid.insertAdjacentElement('afterend',cal);
+      return true;
+    }catch(_){return false}
+  };
+  let moveQueued=false;
+  function queueCalendar(){
+    if(moveQueued)return;moveQueued=true;
+    setTimeout(function(){moveQueued=false;window.rwFix34PlaceCalendar()},0);
+  }
+  function watch(){
+    const box=document.getElementById('driverOrders');if(!box||typeof MutationObserver==='undefined')return;
+    const ob=new MutationObserver(queueCalendar);ob.observe(box,{childList:true,subtree:true});
+    window.__RW_FIX34_CALENDAR_OBSERVER__=ob;
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){watch();queueCalendar()});
+  else{watch();queueCalendar()}
+
+  const oldChecks=window.rwLocalDriverChecksV43;
+  if(typeof oldChecks==='function'){
+    window.rwLocalDriverChecksV43=function(){
+      const rows=oldChecks.apply(this,arguments)||[];
+      rows.push({name:'WEB · FIX34 единый размер кнопок заказов',ok:!!document.getElementById('RUSWEO_V116_FIX34_DRIVER_UI_STANDARD'),detail:'New/Accepted/History используют стандарт 40px; большой Расчёт History — исключение',latency_ms:0});
+      rows.push({name:'WEB · FIX34 History 3×2',ok:String(window.RusWeoV116Fix34DriverUi&&window.RusWeoV116Fix34DriverUi.historyRows||'')==='price/tolls/extra_hours | expenses/tips/additional_income',detail:'Расчёт отдельно; две строки по три финансовых действия',latency_ms:0});
+      rows.push({name:'WEB · FIX34 календарь приоритетный',ok:typeof window.rwFix34PlaceCalendar==='function',detail:'Рабочий календарь сразу под кнопками Финансов',latency_ms:0});
+      return rows;
+    };
+  }
+  window.RusWeoV116Fix34DriverUi={
+    installed:true,
+    standardActionHeightPx:40,
+    standardTabs:['new','accepted','history'],
+    calculationLargeException:true,
+    historyRows:'price/tolls/extra_hours | expenses/tips/additional_income',
+    financeCalendarImmediatelyAfterButtons:true
+  };
+})();
+</script>

@@ -102,6 +102,40 @@
   };
   window.RusWeo.openExternal=openExternal;
 
+  // V116 QA NET-R2 — shared bounded late-JSONP sink for every Web container.
+  // The callback name is a dotted property under a Proxy-backed hub. Retiring a
+  // request removes its concrete handler; any arbitrarily late/duplicate JSONP
+  // invocation resolves to a harmless no-op instead of throwing Script error.
+  function jsonpSafeHubV116(){
+    if(window.RusWeoJsonpHubV116)return window.RusWeoJsonpHubV116;
+    var target={},hub=target,isProxy=false;
+    try{
+      if(typeof Proxy==='function'){
+        hub=new Proxy(target,{get:function(t,k){return Object.prototype.hasOwnProperty.call(t,k)?t[k]:function(){};}});
+        isProxy=true;
+      }
+    }catch(_){hub=target;isProxy=false}
+    window.RusWeoJsonpHubV116=hub;
+    window.RusWeoJsonpHubProxyV116=isProxy;
+    return hub;
+  }
+  function jsonpSafeRegisterV116(prefix,handler){
+    var hub=jsonpSafeHubV116();
+    var key=String(prefix||'cb').replace(/[^0-9A-Za-z_$]/g,'_')+'_'+Date.now()+'_'+Math.random().toString(36).slice(2,9);
+    hub[key]=typeof handler==='function'?handler:function(){};
+    return {hub:hub,key:key,name:'RusWeoJsonpHubV116.'+key};
+  }
+  function jsonpSafeRetireV116(reg){
+    if(!reg)return;
+    try{
+      if(window.RusWeoJsonpHubProxyV116===true){delete reg.hub[reg.key];return}
+    }catch(_){ }
+    // Old WebView fallback without Proxy: keep a one-shot no-op until a late
+    // callback arrives. This is intentionally safer than deleting the symbol.
+    try{reg.hub[reg.key]=function(){try{delete reg.hub[reg.key]}catch(_){reg.hub[reg.key]=undefined}}}catch(_){ }
+  }
+  window.RusWeo.jsonpSafe={register:jsonpSafeRegisterV116,retire:jsonpSafeRetireV116,hub:jsonpSafeHubV116};
+
   try{
     document.documentElement.dataset.rusweoPlatform=platform();
   }catch(e){}
@@ -330,77 +364,42 @@
     if(clientJsonpBusy)return;
 
     var tg=null;
-    try{
-      tg=window.Telegram&&window.Telegram.WebApp
-        ? window.Telegram.WebApp
-        : null;
-    }catch(e){}
-
+    try{tg=window.Telegram&&window.Telegram.WebApp?window.Telegram.WebApp:null}catch(e){}
     var init='';
-    try{
-      init=String(tg&&tg.initData||'').trim();
-    }catch(e){}
-
+    try{init=String(tg&&tg.initData||'').trim()}catch(e){}
     if(!init)return;
 
     clientJsonpBusy=true;
-
-    var cb=
-      'RusWeoChatPollV91_'+
-      Date.now()+
-      '_'+
-      Math.random().toString(36).slice(2,8);
-
     var script=document.createElement('script');
-    var done=false;
-    var timeout=0;
+    var done=false,timeout=0,reg=null;
 
     function clean(){
       if(done)return;
       done=true;
       clientJsonpBusy=false;
-
-      try{
-        if(timeout)clearTimeout(timeout);
-      }catch(e){}
-
-      try{
-        delete window[cb];
-      }catch(e){
-        try{window[cb]=undefined}catch(_){}
-      }
-
-      try{
-        script.remove();
-      }catch(e){}
+      try{if(timeout)clearTimeout(timeout)}catch(e){}
+      try{window.RusWeo&&window.RusWeo.jsonpSafe&&window.RusWeo.jsonpSafe.retire(reg)}catch(e){}
+      try{script.remove()}catch(e){}
     }
 
-    window[cb]=function(data){
+    reg=window.RusWeo.jsonpSafe.register('chatpoll',function(data){
       if(done)return;
       deliverClientChatResponse(data);
       clean();
-    };
+    });
 
-    script.onerror=function(){
-      clean();
-    };
-
+    script.onerror=function(){clean()};
     var q=[
       'action=telegram_client_orders',
       'mode=chat',
       'id='+encodeURIComponent(clientOrderId),
       'init_data='+encodeURIComponent(init),
-      'callback='+encodeURIComponent(cb),
+      'callback='+encodeURIComponent(reg.name),
       '_='+Date.now()
     ].join('&');
-
     script.src=apiUrl()+'?'+q;
     document.head.appendChild(script);
-
-    timeout=setTimeout(
-      clean,
-      8000
-    );
+    timeout=setTimeout(clean,8000);
   }
 
   function requestClientChat(){
@@ -781,19 +780,43 @@
       queued_at:new Date().toISOString()
     };
   }
+  function diagnosticJsonpHub(){
+    if(window.RusWeoGuardJsonpHubV116)return window.RusWeoGuardJsonpHubV116;
+    var target={},hub=target,isProxy=false;
+    try{
+      if(typeof Proxy==='function'){
+        hub=new Proxy(target,{get:function(t,p){return Object.prototype.hasOwnProperty.call(t,p)?t[p]:function(){};}});
+        isProxy=true;
+      }
+    }catch(_){hub=target;isProxy=false}
+    window.RusWeoGuardJsonpHubV116=hub;
+    window.RusWeoGuardJsonpHubProxyV116=isProxy;
+    return hub;
+  }
+  function diagnosticJsonpRegister(handler){
+    var hub=diagnosticJsonpHub();
+    var key='diag_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);
+    hub[key]=handler;
+    return {hub:hub,key:key,name:'RusWeoGuardJsonpHubV116.'+key};
+  }
+  function diagnosticJsonpRetire(reg){
+    if(!reg)return;
+    try{if(window.RusWeoGuardJsonpHubProxyV116===true){delete reg.hub[reg.key];return}}catch(_){}
+    try{reg.hub[reg.key]=function(){try{delete reg.hub[reg.key]}catch(_){reg.hub[reg.key]=undefined}}}catch(_){}
+  }
   function sendReport(payload){
     return new Promise(function(resolve,reject){
       var a=auth();
       if(!a.init_data&&!a.session_token){reject(new Error('diagnostic_auth_missing'));return}
-      var cb='RusWeoErr15_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);
       var q=new URLSearchParams();
-      q.set('action','client_error_report_v116');q.set('callback',cb);q.set('_',String(Date.now()));
+      q.set('action','client_error_report_v116');q.set('_',String(Date.now()));
       if(a.init_data)q.set('init_data',a.init_data);if(a.session_token)q.set('session_token',a.session_token);
       Object.keys(payload||{}).forEach(function(k){var v=payload[k];if(v!==undefined&&v!==null&&String(v)!=='')q.set(k,String(v))});
-      var sc=document.createElement('script'),done=false,timer=null;
-      function clean(){if(timer)clearTimeout(timer);try{delete window[cb]}catch(_){window[cb]=undefined}try{sc.remove()}catch(_){ }}
+      var sc=document.createElement('script'),done=false,timer=null,reg=null;
+      function clean(){if(timer)clearTimeout(timer);diagnosticJsonpRetire(reg);try{sc.remove()}catch(_){ }}
       function finish(ok,v){if(done)return;done=true;clean();ok?resolve(v):reject(v instanceof Error?v:new Error(String(v||'diagnostic_failed')))}
-      window[cb]=function(d){if(d&&d.ok===true&&d.reported===true)finish(true,d);else finish(false,new Error(String(d&&d.error||'diagnostic_rejected')))};
+      reg=diagnosticJsonpRegister(function(d){if(d&&d.ok===true&&d.reported===true)finish(true,d);else finish(false,new Error(String(d&&d.error||'diagnostic_rejected')))});
+      q.set('callback',reg.name);
       sc.async=true;sc.src=apiUrl()+'?'+q.toString();sc.onerror=function(){finish(false,new Error('diagnostic_network'))};
       document.head.appendChild(sc);timer=setTimeout(function(){finish(false,new Error('diagnostic_timeout'))},9000);
     });

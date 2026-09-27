@@ -7,7 +7,7 @@
   content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 
 <title>RusWeo 3.1.42 — Личный кабинет</title>
-<meta name="rusweo-release" content="RusWeo 3.1.42 / V116 / web 31116 / Android target code110">
+<meta name="rusweo-release" content="RusWeo 3.1.42 / V116 / web 31116 / Android target code112">
 <meta name="rusweo-ui-policy" content="single-design-v3-driver-android-telegram">
 <meta name="rusweo-runtime-policy" content="driver-root-back-minimize-v2">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -1387,7 +1387,7 @@ button{
     </button>
 
     <div class="version">
-      RusWeo 3.1.42 · Android target code110
+      RusWeo 3.1.42 · Android target code112
     </div>
 
   </div>
@@ -1794,13 +1794,16 @@ function rwOperatorJsonpV74(action,extra){
     const appSession=rwDriverAppSessionV72();
     if(appSession)q.set('operator_app_session',appSession);
     Object.keys(extra||{}).forEach(function(k){const v=extra[k];if(v!==undefined&&v!==null)q.set(k,String(v))});
-    const cb='RusWeoOperatorV74_'+Date.now()+'_'+Math.random().toString(36).slice(2,9);
-    q.set('callback',cb);q.set('_',String(Date.now()));
     const script=document.createElement('script');
-    let done=false,timer=null;
-    function cleanup(){if(timer)clearTimeout(timer);try{delete window[cb]}catch(e){window[cb]=undefined}try{script.remove()}catch(e){}}
+    let done=false,timer=null,reg=null;
+    function cleanup(){
+      if(timer)clearTimeout(timer);
+      try{window.RusWeo&&window.RusWeo.jsonpSafe&&window.RusWeo.jsonpSafe.retire(reg)}catch(e){}
+      try{script.remove()}catch(e){}
+    }
     function failJsonp(message){if(done)return;done=true;cleanup();reject(new Error(message||'Android transport error'))}
-    window[cb]=function(data){if(done)return;done=true;cleanup();resolve(data||{ok:false,error:'empty_operator_payload'})};
+    reg=window.RusWeo.jsonpSafe.register('operator',function(data){if(done)return;done=true;cleanup();resolve(data||{ok:false,error:'empty_operator_payload'})});
+    q.set('callback',reg.name);q.set('_',String(Date.now()));
     script.async=true;script.src=RW_OPERATOR_API_V72+'?'+q.toString();
     script.onerror=function(){failJsonp('Не удалось связаться с сервером из Android-приложения')};
     document.head.appendChild(script);
@@ -1851,19 +1854,44 @@ function rwFinanceFriendlyErrorV95(data,fallback){
   if(/driver_access_denied|unauthorized/i.test(raw))return 'Сессия водителя не подтверждена. Перезапустите RusWeo и войдите снова.';
   return raw;
 }
+function rwLateJsonpHubV116(){
+  if(window.RusWeoLateJsonpHubV116)return window.RusWeoLateJsonpHubV116;
+  const target={};let hub=target,isProxy=false;
+  try{
+    if(typeof Proxy==='function'){
+      hub=new Proxy(target,{get:function(t,p){return Object.prototype.hasOwnProperty.call(t,p)?t[p]:function(){};}});
+      isProxy=true;
+    }
+  }catch(e){hub=target;isProxy=false}
+  window.RusWeoLateJsonpHubV116=hub;
+  window.RusWeoLateJsonpHubProxyV116=isProxy;
+  return hub;
+}
+function rwLateJsonpRegisterV116(prefix,handler){
+  const hub=rwLateJsonpHubV116();
+  const key=String(prefix||'cb')+'_'+Date.now()+'_'+Math.random().toString(36).slice(2,9);
+  hub[key]=handler;
+  return {hub:hub,key:key,name:'RusWeoLateJsonpHubV116.'+key};
+}
+function rwLateJsonpRetireV116(reg){
+  if(!reg)return;
+  try{
+    if(window.RusWeoLateJsonpHubProxyV116===true){delete reg.hub[reg.key];return}
+  }catch(e){}
+  try{reg.hub[reg.key]=function(){try{delete reg.hub[reg.key]}catch(_){reg.hub[reg.key]=undefined}}}catch(e){}
+}
 function rwFinanceJsonpOnceV95(action,extra,timeoutMs){
   return new Promise(function(resolve,reject){
     const q=new URLSearchParams();
     q.set('action',String(action||''));
     rwFinanceAuthQueryV95(q);
     Object.keys(extra||{}).forEach(function(k){const v=extra[k];if(v!==undefined&&v!==null)q.set(k,String(v))});
-    const cb='RusWeoFinanceV95_'+Date.now()+'_'+Math.random().toString(36).slice(2,9);
-    q.set('callback',cb);q.set('_',String(Date.now()));
     const script=document.createElement('script');
-    let done=false,timer=null,loadTimer=null;
-    function cleanup(){if(timer)clearTimeout(timer);if(loadTimer)clearTimeout(loadTimer);try{delete window[cb]}catch(e){window[cb]=undefined}try{script.remove()}catch(e){}}
+    let done=false,timer=null,loadTimer=null,reg=null;
+    function cleanup(){if(timer)clearTimeout(timer);if(loadTimer)clearTimeout(loadTimer);rwLateJsonpRetireV116(reg);try{script.remove()}catch(e){}}
     function fail(message){if(done)return;done=true;cleanup();reject(new Error(message||'Ошибка связи с сервером'))}
-    window[cb]=function(data){if(done)return;done=true;cleanup();resolve(data||{ok:false,error:'empty_response'})};
+    reg=rwLateJsonpRegisterV116('finance',function(data){if(done)return;done=true;cleanup();resolve(data||{ok:false,error:'empty_response'})});
+    q.set('callback',reg.name);q.set('_',String(Date.now()));
     script.async=true;
     script.src=RW_FINANCE_API_V95+'?'+q.toString();
     script.onerror=function(){fail('Не удалось связаться с сервером RusWeo')};
@@ -5732,30 +5760,15 @@ window.UruWayApp.handleNativeBack=function(){
   function jsonpOnce(mode,timeoutMs){
     return new Promise(function(resolve,reject){
       const safeMode=String(mode||'quick').toLowerCase()==='quick'?'quick':'full';
-      const cb='RusWeoHealthV58_'+Date.now()+'_'+Math.random().toString(36).slice(2,9);
       const script=document.createElement('script');
-      let done=false;
-      let timer=null;
-
+      let done=false,timer=null,reg=null;
       function cleanup(){
         if(timer)clearTimeout(timer);
-        try{delete window[cb];}catch(e){window[cb]=undefined;}
-        try{script.remove();}catch(e){}
+        try{window.RusWeo&&window.RusWeo.jsonpSafe&&window.RusWeo.jsonpSafe.retire(reg)}catch(e){}
+        try{script.remove()}catch(e){}
       }
-      function fail(reason){
-        if(done)return;
-        done=true;
-        cleanup();
-        reject(new Error(reason||'health_transport_error'));
-      }
-
-      window[cb]=function(data){
-        if(done)return;
-        done=true;
-        cleanup();
-        resolve(data||{ok:false,error:'empty_health_payload'});
-      };
-
+      function fail(reason){if(done)return;done=true;cleanup();reject(new Error(reason||'health_transport_error'))}
+      reg=window.RusWeo.jsonpSafe.register('health',function(data){if(done)return;done=true;cleanup();resolve(data||{ok:false,error:'empty_health_payload'})});
       script.async=true;
       let appSession='';
       try{appSession=String(localStorage.getItem('uruway_auth_session')||'').trim()}catch(e){}
@@ -5764,15 +5777,11 @@ window.UruWayApp.handleNativeBack=function(){
         '&mode='+encodeURIComponent(safeMode)+
         '&vehicle_class=standard'+
         '&app_session='+encodeURIComponent(appSession)+
-        '&callback='+encodeURIComponent(cb)+
+        '&callback='+encodeURIComponent(reg.name)+
         '&_='+Date.now();
-
-      script.onerror=function(){fail('health_network_error');};
+      script.onerror=function(){fail('health_network_error')};
       document.head.appendChild(script);
-      timer=setTimeout(
-        function(){fail('health_timeout');},
-        Math.max(10000,Number(timeoutMs||30000))
-      );
+      timer=setTimeout(function(){fail('health_timeout')},Math.max(10000,Number(timeoutMs||30000)));
     });
   }
 
@@ -10141,7 +10150,22 @@ body .order-card.rw3-history-card .order-price{
   function fmtDate(v){var d=new Date(v||0);if(isNaN(d.getTime()))return '—';return d.toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'})}
   function token(){return 'adminmsg_'+Date.now()+'_'+Math.random().toString(36).slice(2,10)}
   function nativeAndroid(){return typeof rwOperatorNativeAndroidV74==='function'&&rwOperatorNativeAndroidV74()}
-  function longJsonp(extra){return new Promise(function(resolve,reject){var q=new URLSearchParams();q.set('action','driver_admin_messages_v116');var s=typeof rwDriverAppSessionV72==='function'?rwDriverAppSessionV72():'';if(s)q.set('operator_app_session',s);Object.keys(extra||{}).forEach(function(k){var v=extra[k];if(v!==undefined&&v!==null)q.set(k,String(v))});var cb='RusWeoAdminMsgV116_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);q.set('callback',cb);q.set('_',Date.now());var sc=document.createElement('script'),done=false,timer=setTimeout(function(){fail('Сервер долго не отвечает. Проверьте историю перед повторной отправкой.')},150000);function clean(){clearTimeout(timer);try{delete window[cb]}catch(_){window[cb]=undefined}try{sc.remove()}catch(_){}}function fail(m){if(done)return;done=true;clean();reject(new Error(m))}window[cb]=function(d){if(done)return;done=true;clean();resolve(d||{ok:false,error:'empty_response'})};sc.async=true;sc.src=RW_OPERATOR_API_V72+'?'+q.toString();sc.onerror=function(){fail('Не удалось связаться с сервером')};document.head.appendChild(sc)})}
+  function longJsonp(extra){
+    return new Promise(function(resolve,reject){
+      var q=new URLSearchParams();q.set('action','driver_admin_messages_v116');
+      var session=typeof rwDriverAppSessionV72==='function'?rwDriverAppSessionV72():'';
+      if(session)q.set('operator_app_session',session);
+      Object.keys(extra||{}).forEach(function(k){var v=extra[k];if(v!==undefined&&v!==null)q.set(k,String(v))});
+      var sc=document.createElement('script'),done=false,timer=null,reg=null;
+      function clean(){if(timer)clearTimeout(timer);try{window.RusWeo&&window.RusWeo.jsonpSafe&&window.RusWeo.jsonpSafe.retire(reg)}catch(_){ }try{sc.remove()}catch(_){ }}
+      function fail(m){if(done)return;done=true;clean();reject(new Error(m))}
+      reg=window.RusWeo.jsonpSafe.register('adminmsg',function(d){if(done)return;done=true;clean();resolve(d||{ok:false,error:'empty_response'})});
+      q.set('callback',reg.name);q.set('_',Date.now());
+      sc.async=true;sc.src=RW_OPERATOR_API_V72+'?'+q.toString();sc.onerror=function(){fail('Не удалось связаться с сервером')};
+      document.head.appendChild(sc);
+      timer=setTimeout(function(){fail('Сервер долго не отвечает. Проверьте историю перед повторной отправкой.')},150000);
+    });
+  }
   async function longFetch(extra){var q=new URLSearchParams();q.set('action','driver_admin_messages_v116');var i=typeof rwDriverInitDataV72==='function'?rwDriverInitDataV72():'';var s=typeof rwDriverAppSessionV72==='function'?rwDriverAppSessionV72():'';if(i)q.set('operator_init_data',i);if(s)q.set('operator_app_session',s);Object.keys(extra||{}).forEach(function(k){var v=extra[k];if(v!==undefined&&v!==null)q.set(k,String(v))});q.set('_',Date.now());var c=typeof AbortController!=='undefined'?new AbortController():null,t=c?setTimeout(function(){c.abort()},150000):null;try{var r=await fetch(RW_OPERATOR_API_V72+'?'+q.toString(),{cache:'no-store',credentials:'omit',signal:c?c.signal:undefined}),txt=String(await r.text()||'').replace(/^\uFEFF/,'').trim();try{return JSON.parse(txt)}catch(_){throw new Error('Сервер вернул некорректный ответ')}}finally{if(t)clearTimeout(t)}}
   function api(mode,extra,longCall){var p=Object.assign({mode:mode},extra||{});var op=async function(){var d=longCall?(nativeAndroid()?await longJsonp(p):await longFetch(p)):(typeof rwOperatorApiV72==='function'?await rwOperatorApiV72('driver_admin_messages_v116',p):await Promise.reject(new Error('API недоступен')));if(window.RusWeo&&window.RusWeo.guard&&window.RusWeo.guard.isTechnicalPayload&&window.RusWeo.guard.isTechnicalPayload(d))throw window.RusWeo.guard.payloadError(d);return d};if(window.RusWeo&&window.RusWeo.guard&&typeof window.RusWeo.guard.run==='function')return window.RusWeo.guard.run(op,{stage:'admin_messages',action:'driver_admin_messages_v116:'+mode,context:String(p.target||''),friendly:'Не удалось выполнить действие в разделе сообщений после автоматической повторной попытки'},{attempts:2,delay:350});return op()}
   function userLabel(u){var n=[u.first_name,u.last_name].filter(Boolean).join(' ').trim(),un=u.username?'@'+String(u.username).replace(/^@/,''):'';return [n,un].filter(Boolean).join(' · ')||('ID '+String(u.id||''))}

@@ -1995,35 +1995,23 @@ async function rwGridRetryQuoteV116(){
 // generic JSONP retry policy. One slow Apps Script execution must not create a
 // second concurrent calculation or delete its callback while the response is late.
 const RW_TARIFF_QUOTE_TIMEOUT_MS_V17=30000;
-const RW_JSONP_LATE_CALLBACK_GRACE_MS_V17=90000;
-function rwRetireJsonpCallbackV17(cb,lateSafe){
-  if(!cb)return;
-  if(lateSafe){
-    try{window[cb]=function(){};}catch(e){}
-    setTimeout(()=>{try{delete window[cb]}catch(e){try{window[cb]=undefined}catch(_){}}},RW_JSONP_LATE_CALLBACK_GRACE_MS_V17);
-    return;
-  }
-  try{delete window[cb]}catch(e){try{window[cb]=undefined}catch(_){}}
-}
 function rwTariffQuoteJsonpV17(url,timeoutMs){
   return new Promise((resolve,reject)=>{
-    const cb='uru_tariff_'+Date.now()+'_'+Math.floor(Math.random()*1e6);
-    const s=document.createElement('script');
-    let done=false;
-    let timer=null;
-    const finish=(err,data,lateSafe)=>{
+    const script=document.createElement('script');
+    let done=false,timer=null,reg=null;
+    const finish=(err,data)=>{
       if(done)return;
       done=true;
       if(timer)clearTimeout(timer);
-      rwRetireJsonpCallbackV17(cb,!!lateSafe);
-      try{s.remove()}catch(e){}
+      try{window.RusWeo&&window.RusWeo.jsonpSafe&&window.RusWeo.jsonpSafe.retire(reg)}catch(e){}
+      try{script.remove()}catch(e){}
       err?reject(err):resolve(data);
     };
-    window[cb]=d=>finish(null,d,false);
-    s.onerror=()=>finish(rw99TechnicalErrorV99('Ошибка соединения с сервером','network_jsonp'),null,true);
-    s.src=url+(url.includes('?')?'&':'?')+'callback='+encodeURIComponent(cb);
-    document.head.appendChild(s);
-    timer=setTimeout(()=>finish(rw99TechnicalErrorV99('Сервер не ответил вовремя','network_timeout'),null,true),Math.max(10000,Number(timeoutMs||RW_TARIFF_QUOTE_TIMEOUT_MS_V17)));
+    reg=window.RusWeo.jsonpSafe.register('tariff',d=>finish(null,d));
+    script.onerror=()=>finish(rw99TechnicalErrorV99('Ошибка соединения с сервером','network_jsonp'),null);
+    script.src=url+(url.includes('?')?'&':'?')+'callback='+encodeURIComponent(reg.name);
+    document.head.appendChild(script);
+    timer=setTimeout(()=>finish(rw99TechnicalErrorV99('Сервер не ответил вовремя','network_timeout'),null),Math.max(10000,Number(timeoutMs||RW_TARIFF_QUOTE_TIMEOUT_MS_V17)));
   });
 }
 async function rwGridConfirmBusinessLeadV92(){
@@ -2491,7 +2479,24 @@ function profile(){
 }
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function money(n,c){return Number(n).toLocaleString('ru-RU')+' '+c}
-function jsonpOnceV72(url,timeoutMs){return new Promise((resolve,reject)=>{const cb='uru_'+Date.now()+'_'+Math.floor(Math.random()*1e6),s=document.createElement('script');let done=false,timer=null;const finish=(err,data,lateSafe)=>{if(done)return;done=true;if(timer)clearTimeout(timer);rwRetireJsonpCallbackV17(cb,!!lateSafe);try{s.remove()}catch(e){};err?reject(err):resolve(data)};window[cb]=d=>finish(null,d,false);s.onerror=()=>finish(rw99TechnicalErrorV99('Ошибка соединения с сервером','network_jsonp'),null,true);timer=setTimeout(()=>finish(rw99TechnicalErrorV99('Сервер не ответил вовремя','network_timeout'),null,true),Math.max(3000,Number(timeoutMs||15000)));s.src=url+(url.includes('?')?'&':'?')+'callback='+encodeURIComponent(cb);document.head.appendChild(s)})}
+function jsonpOnceV72(url,timeoutMs){
+  return new Promise((resolve,reject)=>{
+    const script=document.createElement('script');
+    let done=false,timer=null,reg=null;
+    const finish=(err,data)=>{
+      if(done)return;done=true;
+      if(timer)clearTimeout(timer);
+      try{window.RusWeo&&window.RusWeo.jsonpSafe&&window.RusWeo.jsonpSafe.retire(reg)}catch(e){}
+      try{script.remove()}catch(e){}
+      err?reject(err):resolve(data);
+    };
+    reg=window.RusWeo.jsonpSafe.register('booking',d=>finish(null,d));
+    script.onerror=()=>finish(rw99TechnicalErrorV99('Ошибка соединения с сервером','network_jsonp'),null);
+    timer=setTimeout(()=>finish(rw99TechnicalErrorV99('Сервер не ответил вовремя','network_timeout'),null),Math.max(3000,Number(timeoutMs||15000)));
+    script.src=url+(url.includes('?')?'&':'?')+'callback='+encodeURIComponent(reg.name);
+    document.head.appendChild(script);
+  });
+}
 async function jsonp(url,options){options=options||{};const retries=Object.prototype.hasOwnProperty.call(options,'retries')?Math.max(0,Number(options.retries||0)):1,timeout=Math.max(3000,Number(options.timeout||15000)),retryDelay=Math.max(0,Number(options.retryDelay||350));let last=null;for(let attempt=0;attempt<=retries;attempt++){try{const data=await jsonpOnceV72(url,timeout);if(window.RusWeo&&window.RusWeo.guard&&window.RusWeo.guard.isTechnicalPayload&&window.RusWeo.guard.isTechnicalPayload(data))throw window.RusWeo.guard.payloadError(data);return data}catch(e){last=e;if(attempt<retries)await new Promise(r=>setTimeout(r,retryDelay))}}throw last||new Error('Ошибка соединения с сервером')}
 function telegramInitData(){
   let raw=String(tg?.initData||'').trim();

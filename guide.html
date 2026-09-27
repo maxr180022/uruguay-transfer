@@ -1861,30 +1861,22 @@ async function loadNewsOnce(){if(newsLoaded)return;newsLoaded=true;const status=
 
   function guideLogPartnerAsyncV5(partner,ctx){
     if(!ctx||(!ctx.telegram_user_id&&!ctx.init_data&&!ctx.session_token))return;
-    const cb='RusWeoGuidePartnerV5_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);
-    const sc=document.createElement('script');let done=false;
-    const clean=()=>{if(done)return;done=true;try{delete window[cb]}catch(e){};try{sc.remove()}catch(e){}};
-    window[cb]=()=>clean();
+    const sc=document.createElement('script');let done=false,timer=null,reg=null;
+    const clean=()=>{if(done)return;done=true;if(timer)clearTimeout(timer);try{window.RusWeo&&window.RusWeo.jsonpSafe&&window.RusWeo.jsonpSafe.retire(reg)}catch(e){};try{sc.remove()}catch(e){}};
+    reg=window.RusWeo.jsonpSafe.register('guidepartner',()=>clean());
     const q=new URLSearchParams({
-      action:'partner_lead',partner:String(partner||''),callback:cb,_:Date.now(),
+      action:'partner_lead',partner:String(partner||''),callback:reg.name,_:Date.now(),
       init_data:ctx.init_data||'',session_token:ctx.session_token||'',source:ctx.source||'',
       telegram_webapp_user:ctx.telegram_user_id?'1':'',
-      telegram_user_id:ctx.telegram_user_id||'',
-      telegram_username:ctx.telegram_username||'',
-      telegram_first_name:ctx.telegram_first_name||'',
-      telegram_last_name:ctx.telegram_last_name||'',
+      telegram_user_id:ctx.telegram_user_id||'',telegram_username:ctx.telegram_username||'',
+      telegram_first_name:ctx.telegram_first_name||'',telegram_last_name:ctx.telegram_last_name||'',
       client_id:String(clientId()),
       lead_click_id:String(partner||'partner')+'_'+Date.now()+'_'+Math.random().toString(36).slice(2,8)
     });
     const url=API+'?'+q.toString();
-    try{
-      if(navigator.sendBeacon&&navigator.sendBeacon(url,new Blob([],{type:'text/plain'}))){
-        clean();return;
-      }
-    }catch(e){}
-    sc.src=url;sc.async=true;sc.onerror=clean;document.head.appendChild(sc);setTimeout(clean,10000);
+    try{if(navigator.sendBeacon&&navigator.sendBeacon(url,new Blob([],{type:'text/plain'}))){clean();return}}catch(e){}
+    sc.src=url;sc.async=true;sc.onerror=clean;document.head.appendChild(sc);timer=setTimeout(clean,10000);
   }
-
   let pendingGuidePartnerV5=null;
   let pendingGuideTimerV5=0;
 
@@ -2125,11 +2117,14 @@ async function loadNewsOnce(){if(newsLoaded)return;newsLoaded=true;const status=
   function openExternal(url,c){if(typeof window.rw89OpenTelegramRobust==='function')return window.rw89OpenTelegramRobust(url,c&&c.webApp);try{window.location.href=url;return true}catch(e){return false}}
   function apiConfirm(partner,c){
     return new Promise(function(resolve,reject){
-      var cb='RusWeoPartnerConfirmV85_'+Date.now()+'_'+Math.random().toString(36).slice(2,8),sc=document.createElement('script'),done=false,timer=null;
-      function clean(){if(timer)clearTimeout(timer);try{delete window[cb]}catch(e){}try{sc.remove()}catch(e){}}
-      window[cb]=function(data){if(done)return;done=true;clean();if(data&&data.ok===true)resolve(data);else reject(new Error(data&&data.message||data&&data.error||'Не удалось зафиксировать заявку'))};
-      var q=new URLSearchParams({action:'partner_lead',partner:String(partner||''),confirmed:'1',intent:'send_application',callback:cb,_:String(Date.now()),init_data:c.init_data||'',session_token:c.session_token||'',source:c.source||'',context_page:c.context_page||'',telegram_user_id:c.telegram_user_id||'',telegram_username:c.telegram_username||'',telegram_first_name:c.telegram_first_name||'',telegram_last_name:c.telegram_last_name||'',client_id:clientId(),lead_click_id:String(partner||'partner')+'_'+Date.now()+'_'+Math.random().toString(36).slice(2,9)});
-      sc.async=true;sc.src=String(window.API||'https://script.google.com/macros/s/AKfycbzWkerEeWR-3EjY1QW44Az6pj1TjJK9_ktfnrdcgFILlD6Cnqb4z2X97zSknKRJw-i3jw/exec')+'?'+q.toString();sc.onerror=function(){if(done)return;done=true;clean();reject(new Error('Не удалось связаться с сервером RusWeo'))};document.head.appendChild(sc);timer=setTimeout(function(){if(done)return;done=true;clean();reject(new Error('Сервер не ответил. Повторите ещё раз.'))},10000);
+      var sc=document.createElement('script'),done=false,timer=null,reg=null;
+      function clean(){if(timer)clearTimeout(timer);try{window.RusWeo&&window.RusWeo.jsonpSafe&&window.RusWeo.jsonpSafe.retire(reg)}catch(_){ }try{sc.remove()}catch(_){ }}
+      function finish(err,data){if(done)return;done=true;clean();err?reject(err):resolve(data)}
+      reg=window.RusWeo.jsonpSafe.register('guideconfirm',function(data){if(data&&data.ok===true)finish(null,data);else finish(new Error(data&&data.message||data&&data.error||'Не удалось зафиксировать заявку'))});
+      var q=new URLSearchParams({action:'partner_lead',partner:String(partner||''),confirmed:'1',intent:'send_application',callback:reg.name,_:String(Date.now()),init_data:c.init_data||'',session_token:c.session_token||'',source:c.source||'',context_page:c.context_page||'',telegram_user_id:c.telegram_user_id||'',telegram_username:c.telegram_username||'',telegram_first_name:c.telegram_first_name||'',telegram_last_name:c.telegram_last_name||'',client_id:clientId(),lead_click_id:String(partner||'partner')+'_'+Date.now()+'_'+Math.random().toString(36).slice(2,9)});
+      sc.async=true;sc.src=String(window.API||'https://script.google.com/macros/s/AKfycbzWkerEeWR-3EjY1QW44Az6pj1TjJK9_ktfnrdcgFILlD6Cnqb4z2X97zSknKRJw-i3jw/exec')+'?'+q.toString();
+      sc.onerror=function(){finish(new Error('Не удалось связаться с сервером RusWeo'))};document.head.appendChild(sc);
+      timer=setTimeout(function(){finish(new Error('Сервер не ответил. Повторите ещё раз.'))},10000);
     });
   }
   async function confirm(){

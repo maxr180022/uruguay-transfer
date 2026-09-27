@@ -2498,6 +2498,7 @@ function renderOrderCard(order){
   const odoStart = Number(order.odometer_start_km || 0);
   const odoEnd = Number(order.odometer_end_km || 0);
   const actualKm = Number(order.actual_work_km || 0);
+  const showReturnDelay = status==='returning_home' && Number(order.return_home_eta_ms||0)>0;
 
   const expenses = Array.isArray(order.extra_expenses) ? order.extra_expenses : [];
   const expensesTotal = Number(order.extra_expenses_total_uyu || 0);
@@ -2570,20 +2571,11 @@ function renderOrderCard(order){
     }
 
     if(status==='returning_home'){
-      const homeEta=Number(order.return_home_eta_ms||0);
-      const travel=Number(order.return_home_travel_minutes||0);
-      if(homeEta>0){
-        const etaText=rw116MontevideoClockV23(order.return_home_eta,'');
-        const remaining=Math.max(0,Math.ceil((homeEta-Date.now())/60000));
-        actions +='<div class="rw116-home-eta" role="status" data-rw116-home-eta="'+homeEta+'">'+
-          '🏠 До Pando ≈<strong>'+escHtml(rw116DurationV23(remaining))+'</strong> · ETA <strong>'+escHtml(etaText)+'</strong>'+
-          (travel>0?' · дорога ≈'+escHtml(rw116DurationV23(travel)):'')+
-          '</div>'+
-          '<button class="driver-secondary-action-v115 rw116-delay-compact" onclick="openReturnHomeSnoozeV116(\''+escHtml(id)+'\')">⏱ Задержка</button>';
-      }else{
-        actions +='<div class="rw116-home-eta">🏠 Возврат в Pando · маршрут не определён. Напоминание о прибытии автоматически не запускается.</div>';
-      }
+      // FIX28: live ETA/current return countdown stays internal. The compact
+      // delay control is rendered beside the odometer block below instead of
+      // consuming a separate action row.
     }
+
 
     if(status==='final_point_arrived'){
       const snoozeUntil=String(order.home_departure_snooze_until||'');
@@ -2723,12 +2715,16 @@ function renderOrderCard(order){
         : '')+
 
       (
-        odoStart || odoEnd || actualKm
+        odoStart || odoEnd || actualKm || showReturnDelay
           ? '<div class="order-section-v23">'+
-              '<div class="order-section-title-v23">Одометр / пробег</div>'+
-              (odoStart?'<div class="order-detail-v23"><strong>Старт:</strong> '+odoStart+' км</div>':'')+
-              (odoEnd?'<div class="order-detail-v23"><strong>Финиш:</strong> '+odoEnd+' км</div>':'')+
-              (actualKm?'<div class="order-detail-v23"><strong>Фактический рабочий пробег:</strong> '+actualKm+' км</div>':'')+
+              '<div class="order-section-title-v23 rw116-odo-head"><span>Одометр / пробег</span>'+
+                (showReturnDelay?'<button class="driver-secondary-action-v115 rw116-delay-inline" onclick="openReturnHomeSnoozeV116(\''+escHtml(id)+'\')">⏱ Задержка</button>':'')+
+              '</div>'+
+              '<div class="rw116-odo-grid">'+
+                (odoStart?'<div class="rw116-odo-cell"><span>Старт</span><strong>'+odoStart+' км</strong></div>':'')+
+                (odoEnd?'<div class="rw116-odo-cell"><span>Финиш</span><strong>'+odoEnd+' км</strong></div>':'')+
+                (actualKm?'<div class="rw116-odo-cell"><span>Рабочий пробег</span><strong>'+actualKm+' км</strong></div>':'')+
+              '</div>'+
             '</div>'
           : ''
       )+
@@ -2948,6 +2944,18 @@ function driverRunNextActionV23(orderId){
     return;
   }
 
+  // V117: hourly mileage is measured only while the client is in the car.
+  // Capture a second odometer at pickup and at the end of the client segment.
+  if(next.action==='start_trip' && String(order.service||'')==='hourly'){
+    openDriverOdometerV23(orderId,'start_trip','client_start');
+    return;
+  }
+
+  if(next.action==='finish_client' && String(order.service||'')==='hourly'){
+    openDriverOdometerV23(orderId,'finish_client','client_end');
+    return;
+  }
+
   if(next.action==='return_home'){
     openDriverOdometerV23(orderId,'return_home','end');
     return;
@@ -2988,18 +2996,23 @@ function openDriverOdometerV23(orderId,action,kind){
   const fields=document.getElementById('driverActionFieldsV23');
   const submit=document.getElementById('driverActionSubmitV23');
 
+  const hourlyIncludedKmV117=Math.max(0,Number(order.hourly_included_km_v117||Number(order.hours||0)*10||0));
+  const hourlyRateV117=Math.max(0,Number(order.hourly_excess_rate_uyu_v117||40));
+
   if(title){
     title.textContent=
-      kind==='end'
-        ? '🏠 Финальный одометр'
-        : '🚗 Начальный одометр';
+      kind==='end' ? '🏠 Финальный одометр' :
+      kind==='client_start' ? '👤 Одометр при посадке клиента' :
+      kind==='client_end' ? '✅ Одометр при завершении с клиентом' :
+      '🚗 Начальный одометр';
   }
 
   if(hint){
     hint.textContent=
-      kind==='end'
-        ? 'Введите показание после возвращения в Pando.'
-        : 'Введите показание перед выездом из Pando.';
+      kind==='end' ? 'Введите показание после возвращения в Pando.' :
+      kind==='client_start' ? ('Введите показание в момент посадки клиента. Включено '+hourlyIncludedKmV117+' км с клиентом; пробег до клиента в лимит не входит.') :
+      kind==='client_end' ? ('Введите показание в момент завершения работы с клиентом. Сверх '+hourlyIncludedKmV117+' км — '+hourlyRateV117+' UYU/км; итог пересчитается автоматически.') :
+      'Введите показание перед выездом из Pando.';
   }
 
   if(fields){
@@ -3007,15 +3020,16 @@ function openDriverOdometerV23(orderId,action,kind){
       '<label class="driver-field-v23">'+
         '<span>Одометр, км</span>'+
         '<input id="driverOdometerInputV23" type="number" inputmode="decimal" min="1" step="0.1" '+
-          'placeholder="'+(kind==='end'?'74227':'74115')+'">'+
+          'placeholder="'+(kind==='end'||kind==='client_end'?'74227':'74115')+'">'+
       '</label>';
   }
 
   if(submit){
     submit.textContent=
-      kind==='end'
-        ? 'Закрыть заказ'
-        : 'Начать заказ';
+      kind==='end' ? 'Закрыть заказ' :
+      kind==='client_start' ? 'Начать работу с клиентом' :
+      kind==='client_end' ? 'Завершить и пересчитать' :
+      'Начать заказ';
   }
 
   const overlay=document.getElementById('driverActionOverlayV23');
@@ -3054,10 +3068,10 @@ function openReturnHomeSnoozeV116(orderId){
   const fields=document.getElementById('driverActionFieldsV23');
   const submit=document.getElementById('driverActionSubmitV23');
   if(title)title.textContent='🏠 Перенести прибытие в Pando';
-  if(hint)hint.textContent='При пробке прибавляем выбранное время к ETA. Таймер Android и следующие напоминания синхронизируются с новым ETA.';
+  if(hint)hint.textContent='Если дорога заняла больше времени, добавьте задержку. Напоминание о возвращении будет перенесено автоматически.';
   if(fields)fields.innerHTML='<label class="driver-field-v23"><span>Дополнительное время</span><select id="returnHomeSnoozeMinutesV116">'+
     '<option value="10">+10 минут</option><option value="15">+15 минут</option><option value="20">+20 минут</option></select></label>';
-  if(submit)submit.textContent='Продлить ETA';
+  if(submit)submit.textContent='Добавить задержку';
   const overlay=document.getElementById('driverActionOverlayV23');
   if(overlay)overlay.classList.add('open');
 }
@@ -3116,7 +3130,7 @@ function submitDriverActionV23(){
   const state=driverPendingActionV23;
   if(!state)return;
 
-  if(state.kind==='start' || state.kind==='end'){
+  if(['start','end','client_start','client_end'].indexOf(state.kind)!==-1){
     const input=document.getElementById('driverOdometerInputV23');
     const value=Number(String(input&&input.value||'').replace(',','.'));
 
@@ -3126,7 +3140,7 @@ function submitDriverActionV23(){
     }
 
     const payload={};
-    if(state.kind==='start')payload.odometer_start=value;
+    if(state.kind==='start' || state.kind==='client_start')payload.odometer_start=value;
     else payload.odometer_end=value;
 
     closeDriverActionV23();
@@ -7502,15 +7516,19 @@ body .order-card.rw3-history-card .order-price{margin-top:8px}
 body .rw3-live-route{margin:8px 0;padding:8px 10px;border:1px solid #dbe7f2;border-radius:12px;background:#f8fbff;color:#334155;font-size:12px;line-height:1.38}
 body .rw3-live-route div+div{margin-top:3px}
 body .rw3-live-route b{color:#0b67ad}
-body .rw3-live-meta{display:grid;gap:4px;margin:7px 0 8px;color:#64748b;font-size:12px;line-height:1.32}
-body .rw3-live-meta .row{min-width:0;overflow-wrap:anywhere}
-body .rw3-live-meta .main{color:#111827;font-weight:850}
-body .rw3-live-meta .pair{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+body .rw3-live-meta{display:block;margin:8px 0 9px;color:#64748b;font-size:12px;line-height:1.32}
+body .rw3-live-client{min-width:0;margin:0 0 8px;color:#111827;font-size:12px;line-height:1.35;font-weight:850;overflow-wrap:anywhere;word-break:break-word;white-space:normal}
+body .rw3-live-client .rw3-contact-sep{color:#94a3b8;font-weight:700;margin:0 3px}
+body .rw3-metric-block{margin:7px 0 0;min-width:0}
+body .rw3-metric-title{margin:0 0 5px;color:#64748b;font-size:10px;line-height:1.2;font-weight:900;letter-spacing:.055em;text-transform:uppercase}
+body .rw3-metric-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1px;padding:1px;border-radius:12px;overflow:hidden;background:#dbe7f2;min-width:0}
+body .rw3-metric-cell{min-width:0;min-height:52px;padding:8px 7px;background:#f8fbff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;white-space:normal;overflow:visible}
+body .rw3-metric-label{width:100%;min-width:0;color:#64748b;font-size:clamp(9.5px,2.55vw,10.5px);line-height:1.18;font-weight:800;overflow-wrap:anywhere;word-break:break-word;white-space:normal}
+body .rw3-metric-value{width:100%;min-width:0;margin-top:3px;color:#111827;font-size:clamp(11.5px,3.05vw,13.5px);line-height:1.2;font-weight:900;overflow-wrap:anywhere;word-break:break-word;white-space:normal}
+body .rw3-metric-subvalue{display:block;margin-top:2px;color:#64748b;font-size:9.5px;line-height:1.15;font-weight:700;overflow-wrap:anywhere;word-break:break-word;white-space:normal}
+body .rw3-metric-cell.rw3-wide{grid-column:1 / -1;min-height:46px}
+body .rw3-metric-cell.rw3-soft .rw3-metric-value{font-weight:850}
 body .rw3-live-meta strong{color:#111827;font-weight:900}
-body .rw3-live-meta .muted-label{color:#64748b;font-weight:700}
-body .rw3-live-meta .calc{color:#334155;font-size:11px;line-height:1.38}
-body .rw3-live-meta .calc strong{color:#0f172a}
-body .rw3-live-meta .km{color:#475569;font-size:11px}
 body .rw3-tg-contact{color:#087eea;text-decoration:none;font-weight:900}
 body .rw3-tg-contact:active{opacity:.65}
 body .order-card.rw3-live-card{padding-top:13px;padding-bottom:13px}
@@ -7667,6 +7685,28 @@ body .order-card.rw3-live-card .driver-detail-tabs-v24{display:none!important}
   }
   window.rw31DriverTimeRows=rw31TimeRows;
 
+  function rw3MetricCell(label,value,extraClass){
+    const v=String(value==null?'':value).trim();
+    if(!v)return '';
+    return '<div class="rw3-metric-cell'+(extraClass?' '+extraClass:'')+'">'+
+      '<div class="rw3-metric-label">'+escHtml(label)+'</div>'+
+      '<div class="rw3-metric-value">'+v+'</div>'+
+    '</div>';
+  }
+  function rw3MetricBlock(title,cells){
+    const list=(cells||[]).filter(Boolean);
+    if(!list.length)return '';
+    return '<div class="rw3-metric-block">'+
+      '<div class="rw3-metric-title">'+escHtml(title)+'</div>'+
+      '<div class="rw3-metric-grid">'+list.join('')+'</div>'+
+    '</div>';
+  }
+  function rw3KmText(v){
+    const n=Number(v||0);
+    if(!(n>0))return '';
+    const rounded=Math.round(n*10)/10;
+    return escHtml(String(rounded))+' км';
+  }
   function metaHtml(o){
     const name=String(o.client_name||o.name||o.clientName||'').trim();
     const tg=String(o.telegram||'').trim();
@@ -7677,27 +7717,87 @@ body .order-card.rw3-live-card .driver-detail-tabs-v24{display:none!important}
     const bags=String(o.bags||'').trim();
     const boost=booster(o.booster);
     const payment=String(o.final_payment_label||o.final_payment||'').trim();
+    const waiting=Number(o.waiting_minutes||o.waiting||o.calendar_waiting_minutes||0);
+    const comment=String(o.comment||o.driver_comment||'').trim();
+    const date=String(o.date||'').trim();
+    const time=String(o.time||'').trim();
     const timing=rw31TimeRows(o);
-    let h='<div class="rw3-live-meta">';
-    if(name||tg)h+='<div class="row main">👤 '+(name?escHtml(name):'Клиент')+(tg?' · ✈️ '+window.rw3TelegramLinkHtml(tg):'')+'</div>';
-    const date=dateHtml(o);if(date)h+='<div class="row">🕘 '+date+'</div>';
+    const serviceMin=Number(o.calendar_service_minutes||0);
+    const hourlyClientKmV117=Number(o.hourly_client_km_v117||0);
+    const hourlyIncludedKmV117=Number(o.hourly_included_km_v117||0);
+    const hourlyBasePriceV117=Number(o.hourly_tariff_base_price_uyu_v117||0);
+    const hourlyExcessRateV117=Number(o.hourly_excess_rate_uyu_v117||0);
+    const hourlyClientOdoStartV117=Number(o.hourly_client_odometer_start_km_v117||0);
+    const hourlyClientOdoEndV117=Number(o.hourly_client_odometer_end_km_v117||0);
+    const hourlyExcessKmV117=Number(o.hourly_excess_km_v117||0);
+    const hourlyExcessUyuV117=Number(o.hourly_excess_amount_uyu_v117||0);
+    const clientKm=(serviceCode==='hourly'&&hourlyClientOdoEndV117>0)
+      ? hourlyClientKmV117
+      : Number(o.calendar_route_km||0);
+    const accounting=o.accounting||{};
+    const workKm=Number(accounting.actual_km||accounting.estimated_km||0);
 
-    // Hours belong only to the hourly service. Route services no longer show
-    // the old meaningless default "3 ч".
-    if(service||((serviceCode==='hourly')&&hours)){
-      h+='<div class="row">🚘 '+(service?escHtml(service):'')+
-        ((service&&serviceCode==='hourly'&&hours)?' · ':'')+
-        ((serviceCode==='hourly'&&hours)?'⏱ <strong>'+escHtml(hours)+' ч</strong>':'')+
+    let h='<div class="rw3-live-meta">';
+    if(name||tg){
+      h+='<div class="rw3-live-client">👤 '+(name?escHtml(name):'Клиент')+
+        (tg?'<span class="rw3-contact-sep">·</span>✈️ '+window.rw3TelegramLinkHtml(tg):'')+
       '</div>';
     }
 
-    if(timing.client)h+='<div class="row calc">'+timing.client+'</div>';
-    if(timing.block)h+='<div class="row calc">'+timing.block+'</div>';
-    if(timing.cycle)h+='<div class="row calc rw103-cycle">'+timing.cycle+'</div>';
-    if(timing.km)h+='<div class="row km">'+timing.km+'</div>';
+    const info=[];
+    info.push(rw3MetricCell('Дата',escHtml(date||'—')));
+    info.push(rw3MetricCell('Время',escHtml(time||'—')));
+    info.push(rw3MetricCell('Услуга',escHtml(service||'—'),'rw3-soft'));
+    const clientTime=(serviceCode==='hourly'&&hours)
+      ? (escHtml(hours)+' ч')
+      : (serviceMin>0?escHtml(rw31Min(serviceMin)):'—');
+    info.push(rw3MetricCell('Время с клиентом',clientTime));
+    if(serviceCode==='hourly'){
+      const baseUyu=hourlyBasePriceV117>0?hourlyBasePriceV117:Math.max(0,Number(o.price||0)-hourlyExcessUyuV117);
+      info.push(rw3MetricCell('База за '+(hours||'—')+' ч',escHtml(String(Math.round(baseUyu*100)/100))+' UYU'));
+      info.push(rw3MetricCell('Включено в тариф',escHtml(String(hourlyIncludedKmV117||Number(hours||0)*10||0))+' км'));
+      info.push(rw3MetricCell('Сверх лимита',escHtml(String(hourlyExcessRateV117||40))+' UYU/км'));
+    }
+    const distance=clientKm>0?rw3KmText(clientKm):(workKm>0?rw3KmText(workKm):'—');
+    info.push(rw3MetricCell(serviceCode==='hourly'?'Пробег с клиентом':'Расстояние',distance));
+    info.push(rw3MetricCell('Пассажиры',pax?(escHtml(pax)+' чел.'):'—'));
+    info.push(rw3MetricCell('Багаж',bags?escHtml(bags):'—'));
+    info.push(rw3MetricCell('Бустер',escHtml(boost||'нет')));
+    info.push(rw3MetricCell('Оплата',escHtml(payment||'—'),'rw3-soft'));
+    if(serviceCode==='hourly'&&hourlyClientOdoStartV117>0){
+      info.push(rw3MetricCell('Одометр · посадка',escHtml(String(hourlyClientOdoStartV117))+' км'));
+      info.push(rw3MetricCell('Одометр · завершение',hourlyClientOdoEndV117>0?(escHtml(String(hourlyClientOdoEndV117))+' км'):'—'));
+      if(hourlyClientOdoEndV117>0){
+        info.push(rw3MetricCell('Км сверх лимита',escHtml(String(hourlyExcessKmV117))+' км'));
+        info.push(rw3MetricCell('Доплата за км',escHtml(String(hourlyExcessUyuV117))+' UYU'));
+        info.push(rw3MetricCell('Итого к оплате',escHtml(String(o.price||'0'))+' '+escHtml(String(o.currency||'UYU')),'rw3-wide'));
+      }
+    }
+    info.push(rw3MetricCell('Ожидание',waiting>0?(escHtml(String(Math.round(waiting)))+' мин.'):'0 мин.'));
+    if(comment)info.push(rw3MetricCell('Комментарий',escHtml(comment),'rw3-wide rw3-soft'));
+    h+=rw3MetricBlock('Информация о заказе',info);
 
-    if(pax||bags)h+='<div class="row pair"><span>👥 <strong>'+escHtml(pax||'0')+'</strong> чел.</span><span>🧳 <strong>'+escHtml(bags||'0')+'</strong> багажа</span></div>';
-    if(boost||payment)h+='<div class="row pair">'+(boost?'<span><span class="muted-label">Бустер:</span> <strong>'+escHtml(boost)+'</strong></span>':'')+(payment?'<span><span class="muted-label">Оплата:</span> <strong>'+escHtml(payment)+'</strong></span>':'')+'</div>';
+    const prep=Number(o.calendar_reserve_minutes||0);
+    const busy=rw31MontevideoTime(o.calendar_block_end,o.calendar_busy_until);
+    const positioning=Number(o.calendar_positioning_minutes||0);
+    const returnHome=Number(o.calendar_return_home_minutes||0);
+    const totalWork=Number(o.calendar_total_work_minutes||0);
+    const workStart=rw31MontevideoTime(o.calendar_work_start,'');
+    const workEnd=rw31MontevideoTime(o.calendar_work_end,'');
+    if(prep>0||busy||positioning>0||returnHome>0||totalWork>0||workEnd){
+      const plan=[];
+      plan.push(rw3MetricCell('Подготовка',prep>0?('+'+escHtml(rw31Min(prep))):'—'));
+      plan.push(rw3MetricCell('Основной блок',busy?('до '+escHtml(busy)):'—'));
+      plan.push(rw3MetricCell('Из Pando',positioning>0?('≈'+escHtml(rw31Min(positioning))):'—'));
+      plan.push(rw3MetricCell('Домой',returnHome>0?('≈'+escHtml(rw31Min(returnHome))):'—'));
+      const cycleValue=totalWork>0
+        ? escHtml(rw31Min(totalWork))+((workStart||workEnd)?'<span class="rw3-metric-subvalue">'+(workStart?escHtml(workStart):'…')+'–'+(workEnd?escHtml(workEnd):'…')+'</span>':'')
+        : '—';
+      plan.push(rw3MetricCell('Полный цикл',cycleValue));
+      plan.push(rw3MetricCell('Свободен в Pando',workEnd?('≈'+escHtml(workEnd)):'—'));
+      h+=rw3MetricBlock('План заказа',plan);
+    }
+
     return h+'</div>';
   }
 
@@ -7739,6 +7839,7 @@ body .order-card.rw3-live-card .driver-detail-tabs-v24{display:none!important}
     window.rwLocalDriverChecksV43=function(){
       const rows=oldChecks.apply(this,arguments)||[];
       rows.push({name:'WEB · Карточка заказа 3.1',ok:!!document.getElementById('RUSWEO_3_LIVE_COMPACT_V3')&&typeof window.rw31DriverTimeRows==='function',detail:'A/B + расчёт дороги/комфорта/клиентского окна + подготовка + км',latency_ms:0});
+      rows.push({name:'WEB · V117 почасовой одометр',ok:String(driverRunNextActionV23).indexOf('client_start')!==-1&&String(driverRunNextActionV23).indexOf('client_end')!==-1&&String(submitDriverActionV23).indexOf('client_start')!==-1,detail:'посадка/завершение клиента требуют отдельный одометр',latency_ms:0});
       rows.push({name:'WEB · Telegram контакт одним нажатием',ok:typeof window.rw3OpenTelegramContact==='function',detail:'@username → t.me напрямую',latency_ms:0});
       rows.push({name:'WEB · История completed-only',ok:!!document.getElementById('RUSWEO_3_HISTORY_COMPACT_V2'),detail:'только выполненные · последний сверху · одометр',latency_ms:0});
       rows.push({name:'WEB · Единая диагностика',ok:!document.getElementById('driverTelegramCheckBtnV43')&&!!document.getElementById('driverSelfCheckBtnV43'),detail:'одна полная E2E-проверка включает Telegram',latency_ms:0});
@@ -7749,28 +7850,15 @@ body .order-card.rw3-live-card .driver-detail-tabs-v24{display:none!important}
 </script>
 
 
-<style id="rusweo-v116-home-eta-style">
-.rw116-home-eta{margin:7px 0 3px;padding:7px 9px;border-radius:10px;
-  background:#edf8f1;color:#144c3a;font-size:12px;line-height:1.3}
-.rw116-home-eta strong{font-weight:800}
-.driver-secondary-action-v115.rw116-delay-compact{display:inline-flex;width:auto;min-height:34px;margin:4px 0 2px;padding:7px 10px;border-radius:10px;font-size:12px;line-height:1.2;align-items:center;justify-content:center}
+<style id="rusweo-v116-return-delay-style">
+.rw116-odo-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.rw116-odo-head>span{min-width:0}
+.driver-secondary-action-v115.rw116-delay-inline{display:inline-flex;flex:0 0 auto;width:auto;min-height:32px;margin:0;padding:6px 10px;border-radius:10px;font-size:11px;line-height:1.15;align-items:center;justify-content:center;text-transform:none;letter-spacing:0}
+body .rw116-odo-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1px;padding:1px;margin-top:6px;border-radius:11px;overflow:hidden;background:#dbe7f2;min-width:0}
+body .rw116-odo-cell{min-width:0;min-height:48px;padding:7px 6px;background:#f8fbff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;white-space:normal}
+body .rw116-odo-cell span{width:100%;color:#64748b;font-size:10px;line-height:1.18;font-weight:800;overflow-wrap:anywhere;word-break:break-word;white-space:normal}
+body .rw116-odo-cell strong{width:100%;margin-top:3px;color:#111827;font-size:clamp(11.5px,3vw,13.5px);line-height:1.2;font-weight:900;overflow-wrap:anywhere;word-break:break-word;white-space:normal}
 </style>
-<script id="rusweo-v116-home-timer">
-(function(){'use strict';
-  function tick(){
-    document.querySelectorAll('[data-rw116-home-eta]').forEach(function(el){
-      const eta=Number(el.getAttribute('data-rw116-home-eta')||0);
-      if(!eta)return;
-      const remaining=Math.max(0,Math.ceil((eta-Date.now())/60000));
-      const hh=Math.floor(remaining/60),mm=remaining%60;
-      const b=el.querySelector('strong');
-      if(b)b.textContent=hh+':'+String(mm).padStart(2,'0');
-    });
-  }
-  setInterval(tick,30000);
-  document.addEventListener('visibilitychange',function(){if(!document.hidden)tick();});
-})();
-</script>
 <script id="RUSWEO_3_DRIVER_BACK_MINIMIZE_V2">
 (function(){
   window.UruWayApp=window.UruWayApp||{};

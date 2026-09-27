@@ -1098,7 +1098,7 @@ html.rw97-edit-mode #rw114TermsAcceptance{display:none!important}
       <div class="rw102-guide-divider" aria-hidden="true"></div>
       <div class="rw98-booking-guide rw102-booking-guide" id="rw98BookingGuide">
         <strong>Перед оформлением — выберите правильный тип поездки</strong>
-        <div class="rw98-guide-row"><span class="rw98-guide-icon">🏙️</span><span class="rw98-guide-copy"><b>Поездка внутри Монтевидео</b><small>Короткий маршрут A → B по городу оформляется через «Личный водитель». Выбирайте <em>«Личный водитель»</em> — 600 UYU/час, минимальный заказ 3 часа (от 1 800 UYU).</small></span></div>
+        <div class="rw98-guide-row"><span class="rw98-guide-icon">🏙️</span><span class="rw98-guide-copy"><b>Личный водитель — Монтевидео и ближайшие окрестности</b><small>600 UYU/час, минимум 3 часа. В каждый оплаченный час включено 10 км пробега с клиентом; сверх лимита — 40 UYU/км. Почасовой тариф действует в Монтевидео и не далее 10 км за городской чертой. Если нужно ехать дальше — применяется расчёт по межгородской тарифной сетке.</small></span></div>
         <div class="rw98-guide-row"><span class="rw98-guide-icon">🛣️</span><span class="rw98-guide-copy"><b>Из одного города в другой</b><small>Выбирайте <em>«Другие направления»</em> и создавайте маршрут A → B. Этот калькулятор не предназначен для двух адресов внутри одного города.</small></span></div>
         <div class="rw98-guide-row"><span class="rw98-guide-icon">✈️</span><span class="rw98-guide-copy"><b>Аэропорт, Buquebus или Пунта-дель-Эсте</b><small>Используйте готовое направление из списка — так маршрут и стоимость будут рассчитаны правильно.</small></span></div>
       </div>
@@ -1107,7 +1107,7 @@ html.rw97-edit-mode #rw114TermsAcceptance{display:none!important}
       <div class="rw2-service-tiles" id="rw2ServiceTiles">
         <button class="rw2-service-tile" type="button" data-service="airport_to_mvd"><span class="rw2-tile-icon">✈</span><b>Аэропорт<br>↔ Монтевидео</b><small>Карраско (MVD)</small></button>
         <button class="rw2-service-tile" type="button" data-service="buquebus_to_mvd"><span class="rw2-tile-icon">⛴</span><b>Buquebus<br>↔ Монтевидео</b><small>Порт / центр</small></button>
-        <button class="rw2-service-tile" type="button" data-service="hourly"><span class="rw2-tile-icon">◉</span><b>Личный водитель<br>по Монтевидео</b><small>от 3 часов</small></button>
+        <button class="rw2-service-tile" type="button" data-service="hourly"><span class="rw2-tile-icon">◉</span><b>Личный водитель<br>Монтевидео + окрестности</b><small>600 UYU/ч · от 3 ч · 10 км/ч</small></button>
         <button class="rw2-service-tile" type="button" data-service="mvd_to_pde"><span class="rw2-tile-icon">☀</span><b>Пунта-дель-Эсте</b><small>Маршрут / поездка</small></button>
       </div>
     </div>
@@ -1118,7 +1118,7 @@ html.rw97-edit-mode #rw114TermsAcceptance{display:none!important}
     <div class="step-card">
       <div class="step-card-head"><span class="step-icon">📅</span><div><b>Дата и время</b><small>Выберите удобные дату и время. Система проверит доступность.</small></div></div>
       <div class="grid2"><div class="field"><label>Дата <span class="req">*</span></label><input id="date" type="date"></div><div class="field"><label>Время <span class="req">*</span></label><input id="time" type="time"></div></div>
-      <div class="field hidden" id="hoursWrap"><label>Количество часов</label><select id="hours"></select><div class="hint">Минимальный заказ — 3 часа.</div></div>
+      <div class="field hidden" id="hoursWrap"><label>Количество часов</label><select id="hours"></select><div class="hint" id="hourlyKmHint">3 часа = 30 км с клиентом. Сверх включённого пробега — 40 UYU/км. Зона почасового тарифа: Монтевидео и до 10 км за городской чертой; дальше применяется межгородская тарифная сетка.</div></div>
       <div class="hint">Оформить заявку можно не раньше чем через 2 часа. Доступность выбранного времени проверяется автоматически.</div><div class="status rw77-calendar-status" id="availabilityBox">⏳ Выберите дату и время, затем дождитесь проверки доступности.</div>
     </div>
     <div class="wizard-actions"><button class="wizard-back" type="button" onclick="prevBookingStep()">← Назад</button><button class="wizard-next" type="button" onclick="nextBookingStep()">Продолжить <span>→</span></button></div>
@@ -1545,7 +1545,7 @@ const services=[
 {g:'⛴️ Buquebus — Пунта-дель-Эсте',i:'⛴️',a:[{id:'buquebus_to_pde',n:'Buquebus → Пунта-дель-Эсте',p:200,c:'USD',f:'Buquebus',t:'Пунта-дель-Эсте',d:'Поездка по маршруту Buquebus → Пунта-дель-Эсте.'},{id:'pde_to_buquebus',n:'Пунта-дель-Эсте → Buquebus',p:200,c:'USD',f:'Пунта-дель-Эсте',t:'Buquebus',d:'Поездка по маршруту Пунта-дель-Эсте → Buquebus.'}]},
 {g:'🌴 Монтевидео — Пунта-дель-Эсте',i:'🌴',a:[{id:'mvd_to_pde',n:'Монтевидео → Пунта-дель-Эсте',p:190,c:'USD',f:'Монтевидео',t:'Пунта-дель-Эсте',d:'Индивидуальная поездка в одну сторону.'},{id:'pde_to_mvd',n:'Пунта-дель-Эсте → Монтевидео',p:190,c:'USD',f:'Пунта-дель-Эсте',t:'Монтевидео',d:'Индивидуальная поездка в одну сторону.'}]},
 {g:'☀️ Поездка на день · 10 часов',i:'☀️',a:[{id:'mvd_pde_day',n:'Монтевидео → Пунта-дель-Эсте → Монтевидео',p:275,c:'USD',f:'Монтевидео',t:'Монтевидео',d:'275 USD включает до 10 часов с момента посадки клиента в автомобиль до финальной высадки. Дополнительное время сверх 10 часов — 600 UYU/час.'},{id:'pde_mvd_day',n:'Пунта-дель-Эсте → Монтевидео → Пунта-дель-Эсте',p:275,c:'USD',f:'Пунта-дель-Эсте',t:'Пунта-дель-Эсте',d:'275 USD включает до 10 часов с момента посадки клиента в автомобиль до финальной высадки. Дополнительное время сверх 10 часов — 600 UYU/час.'}]},
-{g:'🚗 Личный водитель',i:'🚗',a:[{id:'hourly',n:'Личный водитель — Монтевидео и ближайшие окрестности',p:600,c:'UYU/час',f:'',t:'',d:'Для поездок внутри Монтевидео и ближайших окрестностей. Короткий маршрут A → B внутри города оформляется через «Личный водитель». 600 UYU/час, минимальный заказ — 3 часа (от 1 800 UYU). Укажите адрес подачи; маршрут можно дополнительно описать в комментарии.'}]},
+{g:'🚗 Личный водитель',i:'🚗',a:[{id:'hourly',n:'Личный водитель — Монтевидео и ближайшие окрестности',p:600,c:'UYU/час',f:'',t:'',d:'600 UYU/час, минимальный заказ — 3 часа. В каждый оплаченный час включено 10 км пробега с клиентом: 3 часа = 30 км, 4 часа = 40 км, 5 часов = 50 км и т. д. Сверх включённого пробега — 40 UYU/км. Пробег считается по одометру с момента посадки клиента до завершения работы с ним. Почасовой тариф действует в Монтевидео и не далее 10 км за городской чертой. Если маршрут выходит дальше 10 км — применяется расчёт по межгородской тарифной сетке «Другие направления».'}]},
 {g:'🛣️ Другие направления',i:'🛣️',a:[{id:'grid_one',n:'Другие направления — между городами',autoGrid:true,label:'авторасчёт',f:'',t:'',d:'Для поездок между разными городами / населёнными пунктами. Две точки внутри Монтевидео здесь не рассчитываются. Для поездки по городу выберите «Личный водитель» — минимум 3 часа (от 1 800 UYU). Создайте маршрут A → B и при необходимости добавьте C, D, E или F. Для промежуточных точек можно указать ожидание от 30 минут до 4 часов. Аэропорты Carrasco/Punta del Este и Buquebus доступны как готовые точки без ручного адреса. Дорожные сборы включены.'}]}
 ];
 let selected=null,loyalty={paidCount:0,orderNumber:1,discountPercent:0,eligible:false},availabilityTimer=null;
@@ -1656,7 +1656,7 @@ function rw98PaintSameCityGuard(showToast){
   if(conflict.isMontevideo){
     box.classList.remove('secondary');
     title.textContent='🏙️ Обе точки находятся внутри Монтевидео';
-    text.textContent='Короткая поездка A → B внутри Монтевидео оформляется через «Личный водитель». Для поездок по городу выберите «Личный водитель» — 600 UYU/час, минимум 3 часа (от 1 800 UYU). Раздел «Другие направления» предназначен для поездок между разными городами.';
+    text.textContent='Короткая поездка A → B внутри Монтевидео оформляется через «Личный водитель»: 600 UYU/час, минимум 3 часа, включено 10 км за каждый оплаченный час, далее 40 UYU/км. Почасовая зона — Монтевидео и до 10 км за городской чертой; дальше применяется межгородская тарифная сетка.';
     btn.textContent='Выбрать «Личный водитель» · минимум 3 часа';
     btn.onclick=rw98SwitchToHourly;
     if(showToast)rw98ShowToast('Короткая поездка Montevideo → Montevideo оформляется через «Личный водитель». Выберите «Личный водитель» — минимум 3 часа.','mvd_same_city');
@@ -2306,7 +2306,7 @@ function cityOrFullPoint(city,street,house,label){
 }
 function routePlan(id){
   const P=(mode,A,B,C)=>({mode,A:A||{},B:B||{},C:C||{}});
-  if(id==='hourly')return P('a',{city:'Montevideo',editableCity:true});
+  if(id==='hourly')return P('a',{city:'Montevideo',editableCity:false});
   if(id==='grid_one')return P('ab',{},{});
   if(id==='airport_to_mvd')return P('ab',{fixed:'airport'},{city:'Montevideo'});
   if(id==='mvd_to_airport')return P('ab',{city:'Montevideo'},{fixed:'airport'});
@@ -2385,6 +2385,7 @@ function configureRouteUI(){
   const cityOnly=!!(plan.B&&plan.B.cityOnlyAllowed&&plan.mode==='abc');
   // V77: the same tariff-city selector is mandatory for every client/service, including corporate.
   rwGridCityInputs(true);
+  if(selected.id==='hourly'&&$('routeACity'))$('routeACity').dataset.rw28CitySearch='0';
   if(selected.id==='grid_one'){rwGridResetPoints();rwGridUpdatePointLabels();rwGridRouteBusinessUiV92('blocked','Заполните маршрут');}else{const gc=$('gridRouteControls'),gn=$('gridRouteCount');if(gc)gc.classList.add('hidden');if(gn)gn.classList.add('hidden');}
   $('routeBStreetLabel').innerHTML='Улица / адрес с номером дома <span class="req">*</span>';
   if(selected.id==='corporate'){
@@ -2394,8 +2395,10 @@ function configureRouteUI(){
     $('routeStepHelp').textContent='Междугородний маршрут A → B. Для поездки внутри Монтевидео выберите «Личный водитель».';
     $('routeHelp').innerHTML='<b>Другие направления — между городами:</b> начните с точек <b>A</b> и <b>B</b>. Если обе точки находятся внутри <b>Монтевидео</b>, короткий городской A → B здесь не рассчитывается. Выберите тариф <b>«Личный водитель»</b>, минимум 3 часа (от 1 800 UYU).<br><br>Кнопкой «Добавить точку» можно добавить остановки <b>C–F</b>. Для обычной точки выберите город и укажите улицу / полный адрес одной строкой, включая номер дома, если он есть. Для Carrasco, аэропорта Punta del Este или Buquebus выберите готовую транспортную точку — адрес вводить не нужно. Цена считается по всему маршруту. На каждой промежуточной точке можно указать ожидание от 30 минут до 4 часов по тарифу 500 UYU/час.';
   }else if(plan.mode==='a'){
-    $('routeStepHelp').textContent='Для почасовой поездки нужен только точный адрес подачи.';
-    $('routeHelp').innerHTML='<b>Почасовая поездка:</b> укажите адрес подачи: город отдельно, а улицу / полный адрес с номером дома — одной строкой. Маршрут во время поездки можно согласовать с исполнителем.';
+    $('routeStepHelp').textContent=selected.id==='hourly'?'Личный водитель: Монтевидео и ближайшие окрестности до 10 км.':'Для почасовой поездки нужен только точный адрес подачи.';
+    $('routeHelp').innerHTML=selected.id==='hourly'
+      ? '<b>Личный водитель — Монтевидео и ближайшие окрестности.</b> Укажите точный адрес подачи в Монтевидео. Тариф — <b>600 UYU/час</b>, минимум <b>3 часа</b>. В каждый оплаченный час включено <b>10 км</b> пробега с клиентом; сверх включённого пробега — <b>40 UYU/км</b>. Пробег считается с момента посадки клиента до завершения работы с ним. Почасовая зона — <b>Монтевидео и до 10 км за городской чертой</b>. Если нужно ехать дальше 10 км, применяется <b>межгородская тарифная сетка «Другие направления»</b>.'
+      : '<b>Почасовая поездка:</b> укажите адрес подачи: город отдельно, а улицу / полный адрес с номером дома — одной строкой. Маршрут во время поездки можно согласовать с исполнителем.';
   }else if(plan.mode==='abc'){
     $('routeStepHelp').textContent='Маршрут туда и обратно: A → B → C.';
     $('routeHelp').innerHTML='<b>Поездка на день / туда и обратно:</b> стоимость <b>275 USD</b> включает до <b>10 часов</b> с момента посадки клиента в автомобиль до финальной высадки. Дополнительное время сверх 10 часов — <b>600 UYU/час</b>.<br><br>Для точек <b>A</b>, <b>B</b> и <b>C</b> выберите город, а улицу / полный адрес с номером дома укажите одной строкой. Все адреса — латиницей.';
@@ -2429,6 +2432,9 @@ function rwV77ValidateRouteForm(){
     if(!cityValue)throw new Error('Пожалуйста, укажите '+rwV77PointWord(letter,'city')+'.');
     if(!rwTariffCityCanonicalV77(cityValue)||!rwCitySelectionValidV77(city)){
       throw new Error('Пожалуйста, выберите '+rwV77PointWord(letter,'city')+' из списка RusWeo. Нажмите на поле города и выберите нужный вариант из списка.');
+    }
+    if(selected&&selected.id==='hourly'&&letter==='A'&&rwNormCity(cityValue)!==rwNormCity('Montevideo')){
+      throw new Error('Адрес подачи для «Личного водителя» укажите в Монтевидео. Во время заказа почасовая зона — Монтевидео и до 10 км за городской чертой; дальше применяется межгородская тарифная сетка.');
     }
     if(!streetValue)throw new Error('Пожалуйста, укажите '+rwV77PointWord(letter,'street')+'.');
   });
@@ -2592,7 +2598,7 @@ document.querySelectorAll('.rw2-service-tile').forEach(b=>b.addEventListener('cl
 $('servicePicker').onclick=()=>setServiceDropdown($('serviceList').classList.contains('hidden'));
 $('serviceBackdrop').onclick=()=>setServiceDropdown(false);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')setServiceDropdown(false)});
-function renderHours(){for(let i=3;i<=12;i++)$('hours').insertAdjacentHTML('beforeend','<option value="'+i+'">'+i+' часа</option>')}
+function renderHours(){for(let i=3;i<=12;i++){const word=(i===3||i===4)?'часа':'часов';$('hours').insertAdjacentHTML('beforeend','<option value="'+i+'">'+i+' '+word+' · '+(i*10)+' км включено</option>')}}
 function renderPassengers(){const corp=selected?.id==='corporate';$('passengers').innerHTML=(corp?[0,1,2,3]:[1,2,3]).map(x=>'<option>'+x+'</option>').join('');renderBags()}
 function maxBagsForPassengers(p){if(selected?.id==='corporate'&&p===0)return 8;if(p===1)return 6;if(p===2)return 3;if(p===3)return 1;return 0}
 function renderBags(){let p=Number($('passengers').value||1),max=maxBagsForPassengers(p),prev=Number($('bags').value||0);$('bags').innerHTML=Array.from({length:max+1},(_,i)=>'<option value="'+i+'">'+i+'</option>').join('');$('bags').value=String(Math.min(prev,max))}
@@ -2608,7 +2614,16 @@ function updatePrice(){
   }
   if(selected.manual){$('priceLabel').textContent='Стоимость';$('price').textContent='По договорённости';$('discountText').textContent=loyalty.discountPercent===10?'🎁 Применится скидка 10%':'';return}
   let base=selected.id==='hourly'?600*Number($('hours').value||3):Number(selected.p),cur=selected.id==='hourly'?'UYU':selected.c,disc=Number(loyalty.discountPercent||0),fin=disc===10?Math.round(base*.9*100)/100:base;
-  $('priceLabel').textContent=selected.id==='hourly'?'Стоимость за '+Number($('hours').value||3)+' ч.':'Стоимость услуги';$('price').textContent=money(fin,cur);$('discountText').textContent=disc===10?'🎁 Ваш '+loyalty.orderNumber+'-й заказ — скидка 10%':''
+  $('priceLabel').textContent=selected.id==='hourly'?'Стоимость за '+Number($('hours').value||3)+' ч.':'Стоимость услуги';
+  $('price').textContent=money(fin,cur);
+  if(selected.id==='hourly'){
+    const h=Number($('hours').value||3),included=h*10;
+    const terms='Включено '+included+' км с клиентом · далее 40 UYU/км · зона: Монтевидео + до 10 км';
+    $('discountText').textContent=terms+(disc===10?' · 🎁 скидка 10%':'');
+    const hint=$('hourlyKmHint');if(hint)hint.textContent=h+' ч. = '+included+' км с клиентом. Сверх включённого пробега — 40 UYU/км. Почасовая зона: Монтевидео и до 10 км за городской чертой; дальше — межгородская тарифная сетка.';
+  }else{
+    $('discountText').textContent=disc===10?'🎁 Ваш '+loyalty.orderNumber+'-й заказ — скидка 10%':'';
+  }
 }
 RW_GRID_POINT_LETTERS.forEach(letter=>{
   const city=$('route'+letter+'City');
@@ -2952,7 +2967,7 @@ function showSuccess(r,d){
   let contacts=[d.telegram,d.phone,d.whatsapp].filter(Boolean).join(' · '),cost=selected.id==='corporate'?'По договорённости':selected.manual?'По договорённости':(r.price?money(r.price,r.currency):$('price').textContent);
   const operatorCtx=rwOperatorContextV72();
   $('successNote').innerHTML=operatorCtx?('Заказ №'+esc(r.booking_number||'')+' оформлен для клиента <b>'+esc(rwOperatorClientLabelV72())+'</b>.<br>Клиенту отправлено уведомление. После подтверждения водителем дальнейшие статусы тоже будут приходить ему в Telegram.'):('Заявка №'+esc(r.booking_number||'')+' создана.<br>Подтверждение и кнопка отмены будут отправлены в Telegram.');
-  $('summary').innerHTML='<div class="row"><span>Номер заявки</span><b class="booking-no">№'+esc(r.booking_number||'')+'</b></div>'+(operatorCtx?'<div class="row"><span>Клиент</span><b>'+esc(rwOperatorClientLabelV72())+'</b></div>':'')+'<div class="row"><span>Услуга</span><b>'+esc(selected.n)+'</b></div><div class="row"><span>Дата и время</span><b>'+esc(d.date)+' · '+esc(d.time)+'</b></div>'+(selected.id==='hourly'?'<div class="row"><span>Количество часов</span><b>'+esc(d.hours)+'</b></div>':'')+'<div class="row"><span>Маршрут</span><b>'+esc(d.route_text||((d.from||'')+' → '+(d.to||'')))+'</b></div>'+(selected.id==='grid_one'&&rwGridWaitingSummary()?'<div class="row"><span>Ожидание</span><b>'+esc(rwGridWaitingSummary())+'</b></div>':'')+'<div class="row"><span>Люди</span><b>'+esc(d.passengers)+'</b></div><div class="row"><span>Багаж</span><b>'+esc(d.bags)+'</b></div><div class="row"><span>Детский бустер</span><b>'+(d.booster==='yes'?'Да':'Нет')+'</b></div><div class="row"><span>Окончательный расчёт</span><b>'+esc(paymentLabel(d.final_payment))+'</b></div>'+(selected.id==='corporate'?'<div class="row"><span>Человек</span><b>'+esc(d.corporate_passenger_name)+'</b></div>':'')+(d.comment?'<div class="row"><span>Комментарий</span><b>'+esc(d.comment)+'</b></div>':'')+'<div class="row"><span>Контакты</span><b>'+esc(contacts)+'</b></div><div class="row"><span>Стоимость</span><b>'+esc(cost)+'</b></div>';
+  $('summary').innerHTML='<div class="row"><span>Номер заявки</span><b class="booking-no">№'+esc(r.booking_number||'')+'</b></div>'+(operatorCtx?'<div class="row"><span>Клиент</span><b>'+esc(rwOperatorClientLabelV72())+'</b></div>':'')+'<div class="row"><span>Услуга</span><b>'+esc(selected.n)+'</b></div><div class="row"><span>Дата и время</span><b>'+esc(d.date)+' · '+esc(d.time)+'</b></div>'+(selected.id==='hourly'?'<div class="row"><span>Количество часов</span><b>'+esc(d.hours)+'</b></div><div class="row"><span>Включённый пробег</span><b>'+esc(String(Number(d.hours||3)*10))+' км</b></div><div class="row"><span>Сверх лимита</span><b>40 UYU/км</b></div><div class="row"><span>География</span><b>Монтевидео + до 10 км</b></div>':'')+'<div class="row"><span>Маршрут</span><b>'+esc(d.route_text||((d.from||'')+' → '+(d.to||'')))+'</b></div>'+(selected.id==='grid_one'&&rwGridWaitingSummary()?'<div class="row"><span>Ожидание</span><b>'+esc(rwGridWaitingSummary())+'</b></div>':'')+'<div class="row"><span>Люди</span><b>'+esc(d.passengers)+'</b></div><div class="row"><span>Багаж</span><b>'+esc(d.bags)+'</b></div><div class="row"><span>Детский бустер</span><b>'+(d.booster==='yes'?'Да':'Нет')+'</b></div><div class="row"><span>Окончательный расчёт</span><b>'+esc(paymentLabel(d.final_payment))+'</b></div>'+(selected.id==='corporate'?'<div class="row"><span>Человек</span><b>'+esc(d.corporate_passenger_name)+'</b></div>':'')+(d.comment?'<div class="row"><span>Комментарий</span><b>'+esc(d.comment)+'</b></div>':'')+'<div class="row"><span>Контакты</span><b>'+esc(contacts)+'</b></div><div class="row"><span>Стоимость</span><b>'+esc(cost)+'</b></div>';
   $('bookingCard').classList.add('hidden');$('successCard').classList.remove('hidden');scrollTo(0,0)
 }
 $('mainMenuV43').onclick=()=>{try{if(rwOperatorModeV72()&&parent&&parent!==window&&typeof parent.rwReturnFromOperatorBookingV72==='function'){parent.rwReturnFromOperatorBookingV72();return}if(parent&&parent!==window&&typeof parent.backToHub==='function'){parent.backToHub();return}}catch(e){}history.back()};$('back').onclick=()=>{$('successCard').classList.add('hidden');$('bookingCard').classList.remove('hidden');scrollTo(0,0)};$('operator').onclick=()=>{const u='https://t.me/maxriccomsk';try{if(isAndroid&&window.UruWayAndroid&&typeof window.UruWayAndroid.openExternal==='function'){window.UruWayAndroid.openExternal(u);return}if(tg?.openTelegramLink)tg.openTelegramLink(u);else location.href=u}catch(e){location.href=u}};
@@ -3008,7 +3023,7 @@ function refreshWizardReview(){
   if(rwOperatorModeV72())add('Клиент',rwOperatorClientLabelV72());
   add('Услуга',selected?selected.n:'—');
   add('Дата и время',($('date').value||'—')+' · '+($('time').value||'—'));
-  if(selected&&selected.id==='hourly')add('Продолжительность',($('hours').value||'3')+' ч.');
+  if(selected&&selected.id==='hourly'){const h=Number($('hours').value||3);add('Продолжительность',h+' ч.');add('Включённый пробег',h*10+' км');add('Сверх лимита','40 UYU/км');add('География','Монтевидео + до 10 км');add('Дальше 10 км','Межгородская тарифная сетка');}
   try{add('Маршрут',getRouteData().route_text);if(selected&&selected.id==='grid_one'){const ws=rwGridWaitingSummary();if(ws)add('Ожидание',ws)}}catch(e){add('Маршрут','Заполните маршрут на шаге 2')}
   add('Люди / багаж',($('passengers').value||'—')+' / '+($('bags').value||'—'));
   add('Бустер',$('booster').value==='yes'?'Да':$('booster').value==='no'?'Нет':'—');

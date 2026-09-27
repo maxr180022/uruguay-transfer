@@ -10901,3 +10901,93 @@ body .rw3-history-card .rw-fix34-history-row .rw-fix34-tip{
   };
 })();
 </script>
+
+<!-- RUSWEO V116 FIX35 — ACCEPTED ACTION SEMANTIC REORDER -->
+<script id="RUSWEO_V116_FIX35_ACCEPTED_ACTION_ORDER">
+(function(){
+  'use strict';
+  const prior=window.renderOrderCard;
+  if(typeof prior!=='function')return;
+
+  function take(card,selector){
+    const btn=card.querySelector(selector);
+    if(btn)btn.remove();
+    return btn||null;
+  }
+  function takeCancel(card){
+    let found=null;
+    Array.from(card.querySelectorAll('button')).some(function(btn){
+      const oc=String(btn.getAttribute('onclick')||'');
+      if(oc.indexOf('driverAction')!==-1&&oc.indexOf('cancel')!==-1){
+        found=btn;btn.remove();return true;
+      }
+      return false;
+    });
+    return found;
+  }
+  function row(cls,buttons){
+    const r=document.createElement('div');
+    r.className='rw-fix33-action-row '+cls;
+    buttons.filter(Boolean).forEach(function(btn){r.appendChild(btn)});
+    r.setAttribute('data-count',String(r.children.length));
+    return r;
+  }
+
+  window.renderOrderCard=function(order){
+    const raw=prior.apply(this,arguments);
+    if(typeof raw!=='string'||!order||typeof driverTab==='undefined'||driverTab!=='accepted')return raw;
+    const holder=document.createElement('div');holder.innerHTML=raw;
+    const card=holder.firstElementChild;if(!card)return raw;
+    const host=card.querySelector('.rw-fix33-actions');if(!host)return raw;
+
+    const primary=take(card,'.driver-primary-action-v23');
+    const chat=take(card,'button[onclick*="openDriverChat"]');
+    const edit=take(card,'button[onclick*="openDriverBookingEditV97"]');
+
+    const nav=take(card,'.rw-fix33-nav-btn');
+    const expense=take(card,'button[onclick*="openDriverExpenseV23"]');
+    const cancel=takeCancel(card);
+
+    const price=take(card,'.rw-v105-price-btn');
+    const snooze=take(card,'button[onclick*="openDepartureSnoozeV113"]');
+    const phone=take(card,'button[onclick*="openPhone"]');
+    const charge=take(card,'.rw-v113-charge-btn');
+
+    host.innerHTML='';
+    const row1=row('rw-fix35-row-primary',[primary,chat,edit]);
+    const row2=row('rw-fix35-row-operational',[nav,expense,cancel]);
+    if(row1.children.length)host.appendChild(row1);
+    if(row2.children.length)host.appendChild(row2);
+
+    const remaining=[price,snooze,phone,charge].filter(Boolean);
+    for(let i=0;i<remaining.length;i+=3){
+      const r=row('rw-fix35-row-secondary',remaining.slice(i,i+3));
+      if(r.children.length)host.appendChild(r);
+    }
+
+    card.setAttribute('data-rw-fix35-accepted-order','1');
+    return card.outerHTML;
+  };
+  try{renderOrderCard=window.renderOrderCard}catch(_){ }
+
+  const oldChecks=window.rwLocalDriverChecksV43;
+  if(typeof oldChecks==='function'){
+    window.rwLocalDriverChecksV43=function(){
+      const rows=oldChecks.apply(this,arguments)||[];
+      rows.push({
+        name:'WEB · FIX35 Accepted порядок действий',
+        ok:!!document.getElementById('RUSWEO_V116_FIX35_ACCEPTED_ACTION_ORDER'),
+        detail:'row1 primary/chat/edit · row2 navigation/expense/cancel · row3 remaining',
+        latency_ms:0
+      });
+      return rows;
+    };
+  }
+  window.RusWeoV116Fix35AcceptedActions={
+    installed:true,
+    acceptedRows:'primary/chat/edit | navigation/expense/cancel | price/snooze/phone_or_charge',
+    standardActionGeometryInheritedFromFix34:true,
+    navigationChooserRetained:true
+  };
+})();
+</script>

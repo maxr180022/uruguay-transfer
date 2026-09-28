@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0d4f79">
-<title>RusWeo · Кабинет водителя · V119 FIX4</title>
+<title>RusWeo · Кабинет водителя · V119 FIX5</title>
 <style>
 :root{--navy:#0c385b;--blue:#087fc2;--cyan:#19a5d8;--ink:#183a54;--muted:#6b7f90;--line:#d9e5ed;--soft:#f3f8fb;--green:#19724d;--red:#a93636}
 *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:linear-gradient(180deg,#eaf7fd 0,#fff 320px);color:var(--ink)}button,input,select{font:inherit}.wrap{width:min(100% - 22px,760px);margin:auto;padding:14px 0 38px}.hero{border-radius:24px;padding:20px;background:linear-gradient(135deg,#0b466e,#0f78aa 65%,#18a0ce);color:#fff;box-shadow:0 14px 35px rgba(12,67,102,.18)}.hero h1{margin:0;font-size:25px}.hero p{margin:7px 0 0;opacity:.92;font-size:13px}.status{display:inline-flex;margin-top:14px;padding:8px 11px;border-radius:999px;background:rgba(255,255,255,.15);font-weight:800;font-size:13px}.card{margin-top:13px;padding:16px;border:1px solid var(--line);border-radius:20px;background:#fff;box-shadow:0 5px 16px rgba(19,62,91,.05)}.card h2{margin:0 0 12px;font-size:17px;color:var(--navy)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{margin-bottom:10px}.field label{display:block;font-size:12px;font-weight:800;margin-bottom:5px;color:#45667d}.field input,.field select{width:100%;min-height:44px;border:1px solid #cfdde7;border-radius:12px;padding:9px 11px;background:#fff;color:var(--ink)}.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}.btn{border:0;border-radius:13px;min-height:44px;padding:9px 12px;font-weight:850;cursor:pointer}.primary{background:#087fc2;color:#fff}.good{background:#e9f7f0;color:#176844;border:1px solid #ccebdd}.bad{background:#fff1f1;color:#963333;border:1px solid #efd5d5}.secondary{background:#f1f6f9;color:#31576f;border:1px solid #d7e4ec}.hint{font-size:11px;color:var(--muted);line-height:1.45;margin-top:7px}.msg{display:none;margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--soft);font-size:12px}.order{border:1px solid #e0e9ef;border-radius:15px;padding:12px;margin:9px 0}.order b{color:var(--navy)}.order .meta{font-size:12px;color:var(--muted);margin-top:5px}.empty{font-size:13px;color:var(--muted)}a{color:#087fc2}.termsWarn{display:none;border:1px solid #f0dfad;background:#fff9e9;border-radius:14px;padding:12px;margin-bottom:11px;font-size:12px}.loader{padding:28px;text-align:center;color:var(--muted)}@media(max-width:560px){.grid,.actions{grid-template-columns:1fr}.wrap{width:min(100% - 16px,760px)}.hero{border-radius:20px}.card{border-radius:17px;padding:14px}}
@@ -41,11 +41,14 @@
     <section class="card"><h2>Мои заявки</h2><div id="orders"><div class="empty">Назначенных заявок пока нет.</div></div></section>
   </main>
 </div>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
 const BACKEND='https://script.google.com/macros/s/AKfycbzWkerEeWR-3EjY1QW44Az6pj1TjJK9_ktfnrdcgFILlD6Cnqb4z2X97zSknKRJw-i3jw/exec';
 const tg=window.Telegram&&window.Telegram.WebApp?window.Telegram.WebApp:null;
 try{tg&&tg.ready();tg&&tg.expand()}catch(e){}
-const initData=()=>String(tg&&tg.initData||'');
+const liveInitData=()=>String(tg&&tg.initData||'').trim();
+const savedInitData=()=>{try{return String(sessionStorage.getItem('rw_tg_driver_init_data_v1')||'').trim()}catch(e){return ''}};
+const initData=()=>{const live=liveInitData();if(live){try{sessionStorage.setItem('rw_tg_driver_init_data_v1',live)}catch(e){}return live}return savedInitData()};
 const isAndroid=!!(window.UruWayAndroid&&typeof window.UruWayAndroid.getPlatform==='function')||(new URLSearchParams(location.search)).get('platform')==='android';
 const appSession=()=>{try{return isAndroid?String(localStorage.getItem('uruway_auth_session')||''):''}catch(e){return ''}};
 const $=id=>document.getElementById(id);

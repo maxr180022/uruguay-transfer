@@ -6,15 +6,16 @@
   name="viewport"
   content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 
-<title>RusWeo 3.1.43 — Личный кабинет</title>
-<meta name="rusweo-release" content="RusWeo 3.1.43 / V117 / web 31117 / Android native code112">
+<title>RusWeo 4.0.0 — Личный кабинет</title>
+<meta name="rusweo-release" content="RusWeo 4.0.0 / V119 / web 31119 / Android native code112">
 <meta name="rusweo-ui-policy" content="single-design-v3-driver-android-telegram">
 <meta name="rusweo-runtime-policy" content="driver-root-back-minimize-v2">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="rusweo-platform.js?v=31117"></script>
-<script src="rusweo-auth.js?v=31117"></script>
+<script src="rusweo-platform.js?v=31119"></script>
+<script src="rusweo-auth.js?v=31119"></script>
 <!-- RusWeo 3.1.42 / V115 · explicit final-point wait + return-home departure lifecycle -->
 
+<!-- RUSWEO_V119_DRIVER_FOUNDATION_PHASE1 -->
 <style>
 
 *{
@@ -1388,7 +1389,7 @@ button{
     </button>
 
     <div class="version">
-      RusWeo 3.1.43 · Android native code112
+      RusWeo 4.0.0 · Android native code112
     </div>
 
   </div>
@@ -1538,7 +1539,7 @@ button{
     <div id="driverOrders"></div>
 
     <div class="version">
-      RusWeo 3.1.43 · Личный кабинет
+      RusWeo 4.0.0 · Личный кабинет
     </div>
 
   </div>
@@ -1915,7 +1916,7 @@ function rwFinanceJsonpOnceV95(action,extra,timeoutMs){
 }
 function rwFinanceBuildOkV95(data){
   const build=String(data&&data.backend_build||'');
-  return build.indexOf('RUSWEO_3_1_V95_')===0 || build==='RUSWEO_3_1_V97_ORDER_EDIT_20260916' || build==='RUSWEO_3_1_V99_DIAGNOSTICS_E2E_20260916' || build==='RUSWEO_3_1_V100_ROLE_ISOLATION_20260916' || build==='RUSWEO_3_1_V103_CORPORATE_CALENDAR_20260916' || build==='RUSWEO_3_1_V104_LOYALTY_PRICE_REMINDER_20260918' || build==='RUSWEO_3_1_V105_FINAL_PRICE_20260918' || build==='RUSWEO_3_1_V106_POINT_ETA_REMINDER_20260918' || build==='RUSWEO_3_1_V107_DRIVER_UI_SAFETY_20260919' || build==='RUSWEO_3_1_V108_HISTORY_ACTION_ROW_20260919' || build==='RUSWEO_3_1_V109_DRIVER_FINANCE_ALIGNMENT_20260919' || build==='RUSWEO_3_1_V110_DRIVER_HOME_COMPACT_20260919' || build==='RUSWEO_3_1_V111_MONEY_INPUT_TRANSPORT_20260919' || build==='RUSWEO_3_1_V112_ANDROID_NOTIFICATION_FINANCE_ALIGNMENT_20260919' || build==='RUSWEO_3_1_V113_TERMINAL_EV_ANALYTICS_20260921' || build==='RUSWEO_3_1_V114_LEGAL_TERMS_UI_20260922' || build==='RUSWEO_3_1_V115_HOME_DEPARTURE_LIFECYCLE_20260922' || build==='RUSWEO_3_1_V116_RETURN_HOME_ETA_20260923' || build==='RUSWEO_3_1_V116_FIX36_MONITORING_E2E_20260927' || build==='RUSWEO_3_1_V116_FIX37_CLIENT_PHONE_LOOKUP_20260927' || build==='RUSWEO_3_1_V116_FIX38_CLIENT_ORDER_CONFIRM_LINK_20260927' || build==='RUSWEO_3_1_V116_FIX39_UI_SOURCE_ANALYTICS_E2E_20260927' || build==='RUSWEO_3_1_V117_CLIENT_ORDER_LINK_ANALYTICS_20260927' || build==='RUSWEO_3_1_V117_TERMINAL_DROPOFF_DAY_BREAK_20260927' || build==='RUSWEO_3_1_V117_UBER_BONUS_ODOMETER_PARTNER_20260927';
+  return build.indexOf('RUSWEO_3_1_V95_')===0 || build==='RUSWEO_3_1_V97_ORDER_EDIT_20260916' || build==='RUSWEO_3_1_V99_DIAGNOSTICS_E2E_20260916' || build==='RUSWEO_3_1_V100_ROLE_ISOLATION_20260916' || build==='RUSWEO_3_1_V103_CORPORATE_CALENDAR_20260916' || build==='RUSWEO_3_1_V104_LOYALTY_PRICE_REMINDER_20260918' || build==='RUSWEO_3_1_V105_FINAL_PRICE_20260918' || build==='RUSWEO_3_1_V106_POINT_ETA_REMINDER_20260918' || build==='RUSWEO_3_1_V107_DRIVER_UI_SAFETY_20260919' || build==='RUSWEO_3_1_V108_HISTORY_ACTION_ROW_20260919' || build==='RUSWEO_3_1_V109_DRIVER_FINANCE_ALIGNMENT_20260919' || build==='RUSWEO_3_1_V110_DRIVER_HOME_COMPACT_20260919' || build==='RUSWEO_3_1_V111_MONEY_INPUT_TRANSPORT_20260919' || build==='RUSWEO_3_1_V112_ANDROID_NOTIFICATION_FINANCE_ALIGNMENT_20260919' || build==='RUSWEO_3_1_V113_TERMINAL_EV_ANALYTICS_20260921' || build==='RUSWEO_3_1_V114_LEGAL_TERMS_UI_20260922' || build==='RUSWEO_3_1_V115_HOME_DEPARTURE_LIFECYCLE_20260922' || build==='RUSWEO_3_1_V116_RETURN_HOME_ETA_20260923' || build==='RUSWEO_3_1_V116_FIX36_MONITORING_E2E_20260927' || build==='RUSWEO_3_1_V116_FIX37_CLIENT_PHONE_LOOKUP_20260927' || build==='RUSWEO_3_1_V116_FIX38_CLIENT_ORDER_CONFIRM_LINK_20260927' || build==='RUSWEO_3_1_V116_FIX39_UI_SOURCE_ANALYTICS_E2E_20260927' || build==='RUSWEO_3_1_V117_CLIENT_ORDER_LINK_ANALYTICS_20260927' || build==='RUSWEO_3_1_V117_TERMINAL_DROPOFF_DAY_BREAK_20260927' || build==='RUSWEO_4_0_V119_DRIVER_FOUNDATION_PHASE1_20260928';
 }
 
 async function rwFinanceReadV95(month){
@@ -2067,7 +2068,7 @@ function startDriverOperatorBookingV72(){
     operator_app_session:rwDriverAppSessionV72()
   };
   const frame=document.getElementById('bookingFrame');
-  frame.src='booking.html?vehicle_class=standard&operator_booking=1&v=31117';
+  frame.src='booking.html?vehicle_class=standard&operator_booking=1&v=31119';
   closeDriverOperatorBookingV72();
   openScreen('booking');
 }
@@ -2086,7 +2087,7 @@ function startDriverOperatorUnlinkedBookingFix38(){
     operator_app_session:rwDriverAppSessionV72()
   };
   const frame=document.getElementById('bookingFrame');
-  frame.src='booking.html?vehicle_class=standard&operator_booking=1&client_claim=1&v=31117';
+  frame.src='booking.html?vehicle_class=standard&operator_booking=1&client_claim=1&v=31119';
   closeDriverOperatorBookingV72();
   openScreen('booking');
 }
@@ -4584,7 +4585,7 @@ window.addEventListener(
     const qs =
       new URLSearchParams({
         vehicle_class:cls,
-        v:'31117',
+        v:'31119',
         app_session:String(
           localStorage.getItem(
             'uruway_auth_session'
@@ -6758,7 +6759,7 @@ window.UruWayApp.handleNativeBack=function(){
     const general=r?money25(r.general_expenses_uyu):'—';
     box.innerHTML=
       '<div class="finance-v25">'+
-        '<div class="finance-summary-v25"><div class="title">💰 ФИНАНСЫ · RusWeo 3.1.43</div><div class="main">'+escHtml(top)+'</div><div class="sub">Сегодня: '+d.orders+' заказов · '+hours25(d.hours)+' · '+money25(d.gross+d.add)+' UYU доход · '+money25(d.net+d.add)+' UYU чистыми</div></div>'+
+        '<div class="finance-summary-v25"><div class="title">💰 ФИНАНСЫ · RusWeo 4.0.0</div><div class="main">'+escHtml(top)+'</div><div class="sub">Сегодня: '+d.orders+' заказов · '+hours25(d.hours)+' · '+money25(d.gross+d.add)+' UYU доход · '+money25(d.net+d.add)+' UYU чистыми</div></div>'+
         '<div class="finance-grid-v25">'+
           '<button class="finance-btn-v25" onclick="runDriverMonthReportV23()">📊 Отчёт месяца<span>12 месяцев · часы · стоимость часа · итог</span></button>'+
           '<button class="finance-btn-v25" onclick="openDriverGeneralExpenseV25()">🧾 Общие расходы<span>Налоги · фактуры · покупки · сервисы</span></button>'+
@@ -6774,7 +6775,7 @@ window.UruWayApp.handleNativeBack=function(){
           '<div class="finance-kpi-v25"><small>Итоговый чистый доход/час за месяц</small><strong>'+actualHour+' UYU/ч</strong></div>'+
         '</div></div>'+
         '<div class="finance-card-v25"><h3>Счётчики заказов</h3><div class="finance-kpis-v25">'+
-          '<div class="finance-kpi-v25"><small>Новые</small><strong>'+fresh+'</strong></div><div class="finance-kpi-v25"><small>Принятые / в работе</small><strong>'+accepted+'</strong></div><div class="finance-kpi-v25"><small>Завершённые</small><strong>'+history+'</strong></div><div class="finance-kpi-v25"><small>Версия</small><strong>3.1.43</strong></div>'+
+          '<div class="finance-kpi-v25"><small>Новые</small><strong>'+fresh+'</strong></div><div class="finance-kpi-v25"><small>Принятые / в работе</small><strong>'+accepted+'</strong></div><div class="finance-kpi-v25"><small>Завершённые</small><strong>'+history+'</strong></div><div class="finance-kpi-v25"><small>Версия</small><strong>4.0.0</strong></div>'+
         '</div></div>'+
       '</div>';
   };
@@ -9469,7 +9470,7 @@ document.addEventListener('DOMContentLoaded',function(){
       vehicle_class:'standard',
       edit_id:id,
       edit_role:'driver',
-      v:'31117',
+      v:'31119',
       _:String(Date.now())
     });
     var appSession=window.rwBookingEditContextV97.operator_app_session;
@@ -10219,7 +10220,7 @@ body .order-card.rw3-history-card .order-price{
   window.RusWeoV116HistoryFocusFix={oneTimeDeepLink:true,completedToHistory:true,manualTabWins:true,pollingKeepsTab:true};
 
   window.RusWeoV113TerminalEvAnalytics={
-    release:'3.1.43',webRevision:'31117',androidTargetCode:112,
+    release:'4.0.0',webRevision:'31119',androidTargetCode:112,
     terminalDriverOffsetMinutes:15,reminderRepeatMinutes:5,evSafeKm:150,
     standardAndCorporate:true,departureSnooze:true,transportDelayReason:true,
     chargeAccountingOnly:true,calendarShiftOnCharge:false,calendarReleaseOnFullClose:true,

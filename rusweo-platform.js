@@ -653,8 +653,8 @@
   if(window.RusWeo&&window.RusWeo.guard&&window.RusWeo.guard.patch==='FIX21_GLOBAL_RETRY_DIAGNOSTICS_20260925')return;
 
   var PATCH='FIX21_GLOBAL_RETRY_DIAGNOSTICS_20260925';
-  var APP_VERSION='3.1.42';
-  var WEB_REVISION='31116';
+  var APP_VERSION='4.0.0';
+  var WEB_REVISION='31119';
   var API_FALLBACK='https://script.google.com/macros/s/AKfycbzWkerEeWR-3EjY1QW44Az6pj1TjJK9_ktfnrdcgFILlD6Cnqb4z2X97zSknKRJw-i3jw/exec';
   var QUEUE_KEY='rusweo_fix15_error_queue';
   var queueBusy=false;

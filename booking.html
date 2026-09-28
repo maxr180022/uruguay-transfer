@@ -1,15 +1,16 @@
 <!doctype html>
-<!-- RusWeo 3.1.43 / V117 · directional terminal tariffs + client order-link/source analytics; V116 lifecycle retained -->
+<!-- RusWeo 4.0.0 / V119 · final 3.x recovery: tariffs/day-trip terms + Uber bonus/odometer + Punta partner + client link/source analytics -->
 <html lang="ru">
+<!-- RUSWEO_V119_DRIVER_FOUNDATION_PHASE1 -->
 <!-- RUSWEO_V117_DAY_TRIP_BREAK_60_MIN -->
 
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="rusweo-release" content="RusWeo 3.1.43 / V117 / web 31117">
+<meta name="rusweo-release" content="RusWeo 4.0.0 / V119 / web 31119">
 <title>RusWeo</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="rusweo-platform.js?v=31117"></script>
+<script src="rusweo-platform.js?v=31119"></script>
 <style>
 :root{--ink:#08305f;--muted:#6f859b;--line:#d8eaf6;--blue:#078de4;--blue2:#04afe9;--pale:#eef8ff;--ok:#158453;--bad:#c83838;--card:#fff}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 88% 0%,rgba(12,173,236,.16),transparent 30%),linear-gradient(180deg,#eaf7ff 0%,#f8fcff 52%,#edf8ff 100%)}
@@ -1280,9 +1281,9 @@ const RW_TERMS_URL_V114='terms_es_3.1.40_20260922.html';
 const RW_TERMS_DOCUMENT_V114='https://maxr180022.github.io/uruguay-transfer/terms_es_3.1.40_20260922.html';
 /* Current hardened booking runtime. */
 const BACKEND_URL='https://script.google.com/macros/s/AKfycbzWkerEeWR-3EjY1QW44Az6pj1TjJK9_ktfnrdcgFILlD6Cnqb4z2X97zSknKRJw-i3jw/exec';
-const RW_EXPECTED_BACKEND_BUILD='RUSWEO_3_1_V117_UBER_BONUS_ODOMETER_PARTNER_20260927';
-const RW_WEB_RELEASE_V99='RusWeo 3.1.43 / V117';
-const RW_WEB_REVISION_V99='31117';
+const RW_EXPECTED_BACKEND_BUILD='RUSWEO_4_0_V119_DRIVER_FOUNDATION_PHASE1_20260928';
+const RW_WEB_RELEASE_V99='RusWeo 4.0.0 / V119';
+const RW_WEB_REVISION_V99='31119';
 const tg=window.Telegram?.WebApp;const params=new URLSearchParams(location.search);const isAndroid=!!(window.UruWayAndroid&&typeof window.UruWayAndroid.getPlatform==='function')||params.get('platform')==='android';const corporateRequested=params.get('mode')==='corporate';let corporateMode=false;
 if(tg){try{tg.ready();tg.expand()}catch(e){}}
 const $=id=>document.getElementById(id);
@@ -1586,7 +1587,7 @@ let rwGridQuote=null,rwGridQuoteTimer=null,rwGridPointCount=2,rwGridQuoteSignatu
 // RUSWEO V116 FIX14 — automatic blocking quote diagnostics.
 const RW_V116_CLIENT_ERROR_QUEUE_KEY='rusweo_v116_client_error_queue';
 const RW_V116_CLIENT_ERROR_PATCH='FIX14_AUTO_BLOCKING_ERROR_REPORT_20260925';
-const RW_V116_WEB_REVISION='31117';
+const RW_V116_WEB_REVISION='31119';
 let rwV116QuoteAttemptsBySignature={};
 let rwV116ErrorFlushBusy=false;
 const RW_GRID_POINT_LETTERS=['A','B','C','D','E','F'];
@@ -1896,7 +1897,7 @@ function rwV116QuoteErrorPayloadV116(err,kind,cities,waits,signature,server){
     platform:isAndroid?'android_webview':'telegram_mini_app',
     page:'booking',
     device:(window.RusWeo&&window.RusWeo.guard&&window.RusWeo.guard.device)?window.RusWeo.guard.device():'',
-    app_version:'3.1.43',
+    app_version:'4.0.0',
     route:Array.isArray(cities)?cities.join(' → '):String(cities||''),
     route_cities:Array.isArray(cities)?cities.join('|'):String(cities||''),
     route_wait_minutes:Array.isArray(waits)?waits.join('|'):String(waits||''),

@@ -7,10 +7,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="rusweo-release" content="RusWeo 4.0.1 / V120 / web 31122">
+<meta name="rusweo-release" content="RusWeo 4.0.1 / V120 / web 31123">
 <title>RusWeo</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="rusweo-platform.js?v=31122"></script>
+<script src="rusweo-platform.js?v=31123"></script>
 <style>
 :root{--ink:#08305f;--muted:#6f859b;--line:#d8eaf6;--blue:#078de4;--blue2:#04afe9;--pale:#eef8ff;--ok:#158453;--bad:#c83838;--card:#fff}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 88% 0%,rgba(12,173,236,.16),transparent 30%),linear-gradient(180deg,#eaf7ff 0%,#f8fcff 52%,#edf8ff 100%)}
@@ -1283,9 +1283,9 @@ const RW_TERMS_URL_V114='terms_es_4.0.0_20260928.html';
 const RW_TERMS_DOCUMENT_V114='https://maxr180022.github.io/uruguay-transfer/terms_es_4.0.0_20260928.html';
 /* Current hardened booking runtime. */
 const BACKEND_URL='https://script.google.com/macros/s/AKfycbzWkerEeWR-3EjY1QW44Az6pj1TjJK9_ktfnrdcgFILlD6Cnqb4z2X97zSknKRJw-i3jw/exec';
-const RW_EXPECTED_BACKEND_BUILD='RUSWEO_4_0_1_V120_FIX2_MAX_TRUST_20260928';
+const RW_EXPECTED_BACKEND_BUILD='RUSWEO_4_0_1_V120_FIX3_LIVE_PILOT_CALENDAR_LOYALTY_20260928';
 const RW_WEB_RELEASE_V99='RusWeo 4.0.1 / V120';
-const RW_WEB_REVISION_V99='31122';
+const RW_WEB_REVISION_V99='31123';
 const tg=window.Telegram?.WebApp;const params=new URLSearchParams(location.search);const isAndroid=!!(window.UruWayAndroid&&typeof window.UruWayAndroid.getPlatform==='function')||params.get('platform')==='android';const corporateRequested=params.get('mode')==='corporate';let corporateMode=false;
 if(tg){try{tg.ready();tg.expand()}catch(e){}}
 const $=id=>document.getElementById(id);
@@ -1589,7 +1589,7 @@ let rwGridQuote=null,rwGridQuoteTimer=null,rwGridPointCount=2,rwGridQuoteSignatu
 // RUSWEO V116 FIX14 — automatic blocking quote diagnostics.
 const RW_V116_CLIENT_ERROR_QUEUE_KEY='rusweo_v116_client_error_queue';
 const RW_V116_CLIENT_ERROR_PATCH='FIX14_AUTO_BLOCKING_ERROR_REPORT_20260925';
-const RW_V116_WEB_REVISION='31122';
+const RW_V116_WEB_REVISION='31123';
 let rwV116QuoteAttemptsBySignature={};
 let rwV116ErrorFlushBusy=false;
 const RW_GRID_POINT_LETTERS=['A','B','C','D','E','F'];
@@ -2688,7 +2688,7 @@ function rwClientAvailabilityTextV114(raw,fallback){
   if(/не раньше чем через 2 часа|уже прошло|нельзя перенести/i.test(text))return text;
   return String(fallback||'Выбранное время недоступно.');
 }
-const rwAvailabilityStateV77={status:'idle',signature:'',message:'',requestId:0};
+const rwAvailabilityStateV77={status:'idle',signature:'',message:'',requestId:0,checkedAt:0};
 function rwAvailabilitySignatureV77(){
   const parts=[String(selected&&selected.id||''),String($('date').value||''),String($('time').value||''),String($('hours').value||'')];
   RW_GRID_POINT_LETTERS.forEach(letter=>{
@@ -2708,12 +2708,12 @@ function rwAvailabilityPaintV77(status,message){
 function rwAvailabilityQueueV77(delay){
   clearTimeout(availabilityTimer);
   if(!selected||!$('date').value||!$('time').value){
-    rwAvailabilityStateV77.status='idle';rwAvailabilityStateV77.signature='';rwAvailabilityStateV77.message='';rwAvailabilityStateV77.requestId++;
+    rwAvailabilityStateV77.status='idle';rwAvailabilityStateV77.signature='';rwAvailabilityStateV77.message='';rwAvailabilityStateV77.checkedAt=0;rwAvailabilityStateV77.requestId++;
     rwAvailabilityPaintV77('idle','⏳ Выберите дату и время, затем дождитесь проверки доступности.');
     return;
   }
   const sig=rwAvailabilitySignatureV77();
-  rwAvailabilityStateV77.status='pending';rwAvailabilityStateV77.signature=sig;rwAvailabilityStateV77.message='Пожалуйста, подождите — проверяем возможность оформления заявки.';
+  rwAvailabilityStateV77.status='pending';rwAvailabilityStateV77.signature=sig;rwAvailabilityStateV77.message='Пожалуйста, подождите — проверяем возможность оформления заявки.';rwAvailabilityStateV77.checkedAt=0;
   const requestId=++rwAvailabilityStateV77.requestId;
   rwAvailabilityPaintV77('pending','⏳ Пожалуйста, подождите — проверяем возможность оформления заявки…');
   availabilityTimer=setTimeout(()=>checkAvailability(requestId),Math.max(0,Number(delay)||0));
@@ -2722,11 +2722,12 @@ function scheduleAvailability(){rwAvailabilityQueueV77(280)}
 $('date').onchange=scheduleAvailability;$('time').onchange=scheduleAvailability;
 function rwRequireAvailabilityV77(){
   const sig=rwAvailabilitySignatureV77();
-  if(rwAvailabilityStateV77.status==='available'&&rwAvailabilityStateV77.signature===sig)return true;
-  if(rwAvailabilityStateV77.status==='unavailable'&&rwAvailabilityStateV77.signature===sig)throw new Error(rwAvailabilityStateV77.message||'Выбранное время недоступно.');
+  const fresh=Date.now()-Number(rwAvailabilityStateV77.checkedAt||0)<=45000;
+  if(rwAvailabilityStateV77.status==='available'&&rwAvailabilityStateV77.signature===sig&&fresh)return true;
+  if(rwAvailabilityStateV77.status==='unavailable'&&rwAvailabilityStateV77.signature===sig&&fresh)throw new Error(rwAvailabilityStateV77.message||'Выбранное время недоступно.');
   if(rwAvailabilityStateV77.status==='error'&&rwAvailabilityStateV77.signature===sig){rwAvailabilityQueueV77(0);throw new Error('Не удалось подтвердить доступность. Повторяем проверку — пожалуйста, подождите.');}
   if(!(rwAvailabilityStateV77.status==='pending'&&rwAvailabilityStateV77.signature===sig))rwAvailabilityQueueV77(0);
-  throw new Error('Пожалуйста, подождите — проверяем возможность оформления заявки. Продолжить можно после зелёного подтверждения «Время свободно».');
+  throw new Error('Пожалуйста, подождите — обновляем доступность. Продолжить можно после зелёного подтверждения «Время свободно».');
 }
 
 (function installCalendarRouteRecheckV18(){
@@ -2738,7 +2739,7 @@ function rwRequireAvailabilityV77(){
     if($('date').value&&$('time').value){
       rwAvailabilityQueueV77(320);
     }else{
-      rwAvailabilityStateV77.status='idle';rwAvailabilityStateV77.signature='';rwAvailabilityStateV77.message='';rwAvailabilityStateV77.requestId++;
+      rwAvailabilityStateV77.status='idle';rwAvailabilityStateV77.signature='';rwAvailabilityStateV77.message='';rwAvailabilityStateV77.checkedAt=0;rwAvailabilityStateV77.requestId++;
       rwAvailabilityPaintV77('idle','Маршрут изменён. После него выберите дату и время.');
     }
   };
@@ -2832,7 +2833,7 @@ async function checkAvailability(requestId){
     getRouteData();
     if(selected.id==='grid_one'&&!rwGridQuote){
       if(ownRequestId!==rwAvailabilityStateV77.requestId)return {stale:true};
-      rwAvailabilityStateV77.status='unavailable';rwAvailabilityStateV77.signature=sig;rwAvailabilityStateV77.message='Сначала дождитесь расчёта маршрута.';
+      rwAvailabilityStateV77.status='unavailable';rwAvailabilityStateV77.signature=sig;rwAvailabilityStateV77.message='Сначала дождитесь расчёта маршрута.';rwAvailabilityStateV77.checkedAt=Date.now();
       rwAvailabilityPaintV77('unavailable','Сначала дождитесь расчёта маршрута.');
       return {available:false};
     }
@@ -2840,13 +2841,13 @@ async function checkAvailability(requestId){
   }catch(e){
     if(ownRequestId!==rwAvailabilityStateV77.requestId)return {stale:true};
     const msg=e.message||String(e);
-    rwAvailabilityStateV77.status='unavailable';rwAvailabilityStateV77.signature=sig;rwAvailabilityStateV77.message=msg;
+    rwAvailabilityStateV77.status='unavailable';rwAvailabilityStateV77.signature=sig;rwAvailabilityStateV77.message=msg;rwAvailabilityStateV77.checkedAt=Date.now();
     rwAvailabilityPaintV77('unavailable',msg);
     return {available:false,message:msg};
   }
 
   if(ownRequestId!==rwAvailabilityStateV77.requestId)return {stale:true};
-  rwAvailabilityStateV77.status='pending';rwAvailabilityStateV77.signature=sig;rwAvailabilityStateV77.message='Пожалуйста, подождите — проверяем возможность оформления заявки.';
+  rwAvailabilityStateV77.status='pending';rwAvailabilityStateV77.signature=sig;rwAvailabilityStateV77.message='Пожалуйста, подождите — проверяем возможность оформления заявки.';rwAvailabilityStateV77.checkedAt=0;
   rwAvailabilityPaintV77('pending','⏳ Проверяем доступность выбранного времени…');
 
   try{
@@ -2866,23 +2867,38 @@ async function checkAvailability(requestId){
     if(ownRequestId!==rwAvailabilityStateV77.requestId||sig!==rwAvailabilitySignatureV77())return {stale:true};
     if(r.available){
       const msg='✅ Время свободно. Можно продолжать оформление.';
-      rwAvailabilityStateV77.status='available';rwAvailabilityStateV77.signature=sig;rwAvailabilityStateV77.message=msg;
+      rwAvailabilityStateV77.status='available';rwAvailabilityStateV77.signature=sig;rwAvailabilityStateV77.message=msg;rwAvailabilityStateV77.checkedAt=Date.now();
       rwAvailabilityPaintV77('available',msg);
     }else{
       const rawMsg=String(r&&r.message||'Выбранное время недоступно.');const baseMsg=rwOperatorContextV72()?rawMsg:rwClientAvailabilityTextV114(rawMsg,'Выбранное время недоступно.');const msg=baseMsg+(r.next?' Ближайшее свободное: '+r.next:'');
-      rwAvailabilityStateV77.status='unavailable';rwAvailabilityStateV77.signature=sig;rwAvailabilityStateV77.message=msg;
+      rwAvailabilityStateV77.status='unavailable';rwAvailabilityStateV77.signature=sig;rwAvailabilityStateV77.message=msg;rwAvailabilityStateV77.checkedAt=Date.now();
       rwAvailabilityPaintV77('unavailable',msg);
     }
     return r;
   }catch(e){
     if(ownRequestId!==rwAvailabilityStateV77.requestId||sig!==rwAvailabilitySignatureV77())return {stale:true};
     const msg='Не удалось проверить доступность. Повторите попытку.';
-    rwAvailabilityStateV77.status='error';rwAvailabilityStateV77.signature=sig;rwAvailabilityStateV77.message=msg;
+    rwAvailabilityStateV77.status='error';rwAvailabilityStateV77.signature=sig;rwAvailabilityStateV77.message=msg;rwAvailabilityStateV77.checkedAt=Date.now();
     rwAvailabilityPaintV77('error',msg);
     rw99ReportTechnicalErrorV99(e,'calendar_check',{friendly:msg});
     return {available:false,error:true,message:msg};
   }
 }
+// V120 FIX3: availability is a live pool, not a one-time snapshot. While the
+// date/time step is visible, recheck automatically so a driver switching READY
+// or changing their work calendar is reflected without the client touching time.
+let rwAvailabilityLiveTimerV120=setInterval(function(){
+  try{
+    if(document.visibilityState!=='visible'||currentBookingStep!==3||!selected||!$('date').value||!$('time').value)return;
+    if(rwAvailabilityStateV77.status==='pending')return;
+    if(Date.now()-Number(rwAvailabilityStateV77.checkedAt||0)<18000)return;
+    rwAvailabilityQueueV77(0);
+  }catch(_){ }
+},20000);
+document.addEventListener('visibilitychange',function(){
+  try{if(document.visibilityState==='visible'&&currentBookingStep===3&&selected&&$('date').value&&$('time').value&&rwAvailabilityStateV77.status!=='pending')rwAvailabilityQueueV77(120);}catch(_){ }
+});
+
 function contactCheck(){['telegram','phone','whatsapp'].forEach(id=>$(id).parentElement.classList.toggle('contact-valid',!!$(id).value.trim()))}['telegram','phone','whatsapp'].forEach(id=>$(id).addEventListener('input',contactCheck));
 function token(){return 'site_'+Date.now()+'_'+Math.random().toString(36).slice(2,11)}
 async function waitResult(t){

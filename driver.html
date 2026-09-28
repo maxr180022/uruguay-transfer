@@ -7,12 +7,12 @@
   content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 
 <title>RusWeo 4.0.1 — Личный кабинет</title>
-<meta name="rusweo-release" content="RusWeo 4.0.1 / V119 / web 31122 / Android native code112">
+<meta name="rusweo-release" content="RusWeo 4.0.1 / V120 / web 31123 / Android native code112">
 <meta name="rusweo-ui-policy" content="single-design-v3-driver-android-telegram">
 <meta name="rusweo-runtime-policy" content="driver-root-back-minimize-v2">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="rusweo-platform.js?v=31122"></script>
-<script src="rusweo-auth.js?v=31122"></script>
+<script src="rusweo-platform.js?v=31123"></script>
+<script src="rusweo-auth.js?v=31123"></script>
 <!-- RusWeo 3.1.42 / V115 · explicit final-point wait + return-home departure lifecycle -->
 
 <!-- RUSWEO_V119_FIX3_DRIVER_OFFER_REMINDER_PUBLIC_NAME -->
@@ -1534,6 +1534,13 @@ button{
         Финансы
       </button>
 
+      <button
+        id="externalTab"
+        class="driver-tab rw-external-orders-tab"
+        onclick="switchDriverTab('external')">
+        Заказы других<br>водителей
+      </button>
+
     </div>
 
     <div id="driverOrders"></div>
@@ -2071,7 +2078,7 @@ function startDriverOperatorBookingV72(){
     operator_app_session:rwDriverAppSessionV72()
   };
   const frame=document.getElementById('bookingFrame');
-  frame.src='booking.html?vehicle_class=standard&operator_booking=1&v=31122';
+  frame.src='booking.html?vehicle_class=standard&operator_booking=1&v=31123';
   closeDriverOperatorBookingV72();
   openScreen('booking');
 }
@@ -2090,7 +2097,7 @@ function startDriverOperatorUnlinkedBookingFix38(){
     operator_app_session:rwDriverAppSessionV72()
   };
   const frame=document.getElementById('bookingFrame');
-  frame.src='booking.html?vehicle_class=standard&operator_booking=1&client_claim=1&v=31122';
+  frame.src='booking.html?vehicle_class=standard&operator_booking=1&client_claim=1&v=31123';
   closeDriverOperatorBookingV72();
   openScreen('booking');
 }
@@ -2196,6 +2203,8 @@ function updateDriverTabs(){
 
   const financeTabNode=document.getElementById('financeTab');
   if(financeTabNode){ financeTabNode.classList.toggle('active',driverTab === 'finance'); }
+  const externalTabNode=document.getElementById('externalTab');
+  if(externalTabNode){ externalTabNode.classList.toggle('active',driverTab === 'external'); }
 
 }
 
@@ -2352,27 +2361,19 @@ function isHistoryStatus(status){
 }
 
 
+function rwV120OwnerIsExternalOrder(order){return String(order&&order.executor_scope||'')==='external';}
+
 function filteredOrders(){
-
   return driverOrders.filter(function(order){
-
-    const status =
-      String(order.status || '');
-
-    if(driverTab === 'new'){
-      return isNewStatus(status);
-    }
-
-    if(driverTab === 'accepted'){
-      return isAcceptedStatus(status);
-    }
-
+    const status=String(order.status||'');
+    const external=rwV120OwnerIsExternalOrder(order);
+    if(driverTab==='external')return external;
+    if(external)return false;
+    if(driverTab==='new')return isNewStatus(status);
+    if(driverTab==='accepted')return isAcceptedStatus(status);
     return isHistoryStatus(status);
-
   });
-
 }
-
 
 function statusText(order){
 
@@ -2482,6 +2483,23 @@ function rw116FallbackOrderCardV23(order,error){
     action+'</div>';
 }
 
+function rwV120ExternalMonitorStatus(order){
+  const st=String(order&&order.status||''),rs=String(order&&order.external_routing_state||'');
+  if(st==='completed')return {text:'Завершён',cls:'done'};
+  if(['driver_enroute','arrived_pickup','trip_started','stop_arrived','final_point_arrived','returning_home','client_completed'].indexOf(st)!==-1)return {text:'Выполняется водителем',cls:'active'};
+  if(['confirmed','receipt_uploaded','confirmed_corporate'].indexOf(st)!==-1&&order&&order.external_driver)return {text:'Принят водителем',cls:'accepted'};
+  if(['AUTO_OVERFLOW_PENDING','OFFERED_EXTERNAL','EXTERNAL_LUGGAGE_MISMATCH','EXTERNAL_DECLINED','EXTERNAL_OFFER_EXPIRED','EXTERNAL_NOW_BUSY','EXTERNAL_CANCELLED_REROUTE'].indexOf(rs)!==-1)return {text:'Отправлен водителю',cls:'offered'};
+  if(st==='rejected_operator')return {text:'Не выполнен',cls:'failed'};
+  return {text:'Отправлен водителю',cls:'offered'};
+}
+function rwV120RenderExternalMonitorCard(order){
+  order=order||{};const s=rwV120ExternalMonitorStatus(order),d=order.external_driver||{};
+  const driverName=String(d.name||'Ожидает назначения');const car=[d.vehicle_color,d.vehicle_make_model,d.vehicle_plate].filter(Boolean).join(' · ');
+  const luggage=(Number(order.bags_l||0)||Number(order.bags_m||0))?(Number(order.bags_l||0)+' L · '+Number(order.bags_m||0)+' M'):String(order.bags||0)+' шт.';
+  const c=order.external_driver_commission||{};let finance='';if(Number(c.base_commission_uyu||c.commission_uyu||0)>0){finance='<div class="rw-v120-external-finance"><b>Водителю после комиссии:</b> '+escHtml(Math.round(Number(c.driver_remainder_uyu||0)).toLocaleString('ru-RU'))+' UYU';if(Number(c.loyalty_setoff_uyu||0)>0)finance+='<br><b>Базовая комиссия:</b> '+escHtml(Math.round(Number(c.base_commission_uyu||0)).toLocaleString('ru-RU'))+' UYU · <b>зачёт скидки:</b> '+escHtml(Math.round(Number(c.loyalty_setoff_uyu||0)).toLocaleString('ru-RU'))+' UYU';finance+='<br><b>Комиссия RusWeo к оплате:</b> '+escHtml(Math.round(Number(c.commission_uyu||0)).toLocaleString('ru-RU'))+' UYU</div>'}
+  return '<article class="rw-v120-external-card" id="rw-order-'+idSafe(String(order.id||''))+'"><div class="rw-v120-external-top"><strong>№'+escHtml(order.number||'')+'</strong><span class="rw-v120-external-status '+s.cls+'">'+escHtml(s.text)+'</span></div><div class="rw-v120-external-route">'+escHtml(order.date||'')+' · '+escHtml(order.time||'')+'<br>'+escHtml(order.route_text||'')+'</div><div class="rw-v120-external-driver"><b>Водитель:</b> '+escHtml(driverName)+(car?'<br><b>Автомобиль:</b> '+escHtml(car):'')+'</div><div class="rw-v120-external-meta">'+escHtml(order.service_name||'')+' · '+escHtml(String(order.passengers||0))+' чел. · '+escHtml(luggage)+(order.price?'<br><b>Стоимость:</b> '+escHtml(String(order.price)+' '+String(order.currency||'')):'')+'</div>'+finance+'</article>';
+}
+
 function renderDriverOrders(){
 
   const box =
@@ -2489,6 +2507,12 @@ function renderDriverOrders(){
 
   if(driverTab === 'finance' && typeof renderDriverFinanceV25 === 'function'){
     renderDriverFinanceV25();
+    return;
+  }
+
+  if(driverTab === 'external'){
+    const externalOrders=filteredOrders();
+    box.innerHTML=externalOrders.length?externalOrders.map(rwV120RenderExternalMonitorCard).join(''):'<div class="driver-empty">Заказов других водителей пока нет.</div>';
     return;
   }
 
@@ -10178,6 +10202,7 @@ body .order-card.rw3-history-card .order-price{
     try{switchDriverTab=window.switchDriverTab}catch(_){}
   }
   function deepTargetTab(order){
+    if(String(order&&order.executor_scope||'')==='external')return'external';
     const status=String(order&&order.status||'');
     if(status==='completed')return'history';
     if(typeof isAcceptedStatus==='function'&&isAcceptedStatus(status))return'accepted';
@@ -10223,7 +10248,7 @@ body .order-card.rw3-history-card .order-price{
   window.RusWeoV116HistoryFocusFix={oneTimeDeepLink:true,completedToHistory:true,manualTabWins:true,pollingKeepsTab:true};
 
   window.RusWeoV113TerminalEvAnalytics={
-    release:'4.0.1',webRevision:'31122',androidTargetCode:112,
+    release:'4.0.1',webRevision:'31123',androidTargetCode:112,
     terminalDriverOffsetMinutes:15,reminderRepeatMinutes:5,evSafeKm:150,
     standardAndCorporate:true,departureSnooze:true,transportDelayReason:true,
     chargeAccountingOnly:true,calendarShiftOnCharge:false,calendarReleaseOnFullClose:true,
@@ -10724,6 +10749,14 @@ body .rw-fix35-row-secondary{
 })();
 </script>
 
+
+<style id="RUSWEO_V120_FIX3_OWNER_EXTERNAL_ORDERS_STYLE">
+#driverPanel .driver-tabs{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+#driverPanel .rw-external-orders-tab{font-size:10px!important;line-height:1.05!important}
+.rw-v120-external-card{background:#fff;border:1px solid #dfe8ee;border-radius:19px;padding:14px;margin:9px 0;box-shadow:0 4px 13px rgba(18,63,92,.045)}
+.rw-v120-external-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.rw-v120-external-top strong{font-size:17px;color:#123b5a}.rw-v120-external-status{border-radius:999px;padding:6px 9px;font-size:11px;font-weight:900;text-align:center}.rw-v120-external-status.offered{background:#eef6ff;color:#27679b}.rw-v120-external-status.accepted{background:#fff8e7;color:#8a5a0a}.rw-v120-external-status.active{background:#effaf5;color:#19724d}.rw-v120-external-status.done{background:#eaf8f1;color:#176844}.rw-v120-external-status.failed{background:#fff1f1;color:#9d3434}.rw-v120-external-route{font-weight:850;margin-top:9px;line-height:1.42}.rw-v120-external-driver,.rw-v120-external-meta,.rw-v120-external-finance{font-size:12px;color:#617b8d;margin-top:7px;line-height:1.5}.rw-v120-external-finance{padding:8px 10px;border-radius:11px;background:#f5f9fc;color:#385b71}
+@media(max-width:430px){#driverPanel .driver-tab{font-size:10px!important;padding:5px 2px!important}.rw-v120-external-status{font-size:9.5px}}
+</style>
 </body>
 </html>
 

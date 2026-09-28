@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- RusWeo 4.0.0 / V119 · final 3.x recovery: tariffs/day-trip terms + Uber bonus/odometer + Punta partner + client link/source analytics -->
+<!-- RusWeo 4.0.1 / V120 · final 3.x recovery: tariffs/day-trip terms + Uber bonus/odometer + Punta partner + client link/source analytics -->
 <html lang="ru">
 <!-- RUSWEO_V119_FIX3_DRIVER_OFFER_REMINDER_PUBLIC_NAME -->
 <!-- RUSWEO_V117_DAY_TRIP_BREAK_60_MIN -->
@@ -7,10 +7,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="rusweo-release" content="RusWeo 4.0.0 / V119 / web 31119">
+<meta name="rusweo-release" content="RusWeo 4.0.1 / V120 / web 31122">
 <title>RusWeo</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="rusweo-platform.js?v=31119"></script>
+<script src="rusweo-platform.js?v=31122"></script>
 <style>
 :root{--ink:#08305f;--muted:#6f859b;--line:#d8eaf6;--blue:#078de4;--blue2:#04afe9;--pale:#eef8ff;--ok:#158453;--bad:#c83838;--card:#fff}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 88% 0%,rgba(12,173,236,.16),transparent 30%),linear-gradient(180deg,#eaf7ff 0%,#f8fcff 52%,#edf8ff 100%)}
@@ -1283,9 +1283,9 @@ const RW_TERMS_URL_V114='terms_es_4.0.0_20260928.html';
 const RW_TERMS_DOCUMENT_V114='https://maxr180022.github.io/uruguay-transfer/terms_es_4.0.0_20260928.html';
 /* Current hardened booking runtime. */
 const BACKEND_URL='https://script.google.com/macros/s/AKfycbzWkerEeWR-3EjY1QW44Az6pj1TjJK9_ktfnrdcgFILlD6Cnqb4z2X97zSknKRJw-i3jw/exec';
-const RW_EXPECTED_BACKEND_BUILD='RUSWEO_4_0_V119_FIX3_DRIVER_OFFER_REMINDER_PUBLIC_NAME_20260928';
-const RW_WEB_RELEASE_V99='RusWeo 4.0.0 / V119';
-const RW_WEB_REVISION_V99='31119';
+const RW_EXPECTED_BACKEND_BUILD='RUSWEO_4_0_1_V120_FIX2_MAX_TRUST_20260928';
+const RW_WEB_RELEASE_V99='RusWeo 4.0.1 / V120';
+const RW_WEB_REVISION_V99='31122';
 const tg=window.Telegram?.WebApp;const params=new URLSearchParams(location.search);const isAndroid=!!(window.UruWayAndroid&&typeof window.UruWayAndroid.getPlatform==='function')||params.get('platform')==='android';const corporateRequested=params.get('mode')==='corporate';let corporateMode=false;
 if(tg){try{tg.ready();tg.expand()}catch(e){}}
 const $=id=>document.getElementById(id);
@@ -1589,7 +1589,7 @@ let rwGridQuote=null,rwGridQuoteTimer=null,rwGridPointCount=2,rwGridQuoteSignatu
 // RUSWEO V116 FIX14 — automatic blocking quote diagnostics.
 const RW_V116_CLIENT_ERROR_QUEUE_KEY='rusweo_v116_client_error_queue';
 const RW_V116_CLIENT_ERROR_PATCH='FIX14_AUTO_BLOCKING_ERROR_REPORT_20260925';
-const RW_V116_WEB_REVISION='31119';
+const RW_V116_WEB_REVISION='31122';
 let rwV116QuoteAttemptsBySignature={};
 let rwV116ErrorFlushBusy=false;
 const RW_GRID_POINT_LETTERS=['A','B','C','D','E','F'];
@@ -1899,7 +1899,7 @@ function rwV116QuoteErrorPayloadV116(err,kind,cities,waits,signature,server){
     platform:isAndroid?'android_webview':'telegram_mini_app',
     page:'booking',
     device:(window.RusWeo&&window.RusWeo.guard&&window.RusWeo.guard.device)?window.RusWeo.guard.device():'',
-    app_version:'4.0.0',
+    app_version:'4.0.1',
     route:Array.isArray(cities)?cities.join(' → '):String(cities||''),
     route_cities:Array.isArray(cities)?cities.join('|'):String(cities||''),
     route_wait_minutes:Array.isArray(waits)?waits.join('|'):String(waits||''),
@@ -2856,6 +2856,10 @@ async function checkAvailability(requestId){
       '&date='+encodeURIComponent($('date').value)+
       '&time='+encodeURIComponent($('time').value)+
       '&hours='+encodeURIComponent($('hours').value||3)+
+      '&passengers='+encodeURIComponent($('passengers').value||1)+
+      '&bags_l='+encodeURIComponent($('bagsL').value||0)+
+      '&bags_m='+encodeURIComponent($('bagsM').value||0)+
+      '&bags='+encodeURIComponent(Number($('bagsL').value||0)+Number($('bagsM').value||0))+
       rwCalendarAvailabilityQueryV18()
     );
 

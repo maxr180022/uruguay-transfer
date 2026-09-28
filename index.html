@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <title>RusWeo</title>
-<!-- RUSWEO_V119_DRIVER_FOUNDATION_PHASE1 -->
+<!-- RUSWEO_V119_FIX3_DRIVER_OFFER_REMINDER_PUBLIC_NAME -->
 <!-- RUSWEO_V117_UBER_BONUS_ODOMETER_PARTNER -->
 <meta name="rusweo-release" content="RusWeo 4.0.0 / V119 / web 31119">
 <!-- RUSWEO_V116_FIX39_UI_SOURCE_ANALYTICS_E2E -->
@@ -1629,6 +1629,14 @@ try{
               location.replace('driver.html?v=31119&hf=1');
               return;
             }
+            if(String(role)==='driver_external'){
+              finished=true;
+              launchResolving=false;
+              markSplashSeen();
+              const android=!!(window.UruWayAndroid&&typeof window.UruWayAndroid.getPlatform==='function');
+              location.replace('driver_v4.html?v=31119&fix=4'+(android?'&platform=android':''));
+              return;
+            }
             reveal();
           }).catch(function(){reveal();});
           return;
@@ -1732,7 +1740,10 @@ try{
 (function(){
   const isAndroid=!!(window.UruWayAndroid&&typeof window.UruWayAndroid.getPlatform==='function');
   if(isAndroid){document.body.classList.add('is-android');}
-  window.openAndroidDriver=function(){ location.href='driver.html?v=31119&hf=1'; };
+  window.openAndroidDriver=function(){
+    let role='';try{role=String(localStorage.getItem('uruway_auth_role')||'')}catch(e){}
+    location.href=role==='driver_external'?'driver_v4.html?v=31119&fix=4&platform=android':'driver.html?v=31119&hf=1';
+  };
   window.uruwayOpenExternal=function(url){
     try{
       if(isAndroid&&typeof window.UruWayAndroid.openExternal==='function'){
@@ -1799,6 +1810,10 @@ try{
       // Launch resolver normally performs this transition behind splash.
       // This branch is used after a fresh Telegram authorization.
       location.replace('driver.html?v=31119&hf=1');
+      return;
+    }
+    if(role==='driver_external'){
+      location.replace('driver_v4.html?v=31119&fix=4&platform=android');
       return;
     }
     if(role!=='client'){
@@ -1956,7 +1971,7 @@ try{
 </style>
 <script id="RUSWEO_INDEX_DIAGNOSTICS_V101">
 (function(){
-  const OP='maxriccomsk', REV='31119', BUILD='RUSWEO_4_0_V119_DRIVER_FOUNDATION_PHASE1_20260928';
+  const OP='maxriccomsk', REV='31119', BUILD='RUSWEO_4_0_V119_FIX3_DRIVER_OFFER_REMINDER_PUBLIC_NAME_20260928';
   let last=null;
   function safe(v,n){return String(v==null?'':v).replace(/[\r\n]+/g,' ').slice(0,n||260)}
   function env(){let p='web';try{if(window.UruWayAndroid)p='android';else if(window.Telegram&&window.Telegram.WebApp)p='telegram'}catch(e){}return p}
@@ -2119,9 +2134,25 @@ try{
     if(isAndroid){
       try{
         const session=String(localStorage.getItem('uruway_auth_session')||'').trim();
-        const role=String(localStorage.getItem('uruway_auth_role')||'').trim();
-        if(session&&role==='driver_standard')return 'driver';
-        if(session&&role==='client')return 'client';
+        const cachedRole=String(localStorage.getItem('uruway_auth_role')||'').trim();
+        if(session){
+          try{
+            const q=new URLSearchParams({action:'app_auth_me',session_token:session,_:String(Date.now())});
+            const r=await fetch(apiDriver+'?'+q.toString(),{cache:'no-store',credentials:'omit'});
+            const d=await r.json();
+            if(d&&d.ok===true){
+              const role=String(d.role||cachedRole||'client');
+              localStorage.setItem('uruway_auth_role',role);
+              localStorage.setItem('uruway_auth_verified_at',String(Date.now()));
+              if(role==='driver_standard')return 'driver';
+              if(role==='driver_external')return 'driver_external';
+              return 'client';
+            }
+          }catch(_){ }
+          if(cachedRole==='driver_standard')return 'driver';
+          if(cachedRole==='driver_external')return 'driver_external';
+          if(cachedRole==='client')return 'client';
+        }
       }catch(e){}
       // First Android login is still shown only AFTER splash via androidAuthGate.
       return 'client';
@@ -2136,7 +2167,10 @@ try{
         const q=new URLSearchParams({action:'telegram_driver_access',init_data:init,_:String(Date.now())});
         const r=await fetch(apiDriver+'?'+q.toString(),{cache:'no-store',credentials:'omit'});
         const d=await r.json();
-        if(d&&d.ok===true&&d.is_driver===true){cacheRole('driver');return 'driver';}
+        if(d&&d.ok===true&&d.is_driver===true){
+          if(String(d.role||'')==='driver_external'){cacheRole('driver_external');return 'driver_external';}
+          cacheRole('driver');return 'driver';
+        }
       }catch(e){}
       cacheRole('client');
       return 'client';
@@ -2152,13 +2186,14 @@ try{
   window.rw28OpenDriver=function(){
     try{const init=liveInitData()||savedInitData();if(init)sessionStorage.setItem('rw_tg_driver_init_data_v1',init)}catch(e){}
     try{tgDriver&&tgDriver.HapticFeedback&&tgDriver.HapticFeedback.impactOccurred('light')}catch(e){}
-    location.href='driver.html?v=31119&hf=1';
+    let role='';try{role=String(sessionStorage.getItem('rw_tg_driver_role_v2')||'')}catch(e){}
+    location.href=role==='driver_external'?'driver_v4.html?v=31119&fix=4':'driver.html?v=31119&hf=1';
   };
 
   // Start as early as possible; do not wait for a click or for the video to end.
   preflight().then(function(role){
     const b=document.getElementById('rw28DriverEntry');
-    if(role==='driver'&&clientOverride()){if(b)b.classList.add('show');}
+    if((role==='driver'||role==='driver_external')&&clientOverride()){if(b)b.classList.add('show');}
   }).catch(function(){});
 })();
 </script>

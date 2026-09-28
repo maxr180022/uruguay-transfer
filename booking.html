@@ -1,7 +1,7 @@
 <!doctype html>
 <!-- RusWeo 4.0.0 / V119 · final 3.x recovery: tariffs/day-trip terms + Uber bonus/odometer + Punta partner + client link/source analytics -->
 <html lang="ru">
-<!-- RUSWEO_V119_DRIVER_FOUNDATION_PHASE1 -->
+<!-- RUSWEO_V119_FIX3_DRIVER_OFFER_REMINDER_PUBLIC_NAME -->
 <!-- RUSWEO_V117_DAY_TRIP_BREAK_60_MIN -->
 
 <head>
@@ -1130,7 +1130,9 @@ html.rw97-edit-mode #rw114TermsAcceptance{display:none!important}
   <div class="booking-step" data-step="4" id="bookingStep3">
     <div class="step-card">
       <div class="step-card-head"><span class="step-icon">👥</span><div><b>Люди и детали</b><small>Только необходимые параметры поездки.</small></div></div>
-      <div class="grid2"><div class="field"><label>Количество людей</label><select id="passengers"></select></div><div class="field"><label>Чемоданы</label><select id="bags"></select><div class="hint">1 человек — до 6 · 2 человека — до 3 · 3 человека — до 1</div></div></div>
+      <div class="field"><label>Количество людей</label><select id="passengers"></select></div>
+      <div class="grid2"><div class="field"><label>Чемоданы L</label><select id="bagsL"></select></div><div class="field"><label>Чемоданы M</label><select id="bagsM"></select></div></div>
+      <div class="hint">M — до 65×45×25 см · L — до 75×50×30 см. Габариты считаются вместе с колёсами и ручками. Багаж крупнее L укажите в комментарии.</div>
       <div class="field"><label>Детский бустер для ребёнка 4–12 лет <span class="req">*</span></label><select id="booster"><option value="">Выберите</option><option value="no">Нет</option><option value="yes">Да</option></select></div>
       <div class="field"><label>💳 Как вы планируете оплатить остаток после поездки?</label><select id="finalPayment"><option value="">Выберите способ оплаты</option><option value="cash_usd">💵 Наличными — USD</option><option value="cash_uyu">💵 Наличными — UYU</option><option value="transfer_usd">🏦 Переводом — USD</option><option value="transfer_uyu">🏦 Переводом — UYU</option><option value="usdt">₮ USDT</option><option value="later">❓ Уточню позже с оператором</option></select><div class="hint">Это способ окончательного расчёта. Предоплата оформляется отдельно.</div></div>
       <div class="field hidden" id="corpPassengerWrap"><label>Имя или ник человека <span class="req">*</span></label><input id="corpPassenger" placeholder="Кого нужно забрать"></div><div class="field hidden" id="corpCommentWrap"><label>Комментарий к заявке</label><textarea id="corpComment" placeholder="Дополнительные пожелания"></textarea></div>
@@ -1251,7 +1253,7 @@ html.rw97-edit-mode #rw114TermsAcceptance{display:none!important}
       <button type="button" id="rwGridFallbackBtn">Обратиться к оператору</button>
     </div>
 
-    <div class="rw114-terms rw114-terms-notice" id="rw114TermsAcceptance"><span>Нажимая «Подтвердить заявку», Вы принимаете <a href="terms_es_3.1.40_20260922.html" id="rw114TermsLink">условия сервиса</a>.</span></div>
+    <div class="rw114-terms rw114-terms-notice" id="rw114TermsAcceptance"><span>Нажимая «Подтвердить заявку», Вы принимаете <a href="terms_es_4.0.0_20260928.html" id="rw114TermsLink">условия сервиса</a>.</span></div>
     <div class="wizard-actions final" id="wizardFinalActions"><button class="wizard-back" type="button" onclick="prevBookingStep()">← Назад</button><button class="primary wizard-submit" id="submit">Подтвердить заявку</button></div>
     <div class="footnote">Заявка является предварительной. После проверки Вы получите подтверждение в Telegram.</div>
   </div>
@@ -1276,12 +1278,12 @@ html.rw97-edit-mode #rw114TermsAcceptance{display:none!important}
 <iframe name="booking_sink" id="bookingSink" style="display:none"></iframe>
 <script>
 /* RusWeo 3.1.40 / V114 — legal terms + neutral client terminology; V113 runtime retained. */
-const RW_TERMS_VERSION_V114='RUSWEO_TERMS_ES_3.1.40_20260922';
-const RW_TERMS_URL_V114='terms_es_3.1.40_20260922.html';
-const RW_TERMS_DOCUMENT_V114='https://maxr180022.github.io/uruguay-transfer/terms_es_3.1.40_20260922.html';
+const RW_TERMS_VERSION_V114='RUSWEO_TERMS_ES_4.0.0_20260928';
+const RW_TERMS_URL_V114='terms_es_4.0.0_20260928.html';
+const RW_TERMS_DOCUMENT_V114='https://maxr180022.github.io/uruguay-transfer/terms_es_4.0.0_20260928.html';
 /* Current hardened booking runtime. */
 const BACKEND_URL='https://script.google.com/macros/s/AKfycbzWkerEeWR-3EjY1QW44Az6pj1TjJK9_ktfnrdcgFILlD6Cnqb4z2X97zSknKRJw-i3jw/exec';
-const RW_EXPECTED_BACKEND_BUILD='RUSWEO_4_0_V119_DRIVER_FOUNDATION_PHASE1_20260928';
+const RW_EXPECTED_BACKEND_BUILD='RUSWEO_4_0_V119_FIX3_DRIVER_OFFER_REMINDER_PUBLIC_NAME_20260928';
 const RW_WEB_RELEASE_V99='RusWeo 4.0.0 / V119';
 const RW_WEB_REVISION_V99='31119';
 const tg=window.Telegram?.WebApp;const params=new URLSearchParams(location.search);const isAndroid=!!(window.UruWayAndroid&&typeof window.UruWayAndroid.getPlatform==='function')||params.get('platform')==='android';const corporateRequested=params.get('mode')==='corporate';let corporateMode=false;
@@ -2614,10 +2616,9 @@ $('servicePicker').onclick=()=>setServiceDropdown($('serviceList').classList.con
 $('serviceBackdrop').onclick=()=>setServiceDropdown(false);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')setServiceDropdown(false)});
 function renderHours(){for(let i=3;i<=12;i++){const word=(i===3||i===4)?'часа':'часов';$('hours').insertAdjacentHTML('beforeend','<option value="'+i+'">'+i+' '+word+' · '+(i*10)+' км включено</option>')}}
-function renderPassengers(){const corp=selected?.id==='corporate';$('passengers').innerHTML=(corp?[0,1,2,3]:[1,2,3]).map(x=>'<option>'+x+'</option>').join('');renderBags()}
-function maxBagsForPassengers(p){if(selected?.id==='corporate'&&p===0)return 8;if(p===1)return 6;if(p===2)return 3;if(p===3)return 1;return 0}
-function renderBags(){let p=Number($('passengers').value||1),max=maxBagsForPassengers(p),prev=Number($('bags').value||0);$('bags').innerHTML=Array.from({length:max+1},(_,i)=>'<option value="'+i+'">'+i+'</option>').join('');$('bags').value=String(Math.min(prev,max))}
-$('passengers').onchange=renderBags;
+function renderPassengers(){const corp=selected?.id==='corporate';$('passengers').innerHTML=(corp?[0,1,2,3]:[1,2,3]).map(x=>'<option>'+x+'</option>').join('');renderLuggageCounters()}
+function renderLuggageCounters(){['bagsL','bagsM'].forEach(id=>{const el=$(id);if(!el)return;const prev=Number(el.value||0);el.innerHTML=Array.from({length:9},(_,i)=>'<option value="'+i+'">'+i+'</option>').join('');el.value=String(Math.min(prev,8))})}
+$('passengers').onchange=()=>{};
 function updatePrice(){
   if(!selected){$('price').textContent='—';return}
   if(selected.id==='corporate'){$('priceLabel').textContent='Стоимость услуги';$('price').textContent='По договорённости';$('discountText').textContent='';return}
@@ -2943,8 +2944,8 @@ $('submit').onclick=async()=>{
     if(!$('date').value||!$('time').value)throw new Error('Укажите дату и время.');
     validateMinimumLeadTime();
     if(!$('booster').value)throw new Error('Обязательно выберите: нужен ли детский бустер — Да или Нет.');
-    let passengerCount=Number($('passengers').value||0),bagCount=Number($('bags').value||0),bagLimit=maxBagsForPassengers(passengerCount);
-    if(bagCount>bagLimit)throw new Error('Для '+passengerCount+' человек можно выбрать максимум '+bagLimit+' чемодан(а/ов).');
+    const passengerCount=Number($('passengers').value||0),bagL=Number($('bagsL').value||0),bagM=Number($('bagsM').value||0);
+    if(!Number.isInteger(bagL)||bagL<0||bagL>8||!Number.isInteger(bagM)||bagM<0||bagM>8)throw new Error('Проверьте количество чемоданов L и M.');
     if(!$('finalPayment').value)throw new Error('Укажите способ окончательного расчёта.');
     rwV77ValidateRouteForm();
     const route=getRouteData();
@@ -2963,7 +2964,7 @@ $('submit').onclick=async()=>{
     btn.disabled=true;btn.textContent='Отправляем заявку…';
     let basePrice=selected.manual?'':(selected.id==='grid_one'?(rwGridQuote?(rwGridQuote.client_price_usd||rwGridQuote.price_usd):''):(selected.id==='hourly'?600*Number($('hours').value||3):selected.p));
     let currency=selected.id==='hourly'?'UYU':(selected.id==='grid_one'?'USD':(selected.c||''));
-    let data={service:selected.id,service_name:selected.n,date:$('date').value,time:$('time').value,hours:$('hours').value||3,...route,...rw104AdminPricingPayloadV104(),passengers:$('passengers').value,bags:$('bags').value,booster:$('booster').value,final_payment:$('finalPayment').value,telegram:$('telegram').value.trim(),phone:$('phone').value.trim(),whatsapp:$('whatsapp').value.trim(),telegram_user_id:p.id,telegram_first_name:p.first,telegram_last_name:p.last,telegram_username:p.username,corporate_passenger_name:$('corpPassenger').value.trim(),comment:$('orderComment').value.trim()||$('corpComment').value.trim(),price:String(basePrice),currency,source:(isAndroid?'android':'telegram_mini_app'),request_token:rt,vehicle_class:'standard',terms_accepted:(operatorCtxPreV114?'0':'1'),terms_version:RW_TERMS_VERSION_V114,terms_document:RW_TERMS_DOCUMENT_V114,app_session:(isAndroid?String(params.get('app_session')||localStorage.getItem('uruway_auth_session')||''):''),init_data:(isAndroid?'':telegramInitData())};
+    let data={service:selected.id,service_name:selected.n,date:$('date').value,time:$('time').value,hours:$('hours').value||3,...route,...rw104AdminPricingPayloadV104(),passengers:$('passengers').value,bags_l:$('bagsL').value,bags_m:$('bagsM').value,bags:String(Number($('bagsL').value||0)+Number($('bagsM').value||0)),booster:$('booster').value,final_payment:$('finalPayment').value,telegram:$('telegram').value.trim(),phone:$('phone').value.trim(),whatsapp:$('whatsapp').value.trim(),telegram_user_id:p.id,telegram_first_name:p.first,telegram_last_name:p.last,telegram_username:p.username,corporate_passenger_name:$('corpPassenger').value.trim(),comment:$('orderComment').value.trim()||$('corpComment').value.trim(),price:String(basePrice),currency,source:(isAndroid?'android':'telegram_mini_app'),request_token:rt,vehicle_class:'standard',terms_accepted:(operatorCtxPreV114?'0':'1'),terms_version:RW_TERMS_VERSION_V114,terms_document:RW_TERMS_DOCUMENT_V114,app_session:(isAndroid?String(params.get('app_session')||localStorage.getItem('uruway_auth_session')||''):''),init_data:(isAndroid?'':telegramInitData())};
     const operatorCtx=rwOperatorContextV72();
     if(operatorCtx){if(operatorCtx.claim_mode_fix38===true){data.operator_unlinked_client_fix38='1';data.operator_for_client='0';data.operator_client='';data.source='driver_operator_claim';}else{data.operator_for_client='1';data.operator_client=String(operatorCtx.target_input||(operatorCtx.target_user&&operatorCtx.target_user.id)||'');data.source='driver_operator';}data.operator_app_session=String(operatorCtx.operator_app_session||'');data.operator_init_data=String(operatorCtx.operator_init_data||'');data.app_session='';data.init_data='';}
     let form=document.createElement('form');form.method='POST';form.action=BACKEND_URL;form.target='booking_sink';form.style.display='none';
@@ -3006,7 +3007,7 @@ function showSuccess(r,d){
   const titleFix38=document.querySelector('#successCard .success-title'),pendingFix38=document.querySelector('#successCard .pending');
   if(claimModeFix38){if(titleFix38)titleFix38.textContent='Заказ создан';if(pendingFix38)pendingFix38.textContent='🟠 Ожидает подтверждения клиента';$('successNote').innerHTML='Заказ №'+esc(r.booking_number||'')+' создан, но ещё <b>не отправлен водителю как новый заказ</b>.<br>Отправьте клиенту ссылку ниже. После того как он откроет её и нажмёт «Подтвердить заказ», заказ появится у Вас во вкладке «Новые».';}
   else{$('successNote').innerHTML=operatorCtx?('Заказ №'+esc(r.booking_number||'')+' оформлен для клиента <b>'+esc(rwOperatorClientLabelV72())+'</b>.<br>Клиенту отправлено уведомление. После подтверждения водителем дальнейшие статусы тоже будут приходить ему в Telegram.'):('Заявка №'+esc(r.booking_number||'')+' создана.<br>Подтверждение и кнопка отмены будут отправлены в Telegram.');}
-  $('summary').innerHTML='<div class="row"><span>Номер заявки</span><b class="booking-no">№'+esc(r.booking_number||'')+'</b></div>'+(operatorCtx?'<div class="row"><span>Клиент</span><b>'+esc(rwOperatorClientLabelV72())+'</b></div>':'')+'<div class="row"><span>Услуга</span><b>'+esc(selected.n)+'</b></div><div class="row"><span>Дата и время</span><b>'+esc(d.date)+' · '+esc(d.time)+'</b></div>'+(selected.id==='hourly'?'<div class="row"><span>Количество часов</span><b>'+esc(d.hours)+'</b></div><div class="row"><span>Включённый пробег</span><b>'+esc(String(Number(d.hours||3)*10))+' км</b></div><div class="row"><span>Сверх лимита</span><b>40 UYU/км</b></div><div class="row"><span>География</span><b>Монтевидео + до 10 км</b></div>':'')+'<div class="row"><span>Маршрут</span><b>'+esc(d.route_text||((d.from||'')+' → '+(d.to||'')))+'</b></div>'+(selected.id==='grid_one'&&rwGridWaitingSummary()?'<div class="row"><span>Ожидание</span><b>'+esc(rwGridWaitingSummary())+'</b></div>':'')+'<div class="row"><span>Люди</span><b>'+esc(d.passengers)+'</b></div><div class="row"><span>Багаж</span><b>'+esc(d.bags)+'</b></div><div class="row"><span>Детский бустер</span><b>'+(d.booster==='yes'?'Да':'Нет')+'</b></div><div class="row"><span>Окончательный расчёт</span><b>'+esc(paymentLabel(d.final_payment))+'</b></div>'+(selected.id==='corporate'?'<div class="row"><span>Человек</span><b>'+esc(d.corporate_passenger_name)+'</b></div>':'')+(d.comment?'<div class="row"><span>Комментарий</span><b>'+esc(d.comment)+'</b></div>':'')+'<div class="row"><span>Контакты</span><b>'+esc(contacts)+'</b></div><div class="row"><span>Стоимость</span><b>'+esc(cost)+'</b></div>';
+  $('summary').innerHTML='<div class="row"><span>Номер заявки</span><b class="booking-no">№'+esc(r.booking_number||'')+'</b></div>'+(operatorCtx?'<div class="row"><span>Клиент</span><b>'+esc(rwOperatorClientLabelV72())+'</b></div>':'')+'<div class="row"><span>Услуга</span><b>'+esc(selected.n)+'</b></div><div class="row"><span>Дата и время</span><b>'+esc(d.date)+' · '+esc(d.time)+'</b></div>'+(selected.id==='hourly'?'<div class="row"><span>Количество часов</span><b>'+esc(d.hours)+'</b></div><div class="row"><span>Включённый пробег</span><b>'+esc(String(Number(d.hours||3)*10))+' км</b></div><div class="row"><span>Сверх лимита</span><b>40 UYU/км</b></div><div class="row"><span>География</span><b>Монтевидео + до 10 км</b></div>':'')+'<div class="row"><span>Маршрут</span><b>'+esc(d.route_text||((d.from||'')+' → '+(d.to||'')))+'</b></div>'+(selected.id==='grid_one'&&rwGridWaitingSummary()?'<div class="row"><span>Ожидание</span><b>'+esc(rwGridWaitingSummary())+'</b></div>':'')+'<div class="row"><span>Люди</span><b>'+esc(d.passengers)+'</b></div><div class="row"><span>Багаж</span><b>'+esc(String(d.bags_l||0)+' L · '+String(d.bags_m||0)+' M')+'</b></div><div class="row"><span>Детский бустер</span><b>'+(d.booster==='yes'?'Да':'Нет')+'</b></div><div class="row"><span>Окончательный расчёт</span><b>'+esc(paymentLabel(d.final_payment))+'</b></div>'+(selected.id==='corporate'?'<div class="row"><span>Человек</span><b>'+esc(d.corporate_passenger_name)+'</b></div>':'')+(d.comment?'<div class="row"><span>Комментарий</span><b>'+esc(d.comment)+'</b></div>':'')+'<div class="row"><span>Контакты</span><b>'+esc(contacts)+'</b></div><div class="row"><span>Стоимость</span><b>'+esc(cost)+'</b></div>';
   $('bookingCard').classList.add('hidden');$('successCard').classList.remove('hidden');scrollTo(0,0)
 }
 const rw38ShareBtn=$('rw38ShareClientLink'),rw38CopyBtn=$('rw38CopyClientLink');if(rw38ShareBtn)rw38ShareBtn.onclick=rw38ShareClientClaimFix38;if(rw38CopyBtn)rw38CopyBtn.onclick=()=>rw38CopyClientClaimFix38(true);
@@ -3046,8 +3047,8 @@ function validateBookingWizardStep(step){
   }
   if(step===4){
     if(!$('booster').value)throw new Error('Выберите, нужен ли детский бустер.');
-    const passengerCount=Number($('passengers').value||0),bagCount=Number($('bags').value||0),bagLimit=maxBagsForPassengers(passengerCount);
-    if(bagCount>bagLimit)throw new Error('Для '+passengerCount+' человек можно выбрать максимум '+bagLimit+' чемодан(а/ов).');
+    const passengerCount=Number($('passengers').value||0),bagL=Number($('bagsL').value||0),bagM=Number($('bagsM').value||0);
+    if(!Number.isInteger(bagL)||bagL<0||bagL>8||!Number.isInteger(bagM)||bagM<0||bagM>8)throw new Error('Проверьте количество чемоданов L и M.');
     if(!$('finalPayment').value)throw new Error('Укажите способ окончательного расчёта.');
     if(selected&&selected.id==='corporate'&&!$('corpPassenger').value.trim())throw new Error('Укажите имя или ник человека.');
   }
@@ -3065,7 +3066,7 @@ function refreshWizardReview(){
   add('Дата и время',($('date').value||'—')+' · '+($('time').value||'—'));
   if(selected&&selected.id==='hourly'){const h=Number($('hours').value||3);add('Продолжительность',h+' ч.');add('Включённый пробег',h*10+' км');add('Сверх лимита','40 UYU/км');add('География','Монтевидео + до 10 км');add('Дальше 10 км','Межгородская тарифная сетка');}
   try{add('Маршрут',getRouteData().route_text);if(selected&&selected.id==='grid_one'){const ws=rwGridWaitingSummary();if(ws)add('Ожидание',ws)}}catch(e){add('Маршрут','Заполните маршрут на шаге 2')}
-  add('Люди / багаж',($('passengers').value||'—')+' / '+($('bags').value||'—'));
+  add('Люди / багаж',($('passengers').value||'—')+' / '+($('bagsL').value||'0')+' L · '+($('bagsM').value||'0')+' M');
   add('Бустер',$('booster').value==='yes'?'Да':$('booster').value==='no'?'Нет':'—');
   add('Оплата',paymentLabel($('finalPayment').value));
   const contacts=[$('telegram').value.trim(),$('phone').value.trim(),$('whatsapp').value.trim()].filter(Boolean).join(' · ');
@@ -3475,8 +3476,9 @@ html.rw97-edit-mode:not(.rw104-driver-edit) #servicePicker .service-picker-chev{
     if($('hours'))$('hours').value=String(order.hours||3);
     renderPassengers();
     $('passengers').value=String(order.passengers||($('passengers').options[0]?.value||'1'));
-    renderBags();
-    $('bags').value=String(order.bags||'0');
+    renderLuggageCounters();
+    $('bagsL').value=String(order.bags_l!=null&&order.bags_l!==''?order.bags_l:'0');
+    $('bagsM').value=String(order.bags_m!=null&&order.bags_m!==''?order.bags_m:(order.bags||'0'));
     $('booster').value=String(order.booster||'');
     $('finalPayment').value=String(order.final_payment||'later');
     $('telegram').value=String(order.telegram||'');
@@ -3507,7 +3509,7 @@ html.rw97-edit-mode:not(.rw104-driver-edit) #servicePicker .service-picker-chev{
     const p=profile();
     let basePrice=selected.manual?'':(selected.id==='grid_one'?(rwGridQuote?(rwGridQuote.client_price_usd||rwGridQuote.price_usd):''):(selected.id==='hourly'?600*Number($('hours').value||3):selected.p));
     let currency=selected.id==='hourly'?'UYU':(selected.id==='grid_one'?'USD':(selected.c||''));
-    return {service:selected.id,service_name:selected.n,date:$('date').value,time:$('time').value,hours:$('hours').value||3,...route,...rw104AdminPricingPayloadV104(),passengers:$('passengers').value,bags:$('bags').value,booster:$('booster').value,final_payment:$('finalPayment').value,telegram:$('telegram').value.trim(),phone:$('phone').value.trim(),whatsapp:$('whatsapp').value.trim(),telegram_user_id:p.id,telegram_first_name:p.first,telegram_last_name:p.last,telegram_username:p.username,corporate_passenger_name:$('corpPassenger').value.trim(),comment:$('orderComment').value.trim()||$('corpComment').value.trim(),price:String(basePrice),currency,vehicle_class:'standard'};
+    return {service:selected.id,service_name:selected.n,date:$('date').value,time:$('time').value,hours:$('hours').value||3,...route,...rw104AdminPricingPayloadV104(),passengers:$('passengers').value,bags_l:$('bagsL').value,bags_m:$('bagsM').value,bags:String(Number($('bagsL').value||0)+Number($('bagsM').value||0)),booster:$('booster').value,final_payment:$('finalPayment').value,telegram:$('telegram').value.trim(),phone:$('phone').value.trim(),whatsapp:$('whatsapp').value.trim(),telegram_user_id:p.id,telegram_first_name:p.first,telegram_last_name:p.last,telegram_username:p.username,corporate_passenger_name:$('corpPassenger').value.trim(),comment:$('orderComment').value.trim()||$('corpComment').value.trim(),price:String(basePrice),currency,vehicle_class:'standard'};
   }
 
   function editTimeChanged(){

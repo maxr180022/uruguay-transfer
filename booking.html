@@ -1,13 +1,15 @@
 <!doctype html>
-<!-- RusWeo 3.1.42 / V116 · V114 client/legal UI + explicit driver final-point lifecycle -->
+<!-- RusWeo 3.1.43 / V117 · directional terminal tariffs + client order-link/source analytics; V116 lifecycle retained -->
 <html lang="ru">
+<!-- RUSWEO_V117_DAY_TRIP_BREAK_60_MIN -->
+
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="rusweo-release" content="RusWeo 3.1.42 / V116 / web 31116">
+<meta name="rusweo-release" content="RusWeo 3.1.43 / V117 / web 31117">
 <title>RusWeo</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="rusweo-platform.js?v=31116fix21"></script>
+<script src="rusweo-platform.js?v=31117"></script>
 <style>
 :root{--ink:#08305f;--muted:#6f859b;--line:#d8eaf6;--blue:#078de4;--blue2:#04afe9;--pale:#eef8ff;--ok:#158453;--bad:#c83838;--card:#fff}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 88% 0%,rgba(12,173,236,.16),transparent 30%),linear-gradient(180deg,#eaf7ff 0%,#f8fcff 52%,#edf8ff 100%)}
@@ -1264,6 +1266,8 @@ html.rw97-edit-mode #rw114TermsAcceptance{display:none!important}
 </div>
 <!-- RUSWEO_V116_FIX38_CLIENT_ORDER_CONFIRM_LINK -->
 <!-- RUSWEO_V116_FIX39_UI_SOURCE_ANALYTICS_E2E -->
+<!-- RUSWEO_V117_CLIENT_ORDER_LINK_ANALYTICS -->
+<!-- RUSWEO_V117_DIRECTIONAL_TERMINAL_TARIFFS -->
 <section class="panel hidden" id="successCard"><div class="success-hero"><div class="check">✓</div><div class="success-title">Заявка оформлена</div><div class="pending">🟡 Ожидает подтверждения</div></div><div class="success-note" id="successNote">Заявка создана. Подтверждение придёт в Telegram.</div><div class="summary" id="summary"></div><button class="secondary hidden" id="rw38ShareClientLink">📤 Отправить клиенту ссылку</button><button class="secondary hidden" id="rw38CopyClientLink">📋 Копировать ссылку</button><button class="secondary" id="mainMenuV43">← Вернуться в главное меню</button><button class="secondary" id="back">Изменить заявку</button><button class="secondary ghost" id="operator">👨‍💼 Связаться с оператором</button></section>
 </main>
 <nav class="rw31-bottom-nav rw31-bottom-nav-3" aria-label="Навигация RusWeo"><button class="active" type="button" onclick="rw31Navigate('home')"><span class="rw31-nav-icon">⌂</span><b>Главная</b></button><button type="button" onclick="rw31Navigate('guide')"><span class="rw31-nav-icon">◇</span><b>Гид</b></button><button type="button" onclick="rw31Navigate('account')"><span class="rw31-nav-icon">●</span><b>Кабинет</b></button></nav>
@@ -1276,9 +1280,9 @@ const RW_TERMS_URL_V114='terms_es_3.1.40_20260922.html';
 const RW_TERMS_DOCUMENT_V114='https://maxr180022.github.io/uruguay-transfer/terms_es_3.1.40_20260922.html';
 /* Current hardened booking runtime. */
 const BACKEND_URL='https://script.google.com/macros/s/AKfycbzWkerEeWR-3EjY1QW44Az6pj1TjJK9_ktfnrdcgFILlD6Cnqb4z2X97zSknKRJw-i3jw/exec';
-const RW_EXPECTED_BACKEND_BUILD='RUSWEO_3_1_V116_FIX39_UI_SOURCE_ANALYTICS_E2E_20260927';
-const RW_WEB_RELEASE_V99='RusWeo 3.1.42 / V116';
-const RW_WEB_REVISION_V99='31116';
+const RW_EXPECTED_BACKEND_BUILD='RUSWEO_3_1_V117_UBER_BONUS_ODOMETER_PARTNER_20260927';
+const RW_WEB_RELEASE_V99='RusWeo 3.1.43 / V117';
+const RW_WEB_REVISION_V99='31117';
 const tg=window.Telegram?.WebApp;const params=new URLSearchParams(location.search);const isAndroid=!!(window.UruWayAndroid&&typeof window.UruWayAndroid.getPlatform==='function')||params.get('platform')==='android';const corporateRequested=params.get('mode')==='corporate';let corporateMode=false;
 if(tg){try{tg.ready();tg.expand()}catch(e){}}
 const $=id=>document.getElementById(id);
@@ -1543,12 +1547,12 @@ function rwOperatorClientLabelV72(){
   return [name,username?'@'+username:'',u.id?'ID '+u.id:''].filter(Boolean).join(' · ');
 }
 const services=[
-{g:'✈️ Аэропорт Караско — Монтевидео',i:'✈️',a:[{id:'airport_to_mvd',n:'Аэропорт Караско (MVD) → Монтевидео',p:70,c:'USD',f:'Аэропорт Караско (MVD)',t:'Монтевидео',d:'Поездка по маршруту аэропорт Караско → Монтевидео. Во время поездки по согласованию можно сделать необходимые остановки.'},{id:'mvd_to_airport',n:'Монтевидео → аэропорт Караско (MVD)',p:70,c:'USD',f:'Монтевидео',t:'Аэропорт Караско (MVD)',d:'Поездка по маршруту Монтевидео → аэропорт Караско.'}]},
-{g:'⛴️ Buquebus — Монтевидео',i:'⛴️',a:[{id:'buquebus_to_mvd',n:'Buquebus → Монтевидео',p:70,c:'USD',f:'Buquebus',t:'Монтевидео',d:'Поездка по маршруту Buquebus → Монтевидео.'},{id:'mvd_to_buquebus',n:'Монтевидео → Buquebus',p:70,c:'USD',f:'Монтевидео',t:'Buquebus',d:'Поездка по маршруту Монтевидео → Buquebus.'}]},
-{g:'✈️ Аэропорт Караско — Пунта-дель-Эсте',i:'✈️',a:[{id:'airport_to_pde',n:'Аэропорт Караско (MVD) → Пунта-дель-Эсте',p:190,c:'USD',f:'Аэропорт Караско (MVD)',t:'Пунта-дель-Эсте',d:'Поездка по маршруту аэропорт Караско → Пунта-дель-Эсте.'},{id:'pde_to_airport',n:'Пунта-дель-Эсте → аэропорт Караско (MVD)',p:190,c:'USD',f:'Пунта-дель-Эсте',t:'Аэропорт Караско (MVD)',d:'Поездка по маршруту Пунта-дель-Эсте → аэропорт Караско.'}]},
-{g:'⛴️ Buquebus — Пунта-дель-Эсте',i:'⛴️',a:[{id:'buquebus_to_pde',n:'Buquebus → Пунта-дель-Эсте',p:200,c:'USD',f:'Buquebus',t:'Пунта-дель-Эсте',d:'Поездка по маршруту Buquebus → Пунта-дель-Эсте.'},{id:'pde_to_buquebus',n:'Пунта-дель-Эсте → Buquebus',p:200,c:'USD',f:'Пунта-дель-Эсте',t:'Buquebus',d:'Поездка по маршруту Пунта-дель-Эсте → Buquebus.'}]},
+{g:'✈️ Аэропорт Караско — Монтевидео',i:'✈️',a:[{id:'airport_to_mvd',n:'Аэропорт Караско (MVD) → Монтевидео',p:70,c:'USD',f:'Аэропорт Караско (MVD)',t:'Монтевидео',d:'Поездка по маршруту аэропорт Караско → Монтевидео. Во время поездки по согласованию можно сделать необходимые остановки.'},{id:'mvd_to_airport',n:'Монтевидео → аэропорт Караско (MVD)',p:60,c:'USD',f:'Монтевидео',t:'Аэропорт Караско (MVD)',d:'Поездка по маршруту Монтевидео → аэропорт Караско.'}]},
+{g:'⛴️ Buquebus — Монтевидео',i:'⛴️',a:[{id:'buquebus_to_mvd',n:'Buquebus → Монтевидео',p:70,c:'USD',f:'Buquebus',t:'Монтевидео',d:'Поездка по маршруту Buquebus → Монтевидео.'},{id:'mvd_to_buquebus',n:'Монтевидео → Buquebus',p:60,c:'USD',f:'Монтевидео',t:'Buquebus',d:'Поездка по маршруту Монтевидео → Buquebus.'}]},
+{g:'✈️ Аэропорт Караско — Пунта-дель-Эсте',i:'✈️',a:[{id:'airport_to_pde',n:'Аэропорт Караско (MVD) → Пунта-дель-Эсте',p:190,c:'USD',f:'Аэропорт Караско (MVD)',t:'Пунта-дель-Эсте',d:'Поездка по маршруту аэропорт Караско → Пунта-дель-Эсте.'},{id:'pde_to_airport',n:'Пунта-дель-Эсте → аэропорт Караско (MVD)',p:180,c:'USD',f:'Пунта-дель-Эсте',t:'Аэропорт Караско (MVD)',d:'Поездка по маршруту Пунта-дель-Эсте → аэропорт Караско.'}]},
+{g:'⛴️ Buquebus — Пунта-дель-Эсте',i:'⛴️',a:[{id:'buquebus_to_pde',n:'Buquebus → Пунта-дель-Эсте',p:200,c:'USD',f:'Buquebus',t:'Пунта-дель-Эсте',d:'Поездка по маршруту Buquebus → Пунта-дель-Эсте.'},{id:'pde_to_buquebus',n:'Пунта-дель-Эсте → Buquebus',p:190,c:'USD',f:'Пунта-дель-Эсте',t:'Buquebus',d:'Поездка по маршруту Пунта-дель-Эсте → Buquebus.'}]},
 {g:'🌴 Монтевидео — Пунта-дель-Эсте',i:'🌴',a:[{id:'mvd_to_pde',n:'Монтевидео → Пунта-дель-Эсте',p:190,c:'USD',f:'Монтевидео',t:'Пунта-дель-Эсте',d:'Индивидуальная поездка в одну сторону.'},{id:'pde_to_mvd',n:'Пунта-дель-Эсте → Монтевидео',p:190,c:'USD',f:'Пунта-дель-Эсте',t:'Монтевидео',d:'Индивидуальная поездка в одну сторону.'}]},
-{g:'☀️ Поездка на день · 10 часов',i:'☀️',a:[{id:'mvd_pde_day',n:'Монтевидео → Пунта-дель-Эсте → Монтевидео',p:275,c:'USD',f:'Монтевидео',t:'Монтевидео',d:'275 USD включает до 10 часов с момента посадки клиента в автомобиль до финальной высадки. Дополнительное время сверх 10 часов — 600 UYU/час.'},{id:'pde_mvd_day',n:'Пунта-дель-Эсте → Монтевидео → Пунта-дель-Эсте',p:275,c:'USD',f:'Пунта-дель-Эсте',t:'Пунта-дель-Эсте',d:'275 USD включает до 10 часов с момента посадки клиента в автомобиль до финальной высадки. Дополнительное время сверх 10 часов — 600 UYU/час.'}]},
+{g:'☀️ Поездка на день · 10 часов',i:'☀️',a:[{id:'mvd_pde_day',n:'Монтевидео → Пунта-дель-Эсте → Монтевидео',p:275,c:'USD',f:'Монтевидео',t:'Монтевидео',d:'275 USD включает до 10 часов с момента посадки клиента в автомобиль до финальной высадки. В рамках 10-часовой поездки предусмотрен 1 час общей остановки на зарядку автомобиля и обеденный перерыв водителя и клиента; этот час входит в общую продолжительность поездки и не добавляется сверх 10 часов. Дополнительное время сверх 10 часов — 600 UYU/час.'},{id:'pde_mvd_day',n:'Пунта-дель-Эсте → Монтевидео → Пунта-дель-Эсте',p:325,c:'USD',f:'Пунта-дель-Эсте',t:'Пунта-дель-Эсте',d:'325 USD включает до 10 часов с момента посадки клиента в автомобиль до финальной высадки. В рамках 10-часовой поездки предусмотрен 1 час общей остановки на зарядку автомобиля и обеденный перерыв водителя и клиента; этот час входит в общую продолжительность поездки и не добавляется сверх 10 часов. Дополнительное время сверх 10 часов — 600 UYU/час.'}]},
 {g:'🚗 Личный водитель',i:'🚗',a:[{id:'hourly',n:'Личный водитель — Монтевидео и ближайшие окрестности',p:600,c:'UYU/час',f:'',t:'',d:'600 UYU/час, минимальный заказ — 3 часа. В каждый оплаченный час включено 10 км пробега с клиентом: 3 часа = 30 км, 4 часа = 40 км, 5 часов = 50 км и т. д. Сверх включённого пробега — 40 UYU/км. Пробег считается по одометру с момента посадки клиента до завершения работы с ним. Почасовой тариф действует в Монтевидео и не далее 10 км за городской чертой. Если маршрут выходит дальше 10 км — применяется расчёт по межгородской тарифной сетке «Другие направления».'}]},
 {g:'🛣️ Другие направления',i:'🛣️',a:[{id:'grid_one',n:'Другие направления — между городами',autoGrid:true,label:'авторасчёт',f:'',t:'',d:'Для поездок между разными городами / населёнными пунктами. Две точки внутри Монтевидео здесь не рассчитываются. Для поездки по городу выберите «Личный водитель» — минимум 3 часа (от 1 800 UYU). Создайте маршрут A → B и при необходимости добавьте C, D, E или F. Для промежуточных точек можно указать ожидание от 30 минут до 4 часов. Аэропорты Carrasco/Punta del Este и Buquebus доступны как готовые точки без ручного адреса. Дорожные сборы включены.'}]}
 ];
@@ -1582,7 +1586,7 @@ let rwGridQuote=null,rwGridQuoteTimer=null,rwGridPointCount=2,rwGridQuoteSignatu
 // RUSWEO V116 FIX14 — automatic blocking quote diagnostics.
 const RW_V116_CLIENT_ERROR_QUEUE_KEY='rusweo_v116_client_error_queue';
 const RW_V116_CLIENT_ERROR_PATCH='FIX14_AUTO_BLOCKING_ERROR_REPORT_20260925';
-const RW_V116_WEB_REVISION='31116';
+const RW_V116_WEB_REVISION='31117';
 let rwV116QuoteAttemptsBySignature={};
 let rwV116ErrorFlushBusy=false;
 const RW_GRID_POINT_LETTERS=['A','B','C','D','E','F'];
@@ -1892,7 +1896,7 @@ function rwV116QuoteErrorPayloadV116(err,kind,cities,waits,signature,server){
     platform:isAndroid?'android_webview':'telegram_mini_app',
     page:'booking',
     device:(window.RusWeo&&window.RusWeo.guard&&window.RusWeo.guard.device)?window.RusWeo.guard.device():'',
-    app_version:'3.1.42',
+    app_version:'3.1.43',
     route:Array.isArray(cities)?cities.join(' → '):String(cities||''),
     route_cities:Array.isArray(cities)?cities.join('|'):String(cities||''),
     route_wait_minutes:Array.isArray(waits)?waits.join('|'):String(waits||''),
@@ -2393,7 +2397,8 @@ function configureRouteUI(){
       : '<b>Почасовая поездка:</b> укажите адрес подачи: город отдельно, а улицу / полный адрес с номером дома — одной строкой. Маршрут во время поездки можно согласовать с исполнителем.';
   }else if(plan.mode==='abc'){
     $('routeStepHelp').textContent='Маршрут туда и обратно: A → B → C.';
-    $('routeHelp').innerHTML='<b>Поездка на день / туда и обратно:</b> стоимость <b>275 USD</b> включает до <b>10 часов</b> с момента посадки клиента в автомобиль до финальной высадки. Дополнительное время сверх 10 часов — <b>600 UYU/час</b>.<br><br>Для точек <b>A</b>, <b>B</b> и <b>C</b> выберите город, а улицу / полный адрес с номером дома укажите одной строкой. Все адреса — латиницей.';
+    const dayPriceUsd=Math.max(0,Number(selected&&selected.p||0));
+    $('routeHelp').innerHTML='<b>Поездка на день / туда и обратно:</b> стоимость <b>'+dayPriceUsd+' USD</b> включает до <b>10 часов</b> с момента посадки клиента в автомобиль до финальной высадки. В рамках этих 10 часов предусмотрен <b>1 час общей остановки</b> на зарядку автомобиля и обеденный перерыв водителя и клиента. Этот час входит в общую продолжительность поездки и не добавляется сверх 10 часов. Дополнительное время сверх 10 часов — <b>600 UYU/час</b>.<br><br>Для точек <b>A</b>, <b>B</b> и <b>C</b> выберите город, а улицу / полный адрес с номером дома укажите одной строкой. Все адреса — латиницей.';
   }else{
     $('routeStepHelp').textContent='Поездка в одну сторону: точка A → точка B.';
     $('routeHelp').innerHTML='<b>Поездка в одну сторону:</b> нужны точки <b>A</b> и <b>B</b>. Для обычного адреса выберите город, а улицу / полный адрес с номером дома укажите одной строкой. Аэропорты Carrasco/Punta del Este и Buquebus подставляются автоматически. Все вводимые адреса — латиницей.';

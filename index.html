@@ -4,8 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <title>RusWeo</title>
-<meta name="rusweo-release" content="RusWeo 3.1.42 / V116 / web 31116">
+<!-- RUSWEO_V117_UBER_BONUS_ODOMETER_PARTNER -->
+<meta name="rusweo-release" content="RusWeo 3.1.43 / V117 / web 31117">
 <!-- RUSWEO_V116_FIX39_UI_SOURCE_ANALYTICS_E2E -->
+<!-- RUSWEO_V117_CLIENT_ORDER_LINK_ANALYTICS -->
+<!-- RUSWEO_V117_DIRECTIONAL_TERMINAL_TARIFFS -->
+<!-- RUSWEO_V117_DAY_TRIP_BREAK_60_MIN -->
 <meta name="rusweo-ui-policy" content="single-design-v3-android-telegram">
 <meta name="rusweo-container-parity" content="shared-ui-runtime-v65">
 <meta name="rusweo-runtime-policy" content="single-ux-no-navigation-auth-v2">
@@ -21,10 +25,10 @@
   },true);
 })();
 </script>
-<script src="rusweo-platform.js?v=31116fix21"></script>
-<script src="rusweo-auth.js?v=31116"></script>
+<script src="rusweo-platform.js?v=31117"></script>
+<script src="rusweo-auth.js?v=31117"></script>
 <style>
-/* RusWeo 3.1.42 / V116 · explicit final-point/return-home lifecycle; V114 client UI retained */
+/* RusWeo 3.1.43 / V117 · directional terminal tariffs + client order-link/source analytics; V116 lifecycle retained */
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{
   margin:0;min-height:100%;
@@ -1460,7 +1464,7 @@ function closeRealEstateChooser28(){
 function rw28RealEstateBackdrop(e){if(e&&e.target&&e.target.id==='rw28RealEstateModal')closeRealEstateChooser28()}
 function chooseRealEstate28(region){
   closeRealEstateChooser28();
-  if(region==='punta')openPartner('realestate_punta','E7onov');
+  if(region==='punta')openPartner('realestate_punta','SI_Uruguay');
   else openPartner('realestate_montevideo','niko_uruguay');
 }
 
@@ -1523,7 +1527,7 @@ function openBookingEditV97(id){
   const modal=document.getElementById('booking');
   const f=document.getElementById('bookingFrame');
   if(!modal||!f)return;
-  const bookingParams=new URLSearchParams({embedded:'1',modal:'1',vehicle_class:'standard',edit_id:id,edit_role:'client',v:'31116',_:String(Date.now())});
+  const bookingParams=new URLSearchParams({embedded:'1',modal:'1',vehicle_class:'standard',edit_id:id,edit_role:'client',v:'31117',_:String(Date.now())});
   const initData=String(tg&&tg.initData||'').trim();
   if(initData)bookingParams.set('init_data',initData);
   try{
@@ -1621,7 +1625,7 @@ try{
               finished=true;
               launchResolving=false;
               markSplashSeen();
-              location.replace('driver.html?v=31116&hf=1');
+              location.replace('driver.html?v=31117&hf=1');
               return;
             }
             reveal();
@@ -1727,7 +1731,7 @@ try{
 (function(){
   const isAndroid=!!(window.UruWayAndroid&&typeof window.UruWayAndroid.getPlatform==='function');
   if(isAndroid){document.body.classList.add('is-android');}
-  window.openAndroidDriver=function(){ location.href='driver.html?v=31116&hf=1'; };
+  window.openAndroidDriver=function(){ location.href='driver.html?v=31117&hf=1'; };
   window.uruwayOpenExternal=function(url){
     try{
       if(isAndroid&&typeof window.UruWayAndroid.openExternal==='function'){
@@ -1793,7 +1797,7 @@ try{
     if(role==='driver_standard'){
       // Launch resolver normally performs this transition behind splash.
       // This branch is used after a fresh Telegram authorization.
-      location.replace('driver.html?v=31116&hf=1');
+      location.replace('driver.html?v=31117&hf=1');
       return;
     }
     if(role!=='client'){
@@ -1951,7 +1955,7 @@ try{
 </style>
 <script id="RUSWEO_INDEX_DIAGNOSTICS_V101">
 (function(){
-  const OP='maxriccomsk', REV='31116', BUILD='RUSWEO_3_1_V116_FIX39_UI_SOURCE_ANALYTICS_E2E_20260927';
+  const OP='maxriccomsk', REV='31117', BUILD='RUSWEO_3_1_V117_UBER_BONUS_ODOMETER_PARTNER_20260927';
   let last=null;
   function safe(v,n){return String(v==null?'':v).replace(/[\r\n]+/g,' ').slice(0,n||260)}
   function env(){let p='web';try{if(window.UruWayAndroid)p='android';else if(window.Telegram&&window.Telegram.WebApp)p='telegram'}catch(e){}return p}
@@ -2147,7 +2151,7 @@ try{
   window.rw28OpenDriver=function(){
     try{const init=liveInitData()||savedInitData();if(init)sessionStorage.setItem('rw_tg_driver_init_data_v1',init)}catch(e){}
     try{tgDriver&&tgDriver.HapticFeedback&&tgDriver.HapticFeedback.impactOccurred('light')}catch(e){}
-    location.href='driver.html?v=31116&hf=1';
+    location.href='driver.html?v=31117&hf=1';
   };
 
   // Start as early as possible; do not wait for a click or for the video to end.
@@ -2952,7 +2956,7 @@ window.addEventListener('load',function(){try{const q=new URLSearchParams(locati
    fit behind a short branded splash. Internal navigation does not replay it. */
 </script>
 
-<!-- RUSWEO V110 DRIVER CACHE BUMP: driver.html?v=31116&hf=1 -->
+<!-- RUSWEO V110 DRIVER CACHE BUMP: driver.html?v=31117&hf=1 -->
 
 <style id="RUSWEO_PARTNER_CONFIRMED_V85_STYLE">
 .rw85-partner-confirm{display:none;position:fixed;inset:0;z-index:2147483550;background:rgba(4,18,39,.55);padding:calc(16px + env(safe-area-inset-top)) 14px calc(16px + env(safe-area-inset-bottom));align-items:flex-end;justify-content:center}

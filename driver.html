@@ -7,7 +7,7 @@
   content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 
 <title>RusWeo 4.0.1 — Личный кабинет</title>
-<meta name="rusweo-release" content="RusWeo 4.0.1 / V120 / web 31123 / Android native code112">
+<meta name="rusweo-release" content="RusWeo 4.0.1 / V120 / owner driver web 31126 / Android native code112">
 <meta name="rusweo-ui-policy" content="single-design-v3-driver-android-telegram">
 <meta name="rusweo-runtime-policy" content="driver-root-back-minimize-v2">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -2222,6 +2222,9 @@ function switchDriverTab(tab){
   }
 
   renderDriverOrders();
+  if(driverTab === 'external'){
+    try{loadDriverOrders(true);}catch(_){ }
+  }
 
 }
 
@@ -2483,6 +2486,8 @@ function rw116FallbackOrderCardV23(order,error){
     action+'</div>';
 }
 
+function rwV120ExternalMonitorIdSafe(value){return String(value||'').replace(/[^A-Za-z0-9_-]/g,'_');}
+
 function rwV120ExternalMonitorStatus(order){
   const st=String(order&&order.status||''),rs=String(order&&order.external_routing_state||'');
   if(st==='completed')return {text:'Завершён',cls:'done'};
@@ -2497,7 +2502,7 @@ function rwV120RenderExternalMonitorCard(order){
   const driverName=String(d.name||'Ожидает назначения');const car=[d.vehicle_color,d.vehicle_make_model,d.vehicle_plate].filter(Boolean).join(' · ');
   const luggage=(Number(order.bags_l||0)||Number(order.bags_m||0))?(Number(order.bags_l||0)+' L · '+Number(order.bags_m||0)+' M'):String(order.bags||0)+' шт.';
   const c=order.external_driver_commission||{};let finance='';if(Number(c.base_commission_uyu||c.commission_uyu||0)>0){finance='<div class="rw-v120-external-finance"><b>Водителю после комиссии:</b> '+escHtml(Math.round(Number(c.driver_remainder_uyu||0)).toLocaleString('ru-RU'))+' UYU';if(Number(c.loyalty_setoff_uyu||0)>0)finance+='<br><b>Базовая комиссия:</b> '+escHtml(Math.round(Number(c.base_commission_uyu||0)).toLocaleString('ru-RU'))+' UYU · <b>зачёт скидки:</b> '+escHtml(Math.round(Number(c.loyalty_setoff_uyu||0)).toLocaleString('ru-RU'))+' UYU';finance+='<br><b>Комиссия RusWeo к оплате:</b> '+escHtml(Math.round(Number(c.commission_uyu||0)).toLocaleString('ru-RU'))+' UYU</div>'}
-  return '<article class="rw-v120-external-card" id="rw-order-'+idSafe(String(order.id||''))+'"><div class="rw-v120-external-top"><strong>№'+escHtml(order.number||'')+'</strong><span class="rw-v120-external-status '+s.cls+'">'+escHtml(s.text)+'</span></div><div class="rw-v120-external-route">'+escHtml(order.date||'')+' · '+escHtml(order.time||'')+'<br>'+escHtml(order.route_text||'')+'</div><div class="rw-v120-external-driver"><b>Водитель:</b> '+escHtml(driverName)+(car?'<br><b>Автомобиль:</b> '+escHtml(car):'')+'</div><div class="rw-v120-external-meta">'+escHtml(order.service_name||'')+' · '+escHtml(String(order.passengers||0))+' чел. · '+escHtml(luggage)+(order.price?'<br><b>Стоимость:</b> '+escHtml(String(order.price)+' '+String(order.currency||'')):'')+'</div>'+finance+'</article>';
+  return '<article class="rw-v120-external-card" id="rw-order-'+rwV120ExternalMonitorIdSafe(String(order.id||''))+'"><div class="rw-v120-external-top"><strong>№'+escHtml(order.number||'')+'</strong><span class="rw-v120-external-status '+s.cls+'">'+escHtml(s.text)+'</span></div><div class="rw-v120-external-route">'+escHtml(order.date||'')+' · '+escHtml(order.time||'')+'<br>'+escHtml(order.route_text||'')+'</div><div class="rw-v120-external-driver"><b>Водитель:</b> '+escHtml(driverName)+(car?'<br><b>Автомобиль:</b> '+escHtml(car):'')+'</div><div class="rw-v120-external-meta">'+escHtml(order.service_name||'')+' · '+escHtml(String(order.passengers||0))+' чел. · '+escHtml(luggage)+(order.price?'<br><b>Стоимость:</b> '+escHtml(String(order.price)+' '+String(order.currency||'')):'')+'</div>'+finance+'</article>';
 }
 
 function renderDriverOrders(){
@@ -2512,7 +2517,14 @@ function renderDriverOrders(){
 
   if(driverTab === 'external'){
     const externalOrders=filteredOrders();
-    box.innerHTML=externalOrders.length?externalOrders.map(rwV120RenderExternalMonitorCard).join(''):'<div class="driver-empty">Заказов других водителей пока нет.</div>';
+    const renderedExternal=externalOrders.map(function(order){
+      try{return rwV120RenderExternalMonitorCard(order);}
+      catch(error){
+        const num=String(order&&order.number||order&&order.id||'');
+        return '<article class="rw-v120-external-card"><div class="rw-v120-external-top"><strong>№'+escHtml(num)+'</strong><span class="rw-v120-external-status failed">Ошибка карточки</span></div><div class="driver-error">Не удалось отобразить эту заявку. Остальные заказы продолжают работать.</div></article>';
+      }
+    });
+    box.innerHTML=renderedExternal.length?renderedExternal.join(''):'<div class="driver-empty">Заказов других водителей пока нет.</div>';
     return;
   }
 

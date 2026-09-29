@@ -1626,7 +1626,7 @@ try{
               finished=true;
               launchResolving=false;
               markSplashSeen();
-              location.replace('driver.html?v=31123&hf=1');
+              location.replace('driver.html?v=31126&hf=1');
               return;
             }
             if(String(role)==='driver_external'){
@@ -1742,7 +1742,7 @@ try{
   if(isAndroid){document.body.classList.add('is-android');}
   window.openAndroidDriver=function(){
     let role='';try{role=String(localStorage.getItem('uruway_auth_role')||'')}catch(e){}
-    location.href=role==='driver_external'?'driver_v4.html?v=31125&v120=1&platform=android':'driver.html?v=31123&hf=1';
+    location.href=role==='driver_external'?'driver_v4.html?v=31125&v120=1&platform=android':'driver.html?v=31126&hf=1';
   };
   window.uruwayOpenExternal=function(url){
     try{
@@ -1809,7 +1809,7 @@ try{
     if(role==='driver_standard'){
       // Launch resolver normally performs this transition behind splash.
       // This branch is used after a fresh Telegram authorization.
-      location.replace('driver.html?v=31123&hf=1');
+      location.replace('driver.html?v=31126&hf=1');
       return;
     }
     if(role==='driver_external'){
@@ -2187,7 +2187,7 @@ try{
     try{const init=liveInitData()||savedInitData();if(init)sessionStorage.setItem('rw_tg_driver_init_data_v1',init)}catch(e){}
     try{tgDriver&&tgDriver.HapticFeedback&&tgDriver.HapticFeedback.impactOccurred('light')}catch(e){}
     let role='';try{role=String(sessionStorage.getItem('rw_tg_driver_role_v2')||'')}catch(e){}
-    location.href=role==='driver_external'?'driver_v4.html?v=31125&v120=1':'driver.html?v=31123&hf=1';
+    location.href=role==='driver_external'?'driver_v4.html?v=31125&v120=1':'driver.html?v=31126&hf=1';
   };
 
   // Start as early as possible; do not wait for a click or for the video to end.
@@ -2992,7 +2992,7 @@ window.addEventListener('load',function(){try{const q=new URLSearchParams(locati
    fit behind a short branded splash. Internal navigation does not replay it. */
 </script>
 
-<!-- RUSWEO V110 DRIVER CACHE BUMP: driver.html?v=31123&hf=1 -->
+<!-- RUSWEO V110 DRIVER CACHE BUMP: driver.html?v=31126&hf=1 -->
 
 <style id="RUSWEO_PARTNER_CONFIRMED_V85_STYLE">
 .rw85-partner-confirm{display:none;position:fixed;inset:0;z-index:2147483550;background:rgba(4,18,39,.55);padding:calc(16px + env(safe-area-inset-top)) 14px calc(16px + env(safe-area-inset-bottom));align-items:flex-end;justify-content:center}

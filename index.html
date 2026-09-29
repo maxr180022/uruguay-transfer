@@ -6,7 +6,7 @@
 <title>RusWeo</title>
 <!-- RUSWEO_V119_FIX3_DRIVER_OFFER_REMINDER_PUBLIC_NAME -->
 <!-- RUSWEO_V117_UBER_BONUS_ODOMETER_PARTNER -->
-<meta name="rusweo-release" content="RusWeo 4.0.1 / V120 / web 31123">
+<meta name="rusweo-release" content="RusWeo 4.1.0 / V121 / web 31128">
 <!-- RUSWEO_V116_FIX39_UI_SOURCE_ANALYTICS_E2E -->
 <!-- RUSWEO_V117_CLIENT_ORDER_LINK_ANALYTICS -->
 <!-- RUSWEO_V117_DIRECTIONAL_TERMINAL_TARIFFS -->
@@ -26,10 +26,10 @@
   },true);
 })();
 </script>
-<script src="rusweo-platform.js?v=31123"></script>
-<script src="rusweo-auth.js?v=31123"></script>
+<script src="rusweo-platform.js?v=31128"></script>
+<script src="rusweo-auth.js?v=31128"></script>
 <style>
-/* RusWeo 4.0.1 / V120 · directional terminal tariffs + client order-link/source analytics; V116 lifecycle retained */
+/* RusWeo 4.1.0 / V121 · real-estate leads + social deep-link entry; V120 transfer/driver lifecycle retained */
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{
   margin:0;min-height:100%;
@@ -1101,6 +1101,7 @@ body.rw2-booking-modal-open{overflow:hidden!important}
 .rw28-re-modal{position:fixed;inset:0;z-index:2147483000;display:none;align-items:center;justify-content:center;padding:calc(18px + env(safe-area-inset-top)) 18px calc(18px + env(safe-area-inset-bottom));background:rgba(4,25,45,.48);backdrop-filter:blur(5px)}
 .rw28-re-modal.open{display:flex}.rw28-re-sheet{width:min(430px,100%);background:#fff;border:1px solid rgba(16,65,104,.15);border-radius:26px;box-shadow:0 24px 70px rgba(5,34,60,.28);padding:18px}.rw28-re-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}.rw28-re-head h3{margin:0;color:#082f52;font-size:20px;line-height:1.15}.rw28-re-head p{margin:6px 0 0;color:#63768a;font-size:13px;line-height:1.35}.rw28-re-close{border:0;width:42px;height:42px;border-radius:15px;background:#f1f5f9;color:#31546f;font-size:26px;line-height:1;cursor:pointer;flex:0 0 auto}.rw28-re-option{width:100%;border:1px solid #d8e4ed;background:#fff;border-radius:18px;padding:14px 15px;margin-top:10px;text-align:left;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;color:#082f52;font:inherit}.rw28-re-option strong{display:block;font-size:16px}.rw28-re-option span{display:block;color:#64788b;font-size:12px;margin-top:3px}.rw28-re-option b{font-size:20px;color:#1587d1}.rw28-re-option:active{transform:scale(.99)}
 html.rw28-re-open,body.rw28-re-open{overflow:hidden!important}
+.rw121-realty-sheet{max-height:min(760px,calc(100vh - 28px));overflow:auto}.rw121-realty-progress{height:6px;background:#edf2f7;border-radius:999px;overflow:hidden;margin:2px 0 6px}.rw121-realty-progress span{display:block;height:100%;width:16.66%;background:linear-gradient(90deg,#087ff3,#7040ee,#ef0a86);border-radius:inherit;transition:width .2s ease}.rw121-realty-stepmeta{font-size:11px;font-weight:900;color:#718198;text-transform:uppercase;letter-spacing:.04em;margin:0 0 12px}.rw121-field{margin:0 0 12px}.rw121-field label{display:block;font-size:13px;font-weight:900;color:#17345f;margin-bottom:6px}.rw121-field select,.rw121-field input,.rw121-field textarea{width:100%;box-sizing:border-box;border:1px solid #d8e4ed;background:#fff;color:#102b4d;border-radius:14px;min-height:48px;padding:10px 12px;font:inherit;font-size:14px;outline:none}.rw121-field textarea{min-height:118px;resize:vertical;line-height:1.4}.rw121-field select:focus,.rw121-field input:focus,.rw121-field textarea:focus{border-color:#4e84ef;box-shadow:0 0 0 3px rgba(78,132,239,.12)}.rw121-hint{font-size:11px;color:#718198;line-height:1.35;margin-top:5px}.rw121-realty-actions{display:grid;grid-template-columns:1fr 1.4fr;gap:8px;margin-top:12px}.rw121-realty-actions button{min-height:46px;border-radius:14px;font-weight:950;font-size:14px}.rw121-primary{border:0;background:linear-gradient(100deg,#087ff3,#7040ee,#ef0a86);color:#fff}.rw121-secondary{border:1px solid #d8e4ed;background:#fff;color:#40546e}.rw121-realty-error{display:none;border-radius:12px;background:#fff1f2;color:#b42338;padding:9px 10px;font-size:12px;font-weight:800;margin-top:8px}.rw121-realty-error.show{display:block}.rw121-summary{display:grid;gap:7px}.rw121-summary-row{border:1px solid #e2e9f1;border-radius:13px;padding:9px 10px;background:#f9fbfd}.rw121-summary-row small{display:block;color:#718198;font-size:10px;font-weight:800;margin-bottom:2px}.rw121-summary-row strong{font-size:13px;color:#17345f}.rw121-success{text-align:center;padding:15px 4px 4px}.rw121-success .ico{font-size:46px}.rw121-success h4{font-size:20px;color:#0c3154;margin:8px 0 6px}.rw121-success p{font-size:13px;line-height:1.45;color:#60728d;margin:0}.rw121-contact-split{display:grid;grid-template-columns:1fr;gap:8px}@media(max-width:420px){.rw121-realty-sheet{padding:15px}.rw121-realty-actions button{min-height:44px}.rw121-field select,.rw121-field input{min-height:46px}}
 </style>
 
 <!-- RUSWEO 3.0 ANDROID UNIFIED IN-APP FIX · code86 -->
@@ -1190,7 +1191,7 @@ body.is-android.auth-pending{
           <article class="rw2-partner"><img class="rw2-pimg" src="data:image/webp;base64,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" alt="BUSINESS трансфер Hyundai H-1"><h3><em>BUSINESS</em>-трансфер</h3><p>Hyundai H-1 · до 8 человек<br>Внешний партнёр</p><div class="rw2-verified">✓ Проверенный партнёр</div><button type="button" onclick="openPartner('business','AVladimirovich')">Связаться&nbsp;→</button></article>
           
           <article class="rw2-partner"><img class="rw2-pimg" src="data:image/webp;base64,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" alt="Документы в Уругвае"><h3><em>Документы</em></h3><p>ВНЖ · ПМЖ · ИП ·<br>банковские счета</p><div class="rw2-verified">✓ Проверенный партнёр</div><button type="button" onclick="openPartner('documents','mapsme')">Связаться&nbsp;→</button></article>
-          <article class="rw2-partner pink"><img class="rw2-pimg" src="data:image/webp;base64,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" alt="Недвижимость в Уругвае"><h3><em>Недвижимость</em></h3><p>Аренда · покупка ·<br>продажа</p><div class="rw2-verified">✓ Проверенный партнёр</div><button type="button" onclick="openRealEstateChooser28()">Связаться&nbsp;→</button></article>
+          <article class="rw2-partner pink"><img class="rw2-pimg" src="data:image/webp;base64,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" alt="Недвижимость в Уругвае"><h3><em>Недвижимость</em></h3><p>Аренда · покупка ·<br>продажа</p><div class="rw2-verified">✓ Проверенный партнёр</div><button type="button" onclick="openRealEstateChooser28()">Оставить заявку&nbsp;→</button></article>
         </div>
       </section>
       <section class="rw2-section">
@@ -1267,13 +1268,19 @@ body.is-android.auth-pending{
 </div>
 
 <div class="rw28-re-modal" id="rw28RealEstateModal" aria-hidden="true" onclick="rw28RealEstateBackdrop(event)">
-  <div class="rw28-re-sheet" role="dialog" aria-modal="true" aria-labelledby="rw28RealEstateTitle">
+  <div class="rw28-re-sheet rw121-realty-sheet" role="dialog" aria-modal="true" aria-labelledby="rw28RealEstateTitle">
     <div class="rw28-re-head">
-      <div><h3 id="rw28RealEstateTitle">🏠 Выберите город</h3><p>Мы направим вас к риелтору, который работает с этим регионом.</p></div>
+      <div><h3 id="rw28RealEstateTitle">🏠 Недвижимость</h3><p id="rw121RealtySubtitle">Короткий запрос — передадим риелтору по городу.</p></div>
       <button class="rw28-re-close" type="button" aria-label="Закрыть" onclick="closeRealEstateChooser28()">×</button>
     </div>
-    <button class="rw28-re-option" type="button" onclick="chooseRealEstate28('montevideo')"><span><strong>Монтевидео</strong><span>Никита · Монтевидео и окрестности</span></span><b>›</b></button>
-    <button class="rw28-re-option" type="button" onclick="chooseRealEstate28('punta')"><span><strong>Пунта-дель-Эсте</strong><span>Евгений · Пунта-дель-Эсте и побережье</span></span><b>›</b></button>
+    <div class="rw121-realty-progress"><span id="rw121RealtyProgressBar"></span></div>
+    <div class="rw121-realty-stepmeta" id="rw121RealtyStepMeta">Шаг 1 из 6</div>
+    <div id="rw121RealtyBody"></div>
+    <div class="rw121-realty-error" id="rw121RealtyError"></div>
+    <div class="rw121-realty-actions">
+      <button class="rw121-secondary" id="rw121RealtyBack" type="button">Назад</button>
+      <button class="rw121-primary" id="rw121RealtyNext" type="button">Далее</button>
+    </div>
   </div>
 </div>
 
@@ -1452,22 +1459,48 @@ function trackPartnerOnce(partner){
   }catch(e){}
 }
 
-function openRealEstateChooser28(){
-  const modal=document.getElementById('rw28RealEstateModal');if(!modal)return;
-  modal.classList.add('open');modal.setAttribute('aria-hidden','false');
-  document.documentElement.classList.add('rw28-re-open');document.body.classList.add('rw28-re-open');
+const RW121_REALTY_STEPS=['city','transaction','property','bedrooms','budget','preferences'];
+let rw121RealtyStep=0,rw121RealtySubmitting=false;
+let rw121RealtyData={city_code:'',city_other:'',transaction:'',property_type:'',bedrooms:'',budget_usd:'',preferences:'',phone:'',telegram_username:''};
+function rw121RealtyCtx(){
+  const q=new URLSearchParams(location.search),u=tgUser();let session='';try{session=String(localStorage.getItem('uruway_auth_session')||'')}catch(e){}
+  return {init_data:String(tg&&tg.initData||''),app_session:session,user:u,entry_source:String(q.get('source')||(tg&&tg.initData?'telegram':'web')||'web'),campaign:String(q.get('campaign')||q.get('utm_campaign')||''),creative:String(q.get('creative')||q.get('utm_content')||''),client_id:stableClientId()};
 }
-function closeRealEstateChooser28(){
-  const modal=document.getElementById('rw28RealEstateModal');if(!modal)return;
-  modal.classList.remove('open');modal.setAttribute('aria-hidden','true');
-  document.documentElement.classList.remove('rw28-re-open');document.body.classList.remove('rw28-re-open');
+function rw121RealtyVerified(){const c=rw121RealtyCtx(),u=c.user||{};const auth=!!(c.init_data||c.app_session||u.id),username=String(u.username||'').trim().replace(/^@/,'');return auth&&/^[A-Za-z0-9_]{5,32}$/.test(username)}
+function rw121RealtyRequestToken(){const k='rw121_realty_request_token';try{let v=sessionStorage.getItem(k);if(!v){v='rl_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,12);sessionStorage.setItem(k,v)}return v}catch(e){return 'rl_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,12)}}
+function rw121Esc(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
+function rw121CityLabel(){if(rw121RealtyData.city_code==='montevideo')return'Монтевидео';if(rw121RealtyData.city_code==='punta_del_este')return'Пунта-дель-Эсте';return rw121RealtyData.city_other||'Другой город'}
+function rw121TransactionLabel(){return rw121RealtyData.transaction==='buy'?'Покупка':'Аренда'}
+function rw121PropertyLabel(){return rw121RealtyData.property_type==='house'?'Дом':'Квартира'}
+function rw121BedroomsLabel(){return rw121RealtyData.bedrooms==='studio'?'Студия':rw121RealtyData.bedrooms==='5+'?'5 и более':rw121RealtyData.bedrooms}
+function rw121RealtySetError(t){const e=document.getElementById('rw121RealtyError');if(!e)return;e.textContent=String(t||'');e.classList.toggle('show',!!t)}
+function rw121Field(label,html,hint){return'<div class="rw121-field"><label>'+rw121Esc(label)+'</label>'+html+(hint?'<div class="rw121-hint">'+rw121Esc(hint)+'</div>':'')+'</div>'}
+function rw121RealtyRender(){
+  const body=document.getElementById('rw121RealtyBody'),meta=document.getElementById('rw121RealtyStepMeta'),bar=document.getElementById('rw121RealtyProgressBar'),back=document.getElementById('rw121RealtyBack'),next=document.getElementById('rw121RealtyNext');if(!body)return;
+  rw121RealtySetError('');const verified=rw121RealtyVerified();const businessCount=RW121_REALTY_STEPS.length;const contactStep=!verified&&rw121RealtyStep===businessCount;const reviewStep=rw121RealtyStep===(businessCount+(verified?0:1));const total=businessCount+(verified?1:2);const visibleIndex=Math.min(rw121RealtyStep+1,total);
+  if(meta)meta.textContent=reviewStep?'Проверка заявки':contactStep?'Контакт для связи':'Шаг '+visibleIndex+' из '+businessCount;
+  if(bar)bar.style.width=Math.min(100,Math.max(8,(visibleIndex/total)*100))+'%';
+  if(back){back.style.visibility=rw121RealtyStep>0?'visible':'hidden';back.disabled=rw121RealtySubmitting}
+  if(next){next.disabled=rw121RealtySubmitting;next.textContent=reviewStep?'Отправить запрос':'Далее'}
+  if(reviewStep){body.innerHTML='<div class="rw121-summary">'+[['Город',rw121CityLabel()],['Покупка / аренда',rw121TransactionLabel()],['Тип недвижимости',rw121PropertyLabel()],['Спальни',rw121BedroomsLabel()],['Бюджет',String(rw121RealtyData.budget_usd)+' USD без коммунальных расходов'],['Пожелания',rw121RealtyData.preferences],...(!verified?[['Контакт',[rw121RealtyData.phone,rw121RealtyData.telegram_username?('@'+rw121RealtyData.telegram_username.replace(/^@/,'')):''].filter(Boolean).join(' · ')]]:[])].map(x=>'<div class="rw121-summary-row"><small>'+rw121Esc(x[0])+'</small><strong>'+rw121Esc(x[1]||'—')+'</strong></div>').join('')+'</div>';return}
+  if(contactStep){body.innerHTML='<div class="rw121-contact-split">'+rw121Field('WhatsApp / телефон','<input id="rw121Phone" inputmode="tel" autocomplete="tel" placeholder="+598 ..." value="'+rw121Esc(rw121RealtyData.phone)+'">','Достаточно одного способа связи.')+rw121Field('Telegram username','<input id="rw121Telegram" autocomplete="off" placeholder="@username" value="'+rw121Esc(rw121RealtyData.telegram_username)+'">','Если удобнее связаться через Telegram.')+'</div>';return}
+  const step=RW121_REALTY_STEPS[rw121RealtyStep];
+  if(step==='city')body.innerHTML=rw121Field('Город','<select id="rw121City"><option value="">Выберите город</option><option value="montevideo" '+(rw121RealtyData.city_code==='montevideo'?'selected':'')+'>Монтевидео</option><option value="punta_del_este" '+(rw121RealtyData.city_code==='punta_del_este'?'selected':'')+'>Пунта-дель-Эсте</option><option value="other" '+(rw121RealtyData.city_code==='other'?'selected':'')+'>Другой город</option></select>')+(rw121RealtyData.city_code==='other'?rw121Field('Напишите город','<input id="rw121CityOther" maxlength="80" placeholder="Например, Атлантида" value="'+rw121Esc(rw121RealtyData.city_other)+'">'):'');
+  if(step==='transaction')body.innerHTML=rw121Field('Что вас интересует?','<select id="rw121Transaction"><option value="">Выберите</option><option value="rent" '+(rw121RealtyData.transaction==='rent'?'selected':'')+'>Аренда</option><option value="buy" '+(rw121RealtyData.transaction==='buy'?'selected':'')+'>Покупка</option></select>');
+  if(step==='property')body.innerHTML=rw121Field('Тип недвижимости','<select id="rw121Property"><option value="">Выберите</option><option value="apartment" '+(rw121RealtyData.property_type==='apartment'?'selected':'')+'>Квартира</option><option value="house" '+(rw121RealtyData.property_type==='house'?'selected':'')+'>Дом</option></select>');
+  if(step==='bedrooms')body.innerHTML=rw121Field('Количество спален','<select id="rw121Bedrooms"><option value="">Выберите</option><option value="studio" '+(rw121RealtyData.bedrooms==='studio'?'selected':'')+'>Студия</option>'+[1,2,3,4,5].map(n=>'<option value="'+n+'" '+(String(rw121RealtyData.bedrooms)===String(n)?'selected':'')+'>'+n+'</option>').join('')+'<option value="5+" '+(rw121RealtyData.bedrooms==='5+'?'selected':'')+'>5 и более</option></select>');
+  if(step==='budget')body.innerHTML=rw121Field('Бюджет в USD','<input id="rw121Budget" type="number" min="100" max="10000000" step="50" inputmode="numeric" placeholder="Например, 1500" value="'+rw121Esc(rw121RealtyData.budget_usd)+'">','Укажите бюджет без коммунальных услуг / gastos comunes.');
+  if(step==='preferences')body.innerHTML=rw121Field('Ваши предпочтения','<textarea id="rw121Preferences" maxlength="1200" placeholder="Район, этаж, мебель, гараж, животные, сроки и другие пожелания">'+rw121Esc(rw121RealtyData.preferences)+'</textarea>','До 1200 символов.');
+  const citySel=document.getElementById('rw121City');if(citySel)citySel.onchange=function(){rw121RealtyData.city_code=this.value;if(this.value!=='other')rw121RealtyData.city_other='';rw121RealtyRender()};
 }
+function rw121RealtyCapture(){const id=x=>document.getElementById(x);const step=RW121_REALTY_STEPS[rw121RealtyStep];if(step==='city'){if(id('rw121City'))rw121RealtyData.city_code=id('rw121City').value;if(id('rw121CityOther'))rw121RealtyData.city_other=id('rw121CityOther').value.trim()}if(step==='transaction'&&id('rw121Transaction'))rw121RealtyData.transaction=id('rw121Transaction').value;if(step==='property'&&id('rw121Property'))rw121RealtyData.property_type=id('rw121Property').value;if(step==='bedrooms'&&id('rw121Bedrooms'))rw121RealtyData.bedrooms=id('rw121Bedrooms').value;if(step==='budget'&&id('rw121Budget'))rw121RealtyData.budget_usd=id('rw121Budget').value;if(step==='preferences'&&id('rw121Preferences'))rw121RealtyData.preferences=id('rw121Preferences').value.trim();if(!rw121RealtyVerified()&&rw121RealtyStep===RW121_REALTY_STEPS.length){if(id('rw121Phone'))rw121RealtyData.phone=id('rw121Phone').value.trim();if(id('rw121Telegram'))rw121RealtyData.telegram_username=id('rw121Telegram').value.trim().replace(/^@/,'')}}
+function rw121RealtyValidate(){const d=rw121RealtyData,step=RW121_REALTY_STEPS[rw121RealtyStep];if(step==='city'&&(!d.city_code||(d.city_code==='other'&&d.city_other.trim().length<2)))return'Выберите город.';if(step==='transaction'&&!d.transaction)return'Выберите покупку или аренду.';if(step==='property'&&!d.property_type)return'Выберите квартиру или дом.';if(step==='bedrooms'&&!d.bedrooms)return'Выберите количество спален.';if(step==='budget'&&(!Number(d.budget_usd)||Number(d.budget_usd)<100))return'Укажите бюджет в USD.';if(step==='preferences'&&d.preferences.trim().length<3)return'Напишите коротко ваши пожелания.';if(!rw121RealtyVerified()&&rw121RealtyStep===RW121_REALTY_STEPS.length&&!d.phone&&!d.telegram_username)return'Укажите WhatsApp/телефон или Telegram username.';if(d.telegram_username&&!/^[A-Za-z0-9_]{5,32}$/.test(d.telegram_username))return'Проверьте Telegram username.';return''}
+function rw121RealtyApi(params,timeout=22000){return new Promise((resolve,reject)=>{const sc=document.createElement('script');let done=false,timer=null,reg=null;const finish=(err,data)=>{if(done)return;done=true;if(timer)clearTimeout(timer);try{window.RusWeo&&window.RusWeo.jsonpSafe&&window.RusWeo.jsonpSafe.retire(reg)}catch(_){ }try{sc.remove()}catch(_){ }err?reject(err):resolve(data)};reg=window.RusWeo&&window.RusWeo.jsonpSafe?window.RusWeo.jsonpSafe.register('realty',d=>finish(null,d)):null;if(!reg){reject(new Error('Сервис временно недоступен'));return}const q=new URLSearchParams(params);q.set('callback',reg.name);q.set('_',Date.now());sc.onerror=()=>finish(new Error('Ошибка сети'));sc.src=API+'?'+q.toString();document.head.appendChild(sc);timer=setTimeout(()=>finish(new Error('Сервер отвечает слишком долго')),timeout)})}
+async function rw121RealtySubmit(){if(rw121RealtySubmitting)return;rw121RealtySubmitting=true;rw121RealtyRender();const c=rw121RealtyCtx();const u=c.user||{};try{const r=await rw121RealtyApi({action:'v121_realty_lead_create',city_code:rw121RealtyData.city_code,city_other:rw121RealtyData.city_other,transaction:rw121RealtyData.transaction,property_type:rw121RealtyData.property_type,bedrooms:rw121RealtyData.bedrooms,budget_usd:String(rw121RealtyData.budget_usd),preferences:rw121RealtyData.preferences,phone:rw121RealtyData.phone,telegram_username:rw121RealtyData.telegram_username,client_first_name:u.first||'',client_last_name:u.last||'',init_data:c.init_data,app_session:c.app_session,entry_source:c.entry_source,campaign:c.campaign,creative:c.creative,client_id:c.client_id,request_token:rw121RealtyRequestToken()});if(!r||!r.ok)throw new Error(r&&r.message||r&&r.error||'Не удалось отправить запрос');const body=document.getElementById('rw121RealtyBody');if(body)body.innerHTML='<div class="rw121-success"><div class="ico">✅</div><h4>Запрос отправлен</h4><p>'+rw121Esc(r.message||'В ближайшее время с вами свяжутся.')+'</p><div class="rw121-summary-row" style="margin-top:12px"><small>Номер лида</small><strong>'+rw121Esc(r.lead_number||'—')+'</strong></div></div>';const meta=document.getElementById('rw121RealtyStepMeta'),bar=document.getElementById('rw121RealtyProgressBar'),back=document.getElementById('rw121RealtyBack'),next=document.getElementById('rw121RealtyNext');if(meta)meta.textContent='Готово';if(bar)bar.style.width='100%';if(back)back.style.display='none';if(next){next.textContent='Закрыть';next.disabled=false;next.onclick=closeRealEstateChooser28}rw121RealtySubmitting=false;return}catch(e){rw121RealtySubmitting=false;rw121RealtyRender();rw121RealtySetError(e&&e.message?e.message:String(e))}}
+function openRealEstateChooser28(opts){opts=opts||{};const modal=document.getElementById('rw28RealEstateModal');if(!modal)return;const presetCity=String(opts.city_code||'');rw121RealtyStep=(opts.start_after_city&&presetCity)?1:0;rw121RealtySubmitting=false;rw121RealtyData={city_code:presetCity,city_other:'',transaction:'',property_type:'',bedrooms:'',budget_usd:'',preferences:'',phone:'',telegram_username:''};modal.classList.add('open');modal.setAttribute('aria-hidden','false');document.documentElement.classList.add('rw28-re-open');document.body.classList.add('rw28-re-open');const back=document.getElementById('rw121RealtyBack'),next=document.getElementById('rw121RealtyNext');if(back)back.onclick=function(){rw121RealtyCapture();rw121RealtyStep=Math.max(0,rw121RealtyStep-1);rw121RealtyRender()};if(next)next.onclick=async function(){rw121RealtyCapture();const e=rw121RealtyValidate();if(e){rw121RealtySetError(e);return}const verified=rw121RealtyVerified(),reviewIndex=RW121_REALTY_STEPS.length+(verified?0:1);if(rw121RealtyStep>=reviewIndex){await rw121RealtySubmit();return}rw121RealtyStep++;rw121RealtyRender()};rw121RealtyRender()}
+function closeRealEstateChooser28(){const modal=document.getElementById('rw28RealEstateModal');if(!modal)return;modal.classList.remove('open');modal.setAttribute('aria-hidden','true');document.documentElement.classList.remove('rw28-re-open');document.body.classList.remove('rw28-re-open')}
 function rw28RealEstateBackdrop(e){if(e&&e.target&&e.target.id==='rw28RealEstateModal')closeRealEstateChooser28()}
-function chooseRealEstate28(region){
-  closeRealEstateChooser28();
-  if(region==='punta')openPartner('realestate_punta','SI_Uruguay');
-  else openPartner('realestate_montevideo','niko_uruguay');
-}
+function chooseRealEstate28(region){openRealEstateChooser28({city_code:region==='punta'?'punta_del_este':'montevideo',start_after_city:true})}
 
 function partnerDirect(username,partner){
   let text='Здравствуйте! Перешёл к вам через партнёрскую кнопку RusWeo.';
@@ -1528,7 +1561,7 @@ function openBookingEditV97(id){
   const modal=document.getElementById('booking');
   const f=document.getElementById('bookingFrame');
   if(!modal||!f)return;
-  const bookingParams=new URLSearchParams({embedded:'1',modal:'1',vehicle_class:'standard',edit_id:id,edit_role:'client',v:'31122',_:String(Date.now())});
+  const bookingParams=new URLSearchParams({embedded:'1',modal:'1',vehicle_class:'standard',edit_id:id,edit_role:'client',v:'31128',_:String(Date.now())});
   const initData=String(tg&&tg.initData||'').trim();
   if(initData)bookingParams.set('init_data',initData);
   try{
@@ -1626,7 +1659,7 @@ try{
               finished=true;
               launchResolving=false;
               markSplashSeen();
-              location.replace('driver.html?v=31126&hf=1');
+              location.replace('driver.html?v=31129&hf=1');
               return;
             }
             if(String(role)==='driver_external'){
@@ -1634,7 +1667,7 @@ try{
               launchResolving=false;
               markSplashSeen();
               const android=!!(window.UruWayAndroid&&typeof window.UruWayAndroid.getPlatform==='function');
-              location.replace('driver_v4.html?v=31125&v120=1'+(android?'&platform=android':''));
+              location.replace('driver_v4.html?v=31130&v121=1'+(android?'&platform=android':''));
               return;
             }
             reveal();
@@ -1742,7 +1775,7 @@ try{
   if(isAndroid){document.body.classList.add('is-android');}
   window.openAndroidDriver=function(){
     let role='';try{role=String(localStorage.getItem('uruway_auth_role')||'')}catch(e){}
-    location.href=role==='driver_external'?'driver_v4.html?v=31125&v120=1&platform=android':'driver.html?v=31126&hf=1';
+    location.href=role==='driver_external'?'driver_v4.html?v=31130&v121=1&platform=android':'driver.html?v=31129&hf=1';
   };
   window.uruwayOpenExternal=function(url){
     try{
@@ -1809,11 +1842,11 @@ try{
     if(role==='driver_standard'){
       // Launch resolver normally performs this transition behind splash.
       // This branch is used after a fresh Telegram authorization.
-      location.replace('driver.html?v=31126&hf=1');
+      location.replace('driver.html?v=31129&hf=1');
       return;
     }
     if(role==='driver_external'){
-      location.replace('driver_v4.html?v=31125&v120=1&platform=android');
+      location.replace('driver_v4.html?v=31130&v121=1&platform=android');
       return;
     }
     if(role!=='client'){
@@ -1971,7 +2004,7 @@ try{
 </style>
 <script id="RUSWEO_INDEX_DIAGNOSTICS_V101">
 (function(){
-  const OP='maxriccomsk', REV='31123', BUILD='RUSWEO_4_0_1_V120_FIX5_AVAILABILITY_RANGE_20260928';
+  const OP='maxriccomsk', REV='31128', BUILD='RUSWEO_4_1_0_V121_REALTY_LEADS_REALTOR_BOT_20260928';
   let last=null;
   function safe(v,n){return String(v==null?'':v).replace(/[\r\n]+/g,' ').slice(0,n||260)}
   function env(){let p='web';try{if(window.UruWayAndroid)p='android';else if(window.Telegram&&window.Telegram.WebApp)p='telegram'}catch(e){}return p}
@@ -2187,7 +2220,7 @@ try{
     try{const init=liveInitData()||savedInitData();if(init)sessionStorage.setItem('rw_tg_driver_init_data_v1',init)}catch(e){}
     try{tgDriver&&tgDriver.HapticFeedback&&tgDriver.HapticFeedback.impactOccurred('light')}catch(e){}
     let role='';try{role=String(sessionStorage.getItem('rw_tg_driver_role_v2')||'')}catch(e){}
-    location.href=role==='driver_external'?'driver_v4.html?v=31125&v120=1':'driver.html?v=31126&hf=1';
+    location.href=role==='driver_external'?'driver_v4.html?v=31130&v121=1':'driver.html?v=31129&hf=1';
   };
 
   // Start as early as possible; do not wait for a click or for the video to end.
@@ -2361,6 +2394,11 @@ try{
   }
 
   window.openPartner=function(partner,username){
+    const partnerKey=String(partner||'').toLowerCase();
+    if(partnerKey==='realestate'||partnerKey==='realestate_montevideo'||partnerKey==='realestate_punta'){
+      const cityCode=partnerKey==='realestate_montevideo'?'montevideo':partnerKey==='realestate_punta'?'punta_del_este':'';
+      if(typeof window.openRealEstateChooser28==='function'){window.openRealEstateChooser28({city_code:cityCode,start_after_city:!!cityCode});return}
+    }
     const ctx=localPartnerContextV5();
     const isAndroid=!!(window.UruWayAndroid&&typeof window.UruWayAndroid.getPlatform==='function');
     if(!ctx.telegram_user_id&&!ctx.init_data&&!ctx.session_token){
@@ -2385,7 +2423,7 @@ try{
 </script>
 
 <script id="rusweoIndexRouteV31">
-window.addEventListener('load',function(){try{const q=new URLSearchParams(location.search);if(q.get('view')==='account'){setTimeout(()=>window.rw2SetTab&&rw2SetTab('account'),60)}else if(q.get('section')==='partners'||location.hash==='#rw2Partners'){setTimeout(()=>window.rw31Navigate?rw31Navigate('partners'):document.getElementById('rw2Partners')?.scrollIntoView({behavior:'auto',block:'start'}),120)}}catch(e){}});
+window.addEventListener('load',function(){try{const q=new URLSearchParams(location.search);if(q.get('flow')==='realestate'||q.get('flow')==='realty'){setTimeout(()=>openRealEstateChooser28(),140)}else if(q.get('view')==='account'){setTimeout(()=>window.rw2SetTab&&rw2SetTab('account'),60)}else if(q.get('section')==='partners'||location.hash==='#rw2Partners'){setTimeout(()=>window.rw31Navigate?rw31Navigate('partners'):document.getElementById('rw2Partners')?.scrollIntoView({behavior:'auto',block:'start'}),120)}}catch(e){}});
 </script>
 
 <script id="rusweo-navigation-v32">
@@ -2992,7 +3030,7 @@ window.addEventListener('load',function(){try{const q=new URLSearchParams(locati
    fit behind a short branded splash. Internal navigation does not replay it. */
 </script>
 
-<!-- RUSWEO V110 DRIVER CACHE BUMP: driver.html?v=31126&hf=1 -->
+<!-- RUSWEO V110 DRIVER CACHE BUMP: driver.html?v=31129&hf=1 -->
 
 <style id="RUSWEO_PARTNER_CONFIRMED_V85_STYLE">
 .rw85-partner-confirm{display:none;position:fixed;inset:0;z-index:2147483550;background:rgba(4,18,39,.55);padding:calc(16px + env(safe-area-inset-top)) 14px calc(16px + env(safe-area-inset-bottom));align-items:flex-end;justify-content:center}
@@ -3055,6 +3093,12 @@ window.addEventListener('load',function(){try{const q=new URLSearchParams(locati
     try{var result=await apiConfirm(state.partner,state.ctx);status('Открываем Telegram…',false);var url=directUrl(state.partner,state.username,state.message);setTimeout(function(){openExternal(url,state.ctx);close()},180)}catch(e){status(e&&e.message?e.message:String(e),true);if(btn)btn.disabled=false}
   }
   window.openPartner=function(partner,username){
+    var partnerKey=String(partner||'').toLowerCase();
+    if(partnerKey==='realestate'||partnerKey==='realestate_montevideo'||partnerKey==='realestate_punta'){
+      close();
+      var cityCode=partnerKey==='realestate_montevideo'?'montevideo':partnerKey==='realestate_punta'?'punta_del_este':'';
+      if(typeof window.openRealEstateChooser28==='function'){window.openRealEstateChooser28({city_code:cityCode,start_after_city:!!cityCode});return}
+    }
     var c=ctx();var isAndroid=!!(window.UruWayAndroid&&typeof window.UruWayAndroid.getPlatform==='function');
     if(!c.telegram_user_id&&!c.init_data&&!c.session_token){alert(isAndroid?'Войдите через Telegram, чтобы связаться с партнёром.':'Не удалось определить Telegram-профиль. Закройте и снова откройте RusWeo кнопкой бота.');return}
     var msg=messageFor(partner,username);state={partner:String(partner||''),username:String(username||''),ctx:c,message:msg};var el=ensure();document.getElementById('rw85PartnerTitle').textContent='🤝 '+partnerLabel(partner);document.getElementById('rw85PartnerMessage').textContent=msg;var st=document.getElementById('rw85PartnerStatus');if(st)st.className='rw85-partner-status';var btn=document.getElementById('rw85PartnerSend');if(btn)btn.disabled=false;el.classList.add('open');
@@ -3062,6 +3106,7 @@ window.addEventListener('load',function(){try{const q=new URLSearchParams(locati
 })();
 </script>
 
+<!-- RUSWEO V121 FIX3 REALTY WIZARD ROUTING: all real-estate entry points stay inside staged RusWeo questionnaire; no direct specialist modal before lead creation. -->
 </body>
 </html>
 

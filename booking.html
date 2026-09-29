@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- RusWeo 4.0.1 / V120 · final 3.x recovery: tariffs/day-trip terms + Uber bonus/odometer + Punta partner + client link/source analytics -->
+<!-- RusWeo 4.1.0 / V121 · final 3.x recovery: tariffs/day-trip terms + Uber bonus/odometer + Punta partner + client link/source analytics -->
 <html lang="ru">
 <!-- RUSWEO_V119_FIX3_DRIVER_OFFER_REMINDER_PUBLIC_NAME -->
 <!-- RUSWEO_V117_DAY_TRIP_BREAK_60_MIN -->
@@ -7,10 +7,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="rusweo-release" content="RusWeo 4.0.1 / V120 / web 31123">
+<meta name="rusweo-release" content="RusWeo 4.1.0 / V121 / web 31128">
 <title>RusWeo</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="rusweo-platform.js?v=31123"></script>
+<script src="rusweo-platform.js?v=31128"></script>
 <style>
 :root{--ink:#08305f;--muted:#6f859b;--line:#d8eaf6;--blue:#078de4;--blue2:#04afe9;--pale:#eef8ff;--ok:#158453;--bad:#c83838;--card:#fff}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 88% 0%,rgba(12,173,236,.16),transparent 30%),linear-gradient(180deg,#eaf7ff 0%,#f8fcff 52%,#edf8ff 100%)}
@@ -1211,8 +1211,8 @@ html.rw97-edit-mode #rw114TermsAcceptance{display:none!important}
 
     <div class="booking-step" data-step="5" id="bookingStep5">
     <div class="step-card compact-contact-card">
-      <div class="step-card-head"><span class="step-icon">💬</span><div><b>Контакты</b><small>Укажите хотя бы один удобный способ связи.</small></div></div>
-      <div class="field" id="tgField"><label>Telegram ник</label><input id="telegram" placeholder="@username"></div>
+      <div class="step-card-head"><span class="step-icon">💬</span><div><b>Контакты</b><small>Telegram подтягивается автоматически. Телефон и WhatsApp можно добавить при необходимости.</small></div></div>
+      <div class="field" id="tgField"><label>Telegram</label><input id="telegram" placeholder="Подтягивается автоматически" readonly><div class="hint">Telegram определяется автоматически: @username, а если username нет — ваш Telegram ID. Поле не редактируется.</div></div>
       <div class="grid2">
         <div class="field" id="phoneField"><label>Номер телефона</label><input id="phone" type="tel" placeholder="+598 ..."></div>
         <div class="field" id="waField"><label>WhatsApp</label><input id="whatsapp" type="tel" placeholder="+598 ..."></div>
@@ -1283,9 +1283,9 @@ const RW_TERMS_URL_V114='terms_es_4.0.0_20260928.html';
 const RW_TERMS_DOCUMENT_V114='https://maxr180022.github.io/uruguay-transfer/terms_es_4.0.0_20260928.html';
 /* Current hardened booking runtime. */
 const BACKEND_URL='https://script.google.com/macros/s/AKfycbzWkerEeWR-3EjY1QW44Az6pj1TjJK9_ktfnrdcgFILlD6Cnqb4z2X97zSknKRJw-i3jw/exec';
-const RW_EXPECTED_BACKEND_BUILD='RUSWEO_4_0_1_V120_FIX3_LIVE_PILOT_CALENDAR_LOYALTY_20260928';
-const RW_WEB_RELEASE_V99='RusWeo 4.0.1 / V120';
-const RW_WEB_REVISION_V99='31123';
+const RW_EXPECTED_BACKEND_BUILD='RUSWEO_4_1_0_V121_REALTY_LEADS_REALTOR_BOT_20260928';
+const RW_WEB_RELEASE_V99='RusWeo 4.1.0 / V121';
+const RW_WEB_REVISION_V99='31128';
 const tg=window.Telegram?.WebApp;const params=new URLSearchParams(location.search);const isAndroid=!!(window.UruWayAndroid&&typeof window.UruWayAndroid.getPlatform==='function')||params.get('platform')==='android';const corporateRequested=params.get('mode')==='corporate';let corporateMode=false;
 if(tg){try{tg.ready();tg.expand()}catch(e){}}
 const $=id=>document.getElementById(id);
@@ -1589,7 +1589,7 @@ let rwGridQuote=null,rwGridQuoteTimer=null,rwGridPointCount=2,rwGridQuoteSignatu
 // RUSWEO V116 FIX14 — automatic blocking quote diagnostics.
 const RW_V116_CLIENT_ERROR_QUEUE_KEY='rusweo_v116_client_error_queue';
 const RW_V116_CLIENT_ERROR_PATCH='FIX14_AUTO_BLOCKING_ERROR_REPORT_20260925';
-const RW_V116_WEB_REVISION='31123';
+const RW_V116_WEB_REVISION='31128';
 let rwV116QuoteAttemptsBySignature={};
 let rwV116ErrorFlushBusy=false;
 const RW_GRID_POINT_LETTERS=['A','B','C','D','E','F'];
@@ -1899,7 +1899,7 @@ function rwV116QuoteErrorPayloadV116(err,kind,cities,waits,signature,server){
     platform:isAndroid?'android_webview':'telegram_mini_app',
     page:'booking',
     device:(window.RusWeo&&window.RusWeo.guard&&window.RusWeo.guard.device)?window.RusWeo.guard.device():'',
-    app_version:'4.0.1',
+    app_version:'4.1.0',
     route:Array.isArray(cities)?cities.join(' → '):String(cities||''),
     route_cities:Array.isArray(cities)?cities.join('|'):String(cities||''),
     route_wait_minutes:Array.isArray(waits)?waits.join('|'):String(waits||''),
@@ -3032,7 +3032,7 @@ function showSuccess(r,d){
 }
 const rw38ShareBtn=$('rw38ShareClientLink'),rw38CopyBtn=$('rw38CopyClientLink');if(rw38ShareBtn)rw38ShareBtn.onclick=rw38ShareClientClaimFix38;if(rw38CopyBtn)rw38CopyBtn.onclick=()=>rw38CopyClientClaimFix38(true);
 $('mainMenuV43').onclick=()=>{try{if(rwOperatorModeV72()&&parent&&parent!==window&&typeof parent.rwReturnFromOperatorBookingV72==='function'){parent.rwReturnFromOperatorBookingV72();return}if(parent&&parent!==window&&typeof parent.backToHub==='function'){parent.backToHub();return}}catch(e){}history.back()};$('back').onclick=()=>{$('successCard').classList.add('hidden');$('bookingCard').classList.remove('hidden');scrollTo(0,0)};$('operator').onclick=()=>{const u='https://t.me/maxriccomsk';try{if(isAndroid&&window.UruWayAndroid&&typeof window.UruWayAndroid.openExternal==='function'){window.UruWayAndroid.openExternal(u);return}if(tg?.openTelegramLink)tg.openTelegramLink(u);else location.href=u}catch(e){location.href=u}};
-(function init(){renderHours();refreshMinimumBookingTime();renderMenu();renderPassengers();let p=profile();const operatorCtx=rwOperatorContextV72();if(operatorCtx){const termsBox=$('rw114TermsAcceptance');if(termsBox)termsBox.classList.add('hidden');const banner=$('rw72OperatorBanner'),label=$('rw72OperatorClient');if(banner)banner.classList.add('show');if(label)label.textContent=rwOperatorClientLabelV72();if(operatorCtx.claim_mode_fix38===true){$('telegram').value='';$('telegram').readOnly=false;$('telegram').classList.remove('rw72-operator-lock');const prefill=String(operatorCtx.prefill_contact_fix38||'').trim();if(prefill){if(/^@/.test(prefill))$('telegram').value=prefill;else if(/\d/.test(prefill))$('phone').value=prefill;}}else{$('telegram').value=p.username?'@'+p.username:('Telegram ID '+p.id);$('telegram').readOnly=true;$('telegram').classList.add('rw72-operator-lock');}setTimeout(function(){rw104LoadAdminPricingV104({mode:'auto'})},0);}else if(p.username)$('telegram').value='@'+p.username;contactCheck();let now=new Date(Date.now()+2*3600000);let y=now.getFullYear(),m=String(now.getMonth()+1).padStart(2,'0'),d=String(now.getDate()).padStart(2,'0');$('date').min=y+'-'+m+'-'+d;loadCorporateAccess().then(function(allowed){if(corporateRequested&&allowed&&(!selected||selected.id!=='corporate'))choose('corporate')});loadLoyalty()})();
+(function init(){renderHours();refreshMinimumBookingTime();renderMenu();renderPassengers();let p=profile();const operatorCtx=rwOperatorContextV72();if(operatorCtx){const termsBox=$('rw114TermsAcceptance');if(termsBox)termsBox.classList.add('hidden');const banner=$('rw72OperatorBanner'),label=$('rw72OperatorClient');if(banner)banner.classList.add('show');if(label)label.textContent=rwOperatorClientLabelV72();if(operatorCtx.claim_mode_fix38===true){$('telegram').value='';$('telegram').readOnly=false;$('telegram').classList.remove('rw72-operator-lock');const prefill=String(operatorCtx.prefill_contact_fix38||'').trim();if(prefill){if(/^@/.test(prefill))$('telegram').value=prefill;else if(/\d/.test(prefill))$('phone').value=prefill;}}else{$('telegram').value=p.username?'@'+p.username:('Telegram ID '+p.id);$('telegram').readOnly=true;$('telegram').classList.add('rw72-operator-lock');}setTimeout(function(){rw104LoadAdminPricingV104({mode:'auto'})},0);}else{$('telegram').value=p.username?'@'+p.username:(p.id?'Telegram ID '+p.id:'');$('telegram').readOnly=true;$('telegram').classList.add('rw72-operator-lock');$('telegram').placeholder=p.id?'':'Telegram профиль не определён';}contactCheck();let now=new Date(Date.now()+2*3600000);let y=now.getFullYear(),m=String(now.getMonth()+1).padStart(2,'0'),d=String(now.getDate()).padStart(2,'0');$('date').min=y+'-'+m+'-'+d;loadCorporateAccess().then(function(allowed){if(corporateRequested&&allowed&&(!selected||selected.id!=='corporate'))choose('corporate')});loadLoyalty()})();
 </script>
 
 <script id="rusweoWizardLogicV2">

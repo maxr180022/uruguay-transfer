@@ -7,7 +7,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="rusweo-release" content="RusWeo 4.1.0 / V121 / web 31128">
+<meta name="rusweo-release" content="RusWeo 4.1.0 / V121 FIX6 / booking web 31138">
 <title>RusWeo</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="rusweo-platform.js?v=31128"></script>
@@ -1286,9 +1286,19 @@ const BACKEND_URL='https://script.google.com/macros/s/AKfycbzWkerEeWR-3EjY1QW44A
 const RW_EXPECTED_BACKEND_BUILD='RUSWEO_4_1_0_V121_REALTY_LEADS_REALTOR_BOT_20260928';
 const RW_WEB_RELEASE_V99='RusWeo 4.1.0 / V121';
 const RW_WEB_REVISION_V99='31128';
-const tg=window.Telegram?.WebApp;const params=new URLSearchParams(location.search);const isAndroid=!!(window.UruWayAndroid&&typeof window.UruWayAndroid.getPlatform==='function')||params.get('platform')==='android';const corporateRequested=params.get('mode')==='corporate';let corporateMode=false;
+const tg=window.Telegram?.WebApp;const params=new URLSearchParams(location.search);const isAndroid=!!(window.UruWayAndroid&&typeof window.UruWayAndroid.getPlatform==='function')||params.get('platform')==='android';const corporateRequested=params.get('mode')==='corporate';const manualTestModeV121=params.get('test_order')==='1';let corporateMode=false;
 if(tg){try{tg.ready();tg.expand()}catch(e){}}
 const $=id=>document.getElementById(id);
+if(manualTestModeV121){
+  setTimeout(function(){
+    try{
+      const title=document.querySelector('.rw2-booking-title-row .title');if(title)title.textContent='🧪 Тестовый заказ';
+      const sub=document.querySelector('.rw2-booking-title-row .sub');if(sub)sub.textContent='Изолированный тест: не попадёт в основные заказы, финансы и статистику.';
+      const successTitle=document.querySelector('#successCard .success-title');if(successTitle)successTitle.textContent='Тестовая заявка оформлена';
+    }catch(e){}
+  },0);
+}
+
 
 // Current operator-only pricing controls.
 function rw104OperatorPricingAllowedV104(){
@@ -2984,7 +2994,7 @@ $('submit').onclick=async()=>{
     btn.disabled=true;btn.textContent='Отправляем заявку…';
     let basePrice=selected.manual?'':(selected.id==='grid_one'?(rwGridQuote?(rwGridQuote.client_price_usd||rwGridQuote.price_usd):''):(selected.id==='hourly'?600*Number($('hours').value||3):selected.p));
     let currency=selected.id==='hourly'?'UYU':(selected.id==='grid_one'?'USD':(selected.c||''));
-    let data={service:selected.id,service_name:selected.n,date:$('date').value,time:$('time').value,hours:$('hours').value||3,...route,...rw104AdminPricingPayloadV104(),passengers:$('passengers').value,bags_l:$('bagsL').value,bags_m:$('bagsM').value,bags:String(Number($('bagsL').value||0)+Number($('bagsM').value||0)),booster:$('booster').value,final_payment:$('finalPayment').value,telegram:$('telegram').value.trim(),phone:$('phone').value.trim(),whatsapp:$('whatsapp').value.trim(),telegram_user_id:p.id,telegram_first_name:p.first,telegram_last_name:p.last,telegram_username:p.username,corporate_passenger_name:$('corpPassenger').value.trim(),comment:$('orderComment').value.trim()||$('corpComment').value.trim(),price:String(basePrice),currency,source:(isAndroid?'android':'telegram_mini_app'),request_token:rt,vehicle_class:'standard',terms_accepted:(operatorCtxPreV114?'0':'1'),terms_version:RW_TERMS_VERSION_V114,terms_document:RW_TERMS_DOCUMENT_V114,app_session:(isAndroid?String(params.get('app_session')||localStorage.getItem('uruway_auth_session')||''):''),init_data:(isAndroid?'':telegramInitData())};
+    let data={service:selected.id,service_name:selected.n,date:$('date').value,time:$('time').value,hours:$('hours').value||3,...route,...rw104AdminPricingPayloadV104(),passengers:$('passengers').value,bags_l:$('bagsL').value,bags_m:$('bagsM').value,bags:String(Number($('bagsL').value||0)+Number($('bagsM').value||0)),booster:$('booster').value,final_payment:$('finalPayment').value,telegram:$('telegram').value.trim(),phone:$('phone').value.trim(),whatsapp:$('whatsapp').value.trim(),telegram_user_id:p.id,telegram_first_name:p.first,telegram_last_name:p.last,telegram_username:p.username,corporate_passenger_name:$('corpPassenger').value.trim(),comment:$('orderComment').value.trim()||$('corpComment').value.trim(),price:String(basePrice),currency,source:(isAndroid?'android':'telegram_mini_app'),request_token:rt,vehicle_class:'standard',terms_accepted:(operatorCtxPreV114?'0':'1'),terms_version:RW_TERMS_VERSION_V114,terms_document:RW_TERMS_DOCUMENT_V114,app_session:(isAndroid?String(params.get('app_session')||localStorage.getItem('uruway_auth_session')||''):''),init_data:(isAndroid?'':telegramInitData()),test_mode_v121:(manualTestModeV121?'1':'0')};
     const operatorCtx=rwOperatorContextV72();
     if(operatorCtx){if(operatorCtx.claim_mode_fix38===true){data.operator_unlinked_client_fix38='1';data.operator_for_client='0';data.operator_client='';data.source='driver_operator_claim';}else{data.operator_for_client='1';data.operator_client=String(operatorCtx.target_input||(operatorCtx.target_user&&operatorCtx.target_user.id)||'');data.source='driver_operator';}data.operator_app_session=String(operatorCtx.operator_app_session||'');data.operator_init_data=String(operatorCtx.operator_init_data||'');data.app_session='';data.init_data='';}
     let form=document.createElement('form');form.method='POST';form.action=BACKEND_URL;form.target='booking_sink';form.style.display='none';

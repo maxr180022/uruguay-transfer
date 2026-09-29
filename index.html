@@ -6,7 +6,7 @@
 <title>RusWeo</title>
 <!-- RUSWEO_V119_FIX3_DRIVER_OFFER_REMINDER_PUBLIC_NAME -->
 <!-- RUSWEO_V117_UBER_BONUS_ODOMETER_PARTNER -->
-<meta name="rusweo-release" content="RusWeo 4.1.0 / V121 FIX4 / web 31131">
+<meta name="rusweo-release" content="RusWeo 4.1.0 / V121 FIX6 / web 31136">
 <!-- RUSWEO_V116_FIX39_UI_SOURCE_ANALYTICS_E2E -->
 <!-- RUSWEO_V117_CLIENT_ORDER_LINK_ANALYTICS -->
 <!-- RUSWEO_V117_DIRECTIONAL_TERMINAL_TARIFFS -->
@@ -1471,7 +1471,9 @@ function rw121RealtyCtx(){
   return {init_data:String(tg&&tg.initData||''),app_session:session,user:u,entry_source:String(q.get('source')||(tg&&tg.initData?'telegram':'web')||'web'),campaign:String(q.get('campaign')||q.get('utm_campaign')||''),creative:String(q.get('creative')||q.get('utm_content')||''),client_id:stableClientId()};
 }
 function rw121RealtyVerified(){const c=rw121RealtyCtx(),u=c.user||{};const auth=!!(c.init_data||c.app_session||u.id),username=String(u.username||'').trim().replace(/^@/,'');return auth&&/^[A-Za-z0-9_]{5,32}$/.test(username)}
-function rw121RealtyRequestToken(){const k='rw121_realty_request_token';try{let v=sessionStorage.getItem(k);if(!v){v='rl_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,12);sessionStorage.setItem(k,v)}return v}catch(e){return 'rl_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,12)}}
+let rw121RealtyRequestTokenValue='';
+function rw121RealtyNewRequestToken(){rw121RealtyRequestTokenValue='rl_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,12);return rw121RealtyRequestTokenValue}
+function rw121RealtyRequestToken(){return rw121RealtyRequestTokenValue||rw121RealtyNewRequestToken()}
 function rw121Esc(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
 function rw121CityLabel(){if(rw121RealtyData.city_code==='montevideo')return'Монтевидео';if(rw121RealtyData.city_code==='punta_del_este')return'Пунта-дель-Эсте';return rw121RealtyData.city_other||'Другой город'}
 function rw121TransactionLabel(){return rw121RealtyData.transaction==='buy'?'Покупка':'Аренда'}
@@ -1520,7 +1522,7 @@ function rw121RealtyCapture(){const id=x=>document.getElementById(x);const step=
 function rw121RealtyValidate(){const d=rw121RealtyData,step=RW121_REALTY_STEPS[rw121RealtyStep];if(step==='city'&&(!d.city_code||(d.city_code==='other'&&d.city_other.trim().length<2)))return'Выберите город.';if(step==='transaction'&&!d.transaction)return'Выберите покупку или аренду.';if(step==='property'&&!d.property_type)return'Выберите квартиру или дом.';if(step==='bedrooms'&&!d.bedrooms)return'Выберите количество спален.';if(step==='budget'&&(!Number(d.budget_usd)||Number(d.budget_usd)<100))return'Укажите бюджет в USD.';if(step==='preferences'&&d.preferences.trim().length<3)return'Напишите коротко ваши пожелания.';if(!rw121RealtyVerified()&&rw121RealtyStep===RW121_REALTY_STEPS.length&&!d.phone&&!d.telegram_username)return'Укажите WhatsApp/телефон или Telegram username.';if(d.telegram_username&&!/^[A-Za-z0-9_]{5,32}$/.test(d.telegram_username))return'Проверьте Telegram username.';return''}
 function rw121RealtyApi(params,timeout=22000){return new Promise((resolve,reject)=>{const sc=document.createElement('script');let done=false,timer=null,reg=null;const finish=(err,data)=>{if(done)return;done=true;if(timer)clearTimeout(timer);try{window.RusWeo&&window.RusWeo.jsonpSafe&&window.RusWeo.jsonpSafe.retire(reg)}catch(_){ }try{sc.remove()}catch(_){ }err?reject(err):resolve(data)};reg=window.RusWeo&&window.RusWeo.jsonpSafe?window.RusWeo.jsonpSafe.register('realty',d=>finish(null,d)):null;if(!reg){reject(new Error('Сервис временно недоступен'));return}const q=new URLSearchParams(params);q.set('callback',reg.name);q.set('_',Date.now());sc.onerror=()=>finish(new Error('Ошибка сети'));sc.src=API+'?'+q.toString();document.head.appendChild(sc);timer=setTimeout(()=>finish(new Error('Сервер отвечает слишком долго')),timeout)})}
 async function rw121RealtySubmit(){if(rw121RealtySubmitting)return;rw121RealtySubmitting=true;rw121RealtyRender();const c=rw121RealtyCtx();const u=c.user||{};try{const r=await rw121RealtyApi({action:'v121_realty_lead_create',city_code:rw121RealtyData.city_code,city_other:rw121RealtyData.city_other,transaction:rw121RealtyData.transaction,property_type:rw121RealtyData.property_type,bedrooms:rw121RealtyData.bedrooms,budget_usd:String(rw121RealtyData.budget_usd),preferences:rw121RealtyData.preferences,phone:rw121RealtyData.phone,telegram_username:rw121RealtyData.telegram_username,client_first_name:u.first||'',client_last_name:u.last||'',init_data:c.init_data,app_session:c.app_session,entry_source:c.entry_source,campaign:c.campaign,creative:c.creative,client_id:c.client_id,request_token:rw121RealtyRequestToken()});if(!r||!r.ok)throw new Error(r&&r.message||r&&r.error||'Не удалось отправить запрос');rw121RealtySubmitting=false;const sending=document.getElementById('rw121RealtySubmitting');if(sending)sending.classList.remove('show');const delivered=String(r.routing_state||'')==='DELIVERED';const body=document.getElementById('rw121RealtyBody');if(body)body.innerHTML='<div class="rw121-success"><div class="ico">✅</div><h4>'+(delivered?'Запрос отправлен риелтору':'Запрос принят RusWeo')+'</h4><p>'+rw121Esc(r.message||'В ближайшее время с вами свяжутся.')+'</p><div class="rw121-summary-row" style="margin-top:12px"><small>Номер лида</small><strong>'+rw121Esc(r.lead_number||'—')+'</strong></div></div>';const meta=document.getElementById('rw121RealtyStepMeta'),bar=document.getElementById('rw121RealtyProgressBar'),back=document.getElementById('rw121RealtyBack'),next=document.getElementById('rw121RealtyNext');if(meta)meta.textContent='Готово';if(bar)bar.style.width='100%';if(back)back.style.display='none';if(next){next.textContent='Закрыть';next.disabled=false;next.onclick=closeRealEstateChooser28}return}catch(e){rw121RealtySubmitting=false;rw121RealtyRender();rw121RealtySetError(e&&e.message?e.message:String(e))}}
-function openRealEstateChooser28(opts){opts=opts||{};const modal=document.getElementById('rw28RealEstateModal');if(!modal)return;const presetCity=String(opts.city_code||'');rw121RealtyStep=(opts.start_after_city&&presetCity)?1:0;rw121RealtySubmitting=false;rw121RealtyData={city_code:presetCity,city_other:'',transaction:'',property_type:'',bedrooms:'',budget_usd:'',preferences:'',phone:'',telegram_username:''};modal.classList.add('open');modal.setAttribute('aria-hidden','false');modal.scrollTop=0;document.documentElement.classList.add('rw28-re-open');document.body.classList.add('rw28-re-open');const sheet=modal.querySelector('.rw121-realty-sheet');if(sheet)sheet.scrollTop=0;const back=document.getElementById('rw121RealtyBack'),next=document.getElementById('rw121RealtyNext');if(back)back.onclick=function(){rw121RealtyCapture();rw121RealtyStep=Math.max(0,rw121RealtyStep-1);rw121RealtyRender();if(sheet)sheet.scrollTop=0};if(next)next.onclick=async function(){rw121RealtyCapture();const e=rw121RealtyValidate();if(e){rw121RealtySetError(e);return}const verified=rw121RealtyVerified(),reviewIndex=RW121_REALTY_STEPS.length+(verified?0:1);if(rw121RealtyStep>=reviewIndex){await rw121RealtySubmit();return}rw121RealtyStep++;rw121RealtyRender();if(sheet)sheet.scrollTop=0};rw121RealtyRender()}
+function openRealEstateChooser28(opts){opts=opts||{};const modal=document.getElementById('rw28RealEstateModal');if(!modal)return;const presetCity=String(opts.city_code||'');rw121RealtyStep=(opts.start_after_city&&presetCity)?1:0;rw121RealtySubmitting=false;rw121RealtyNewRequestToken();rw121RealtyData={city_code:presetCity,city_other:'',transaction:'',property_type:'',bedrooms:'',budget_usd:'',preferences:'',phone:'',telegram_username:''};modal.classList.add('open');modal.setAttribute('aria-hidden','false');modal.scrollTop=0;document.documentElement.classList.add('rw28-re-open');document.body.classList.add('rw28-re-open');const sheet=modal.querySelector('.rw121-realty-sheet');if(sheet)sheet.scrollTop=0;const back=document.getElementById('rw121RealtyBack'),next=document.getElementById('rw121RealtyNext');if(back)back.onclick=function(){rw121RealtyCapture();rw121RealtyStep=Math.max(0,rw121RealtyStep-1);rw121RealtyRender();if(sheet)sheet.scrollTop=0};if(next)next.onclick=async function(){rw121RealtyCapture();const e=rw121RealtyValidate();if(e){rw121RealtySetError(e);return}const verified=rw121RealtyVerified(),reviewIndex=RW121_REALTY_STEPS.length+(verified?0:1);if(rw121RealtyStep>=reviewIndex){await rw121RealtySubmit();return}rw121RealtyStep++;rw121RealtyRender();if(sheet)sheet.scrollTop=0};rw121RealtyRender()}
 function closeRealEstateChooser28(){const modal=document.getElementById('rw28RealEstateModal');if(!modal)return;modal.classList.remove('open');modal.setAttribute('aria-hidden','true');document.documentElement.classList.remove('rw28-re-open');document.body.classList.remove('rw28-re-open')}
 function rw28RealEstateBackdrop(e){if(e&&e.target&&e.target.id==='rw28RealEstateModal')closeRealEstateChooser28()}
 function chooseRealEstate28(region){openRealEstateChooser28({city_code:region==='punta'?'punta_del_este':'montevideo',start_after_city:true})}
@@ -1549,9 +1551,12 @@ function openBooking(){
   const f=document.getElementById('bookingFrame');
   if(!modal||!f)return;
 
-  const corporate=(new URLSearchParams(location.search).get('mode')==='corporate');
+  const pageParams=new URLSearchParams(location.search);
+  const corporate=(pageParams.get('mode')==='corporate');
+  const testOrder=(pageParams.get('test_order')==='1');
   const bookingParams=new URLSearchParams({embedded:'1',modal:'1',vehicle_class:'standard',_:String(Date.now())});
   if(corporate)bookingParams.set('mode','corporate');
+  if(testOrder)bookingParams.set('test_order','1');
   const initData=String(tg&&tg.initData||'').trim();
   if(initData)bookingParams.set('init_data',initData);
   try{
@@ -1602,6 +1607,8 @@ function openBookingEditV97(id){
   try{if(tg&&tg.BackButton)tg.BackButton.show();}catch(e){}
 }
 window.openBookingEditV97=openBookingEditV97;
+// V121 FIX6: dedicated Telegram test-order button opens the normal booking form immediately.
+setTimeout(function(){try{if(new URLSearchParams(location.search).get('test_order')==='1')openBooking()}catch(e){}},280);
 
 function backToHub(){
   const modal=document.getElementById('booking');
@@ -1690,7 +1697,7 @@ try{
               launchResolving=false;
               markSplashSeen();
               const android=!!(window.UruWayAndroid&&typeof window.UruWayAndroid.getPlatform==='function');
-              location.replace('driver_v4.html?v=31132&v121=1'+(android?'&platform=android':''));
+              location.replace('driver_v4.html?v=31137&v121=1'+(android?'&platform=android':''));
               return;
             }
             reveal();
@@ -1798,7 +1805,7 @@ try{
   if(isAndroid){document.body.classList.add('is-android');}
   window.openAndroidDriver=function(){
     let role='';try{role=String(localStorage.getItem('uruway_auth_role')||'')}catch(e){}
-    location.href=role==='driver_external'?'driver_v4.html?v=31132&v121=1&platform=android':'driver.html?v=31133&hf=1';
+    location.href=role==='driver_external'?'driver_v4.html?v=31137&v121=1&platform=android':'driver.html?v=31133&hf=1';
   };
   window.uruwayOpenExternal=function(url){
     try{
@@ -1875,7 +1882,7 @@ try{
         try{setTimeout(()=>window.rw2LoadOrders&&window.rw2LoadOrders(true),80)}catch(e){}
         return;
       }
-      location.replace(role==='driver_external'?'driver_v4.html?v=31132&v121=1&platform=android':'driver.html?v=31133&hf=1');
+      location.replace(role==='driver_external'?'driver_v4.html?v=31137&v121=1&platform=android':'driver.html?v=31133&hf=1');
       return;
     }
     if(role!=='client'){
@@ -2241,7 +2248,7 @@ try{
     const role=actualDriverRole||String(sessionStorage.getItem('rw121_driver_actual_role')||''),uid=actualDriverUid||String(sessionStorage.getItem('rw121_driver_actual_uid')||'');
     if(role!=='driver_standard'&&role!=='driver_external'&&role!=='driver')return;
     writeMode(uid,'driver');
-    location.href=role==='driver_external'?'driver_v4.html?v=31132&v121=1':'driver.html?v=31133&hf=1';
+    location.href=role==='driver_external'?'driver_v4.html?v=31137&v121=1':'driver.html?v=31133&hf=1';
   };
   window.rw28OpenDriver=window.rw121SwitchToDriverMode;
   preflight().then(function(){showDriverSwitch()}).catch(function(){});

@@ -6,13 +6,13 @@
   name="viewport"
   content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 
-<title>RusWeo 4.0.1 — Личный кабинет</title>
-<meta name="rusweo-release" content="RusWeo 4.0.1 / V120 / owner driver web 31126 / Android native code112">
+<title>RusWeo 4.1.0 — Личный кабинет</title>
+<meta name="rusweo-release" content="RusWeo 4.1.0 / V121 FIX4 / owner driver web 31133 / Android native code112">
 <meta name="rusweo-ui-policy" content="single-design-v3-driver-android-telegram">
 <meta name="rusweo-runtime-policy" content="driver-root-back-minimize-v2">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="rusweo-platform.js?v=31123"></script>
-<script src="rusweo-auth.js?v=31123"></script>
+<script src="rusweo-platform.js?v=31128"></script>
+<script src="rusweo-auth.js?v=31128"></script>
 <!-- RusWeo 3.1.42 / V115 · explicit final-point wait + return-home departure lifecycle -->
 
 <!-- RUSWEO_V119_FIX3_DRIVER_OFFER_REMINDER_PUBLIC_NAME -->
@@ -1389,7 +1389,7 @@ button{
     </button>
 
     <div class="version">
-      RusWeo 4.0.1 · Android native code112
+      RusWeo 4.1.0 · Android native code112
     </div>
 
   </div>
@@ -1473,7 +1473,7 @@ button{
   <div class="container">
 
     <button class="driver-exit" onclick="logoutDriverV43()">
-      ‹ Выйти из кабинета
+      ‹ Клиентское приложение
     </button>
 
     <div class="driver-v110-compact-head" id="driverV110CompactHead">
@@ -1546,7 +1546,7 @@ button{
     <div id="driverOrders"></div>
 
     <div class="version">
-      RusWeo 4.0.1 · Личный кабинет
+      RusWeo 4.1.0 · Личный кабинет
     </div>
 
   </div>
@@ -1926,7 +1926,7 @@ function rwFinanceBuildOkV95(data){
   // V120: V4 uses the same proven V95 finance contract. Build identity
   // must not be treated as an API capability gate, otherwise every newer V4 build
   // backend produces a false "V95+ not active" popup after a successful call.
-  return build.indexOf('RUSWEO_4_0_1_V120_')===0 || build.indexOf('RUSWEO_4_0_V119_')===0 || build.indexOf('RUSWEO_3_1_V95_')===0 || build==='RUSWEO_3_1_V97_ORDER_EDIT_20260916' || build==='RUSWEO_3_1_V99_DIAGNOSTICS_E2E_20260916' || build==='RUSWEO_3_1_V100_ROLE_ISOLATION_20260916' || build==='RUSWEO_3_1_V103_CORPORATE_CALENDAR_20260916' || build==='RUSWEO_3_1_V104_LOYALTY_PRICE_REMINDER_20260918' || build==='RUSWEO_3_1_V105_FINAL_PRICE_20260918' || build==='RUSWEO_3_1_V106_POINT_ETA_REMINDER_20260918' || build==='RUSWEO_3_1_V107_DRIVER_UI_SAFETY_20260919' || build==='RUSWEO_3_1_V108_HISTORY_ACTION_ROW_20260919' || build==='RUSWEO_3_1_V109_DRIVER_FINANCE_ALIGNMENT_20260919' || build==='RUSWEO_3_1_V110_DRIVER_HOME_COMPACT_20260919' || build==='RUSWEO_3_1_V111_MONEY_INPUT_TRANSPORT_20260919' || build==='RUSWEO_3_1_V112_ANDROID_NOTIFICATION_FINANCE_ALIGNMENT_20260919' || build==='RUSWEO_3_1_V113_TERMINAL_EV_ANALYTICS_20260921' || build==='RUSWEO_3_1_V114_LEGAL_TERMS_UI_20260922' || build==='RUSWEO_3_1_V115_HOME_DEPARTURE_LIFECYCLE_20260922' || build==='RUSWEO_3_1_V116_RETURN_HOME_ETA_20260923' || build==='RUSWEO_3_1_V116_FIX36_MONITORING_E2E_20260927' || build==='RUSWEO_3_1_V116_FIX37_CLIENT_PHONE_LOOKUP_20260927' || build==='RUSWEO_3_1_V116_FIX38_CLIENT_ORDER_CONFIRM_LINK_20260927' || build==='RUSWEO_3_1_V116_FIX39_UI_SOURCE_ANALYTICS_E2E_20260927' || build==='RUSWEO_3_1_V117_CLIENT_ORDER_LINK_ANALYTICS_20260927' || build==='RUSWEO_3_1_V117_TERMINAL_DROPOFF_DAY_BREAK_20260927' || build==='RUSWEO_4_0_V119_DRIVER_FOUNDATION_PHASE1_20260928' || build==='RUSWEO_4_0_V119_FIX3_DRIVER_OFFER_REMINDER_PUBLIC_NAME_20260928';
+  return build.indexOf('RUSWEO_4_1_0_V121_')===0 || build.indexOf('RUSWEO_4_0_1_V120_')===0 || build.indexOf('RUSWEO_4_0_V119_')===0 || build.indexOf('RUSWEO_3_1_V95_')===0 || build==='RUSWEO_3_1_V97_ORDER_EDIT_20260916' || build==='RUSWEO_3_1_V99_DIAGNOSTICS_E2E_20260916' || build==='RUSWEO_3_1_V100_ROLE_ISOLATION_20260916' || build==='RUSWEO_3_1_V103_CORPORATE_CALENDAR_20260916' || build==='RUSWEO_3_1_V104_LOYALTY_PRICE_REMINDER_20260918' || build==='RUSWEO_3_1_V105_FINAL_PRICE_20260918' || build==='RUSWEO_3_1_V106_POINT_ETA_REMINDER_20260918' || build==='RUSWEO_3_1_V107_DRIVER_UI_SAFETY_20260919' || build==='RUSWEO_3_1_V108_HISTORY_ACTION_ROW_20260919' || build==='RUSWEO_3_1_V109_DRIVER_FINANCE_ALIGNMENT_20260919' || build==='RUSWEO_3_1_V110_DRIVER_HOME_COMPACT_20260919' || build==='RUSWEO_3_1_V111_MONEY_INPUT_TRANSPORT_20260919' || build==='RUSWEO_3_1_V112_ANDROID_NOTIFICATION_FINANCE_ALIGNMENT_20260919' || build==='RUSWEO_3_1_V113_TERMINAL_EV_ANALYTICS_20260921' || build==='RUSWEO_3_1_V114_LEGAL_TERMS_UI_20260922' || build==='RUSWEO_3_1_V115_HOME_DEPARTURE_LIFECYCLE_20260922' || build==='RUSWEO_3_1_V116_RETURN_HOME_ETA_20260923' || build==='RUSWEO_3_1_V116_FIX36_MONITORING_E2E_20260927' || build==='RUSWEO_3_1_V116_FIX37_CLIENT_PHONE_LOOKUP_20260927' || build==='RUSWEO_3_1_V116_FIX38_CLIENT_ORDER_CONFIRM_LINK_20260927' || build==='RUSWEO_3_1_V116_FIX39_UI_SOURCE_ANALYTICS_E2E_20260927' || build==='RUSWEO_3_1_V117_CLIENT_ORDER_LINK_ANALYTICS_20260927' || build==='RUSWEO_3_1_V117_TERMINAL_DROPOFF_DAY_BREAK_20260927' || build==='RUSWEO_4_0_V119_DRIVER_FOUNDATION_PHASE1_20260928' || build==='RUSWEO_4_0_V119_FIX3_DRIVER_OFFER_REMINDER_PUBLIC_NAME_20260928';
 }
 
 async function rwFinanceReadV95(month){
@@ -2078,7 +2078,7 @@ function startDriverOperatorBookingV72(){
     operator_app_session:rwDriverAppSessionV72()
   };
   const frame=document.getElementById('bookingFrame');
-  frame.src='booking.html?vehicle_class=standard&operator_booking=1&v=31123';
+  frame.src='booking.html?vehicle_class=standard&operator_booking=1&v=31128';
   closeDriverOperatorBookingV72();
   openScreen('booking');
 }
@@ -2097,7 +2097,7 @@ function startDriverOperatorUnlinkedBookingFix38(){
     operator_app_session:rwDriverAppSessionV72()
   };
   const frame=document.getElementById('bookingFrame');
-  frame.src='booking.html?vehicle_class=standard&operator_booking=1&client_claim=1&v=31123';
+  frame.src='booking.html?vehicle_class=standard&operator_booking=1&client_claim=1&v=31128';
   closeDriverOperatorBookingV72();
   openScreen('booking');
 }
@@ -2502,7 +2502,10 @@ function rwV120RenderExternalMonitorCard(order){
   const driverName=String(d.name||'Ожидает назначения');const car=[d.vehicle_color,d.vehicle_make_model,d.vehicle_plate].filter(Boolean).join(' · ');
   const luggage=(Number(order.bags_l||0)||Number(order.bags_m||0))?(Number(order.bags_l||0)+' L · '+Number(order.bags_m||0)+' M'):String(order.bags||0)+' шт.';
   const c=order.external_driver_commission||{};let finance='';if(Number(c.base_commission_uyu||c.commission_uyu||0)>0){finance='<div class="rw-v120-external-finance"><b>Водителю после комиссии:</b> '+escHtml(Math.round(Number(c.driver_remainder_uyu||0)).toLocaleString('ru-RU'))+' UYU';if(Number(c.loyalty_setoff_uyu||0)>0)finance+='<br><b>Базовая комиссия:</b> '+escHtml(Math.round(Number(c.base_commission_uyu||0)).toLocaleString('ru-RU'))+' UYU · <b>зачёт скидки:</b> '+escHtml(Math.round(Number(c.loyalty_setoff_uyu||0)).toLocaleString('ru-RU'))+' UYU';finance+='<br><b>Комиссия RusWeo к оплате:</b> '+escHtml(Math.round(Number(c.commission_uyu||0)).toLocaleString('ru-RU'))+' UYU</div>'}
-  return '<article class="rw-v120-external-card" id="rw-order-'+rwV120ExternalMonitorIdSafe(String(order.id||''))+'"><div class="rw-v120-external-top"><strong>№'+escHtml(order.number||'')+'</strong><span class="rw-v120-external-status '+s.cls+'">'+escHtml(s.text)+'</span></div><div class="rw-v120-external-route">'+escHtml(order.date||'')+' · '+escHtml(order.time||'')+'<br>'+escHtml(order.route_text||'')+'</div><div class="rw-v120-external-driver"><b>Водитель:</b> '+escHtml(driverName)+(car?'<br><b>Автомобиль:</b> '+escHtml(car):'')+'</div><div class="rw-v120-external-meta">'+escHtml(order.service_name||'')+' · '+escHtml(String(order.passengers||0))+' чел. · '+escHtml(luggage)+(order.price?'<br><b>Стоимость:</b> '+escHtml(String(order.price)+' '+String(order.currency||'')):'')+'</div>'+finance+'</article>';
+  const decision=order.external_driver_decision||null;const outcome=String(order.external_outcome_reason||'').trim();let reason='';
+  if(decision&&decision.label){reason='<div class="rw-v120-external-reason"><b>'+(decision.driver_selected?'Причина водителя:':'Причина:')+'</b> '+escHtml(String(decision.label||''));if(outcome&&outcome!==String(decision.label||''))reason+='<br><b>Итог системы:</b> '+escHtml(outcome);reason+='</div>';}
+  else if(outcome){reason='<div class="rw-v120-external-reason"><b>Причина:</b> '+escHtml(outcome)+'</div>';}
+  return '<article class="rw-v120-external-card" id="rw-order-'+rwV120ExternalMonitorIdSafe(String(order.id||''))+'"><div class="rw-v120-external-top"><strong>№'+escHtml(order.number||'')+'</strong><span class="rw-v120-external-status '+s.cls+'">'+escHtml(s.text)+'</span></div><div class="rw-v120-external-route">'+escHtml(order.date||'')+' · '+escHtml(order.time||'')+'<br>'+escHtml(order.route_text||'')+'</div><div class="rw-v120-external-driver"><b>Водитель:</b> '+escHtml(driverName)+(car?'<br><b>Автомобиль:</b> '+escHtml(car):'')+'</div><div class="rw-v120-external-meta">'+escHtml(order.service_name||'')+' · '+escHtml(String(order.passengers||0))+' чел. · '+escHtml(luggage)+(order.price?'<br><b>Стоимость:</b> '+escHtml(String(order.price)+' '+String(order.currency||'')):'')+'</div>'+reason+finance+'</article>';
 }
 
 function renderDriverOrders(){
@@ -5848,7 +5851,15 @@ window.UruWayApp.handleNativeBack=function(){
 };
 </script>
 
-<script id="URUWAY_DRIVER_LOGOUT_V43">window.logoutDriverV43=function(){location.replace('index.html?client=1');};</script>
+<script id="URUWAY_DRIVER_LOGOUT_V43">
+window.logoutDriverV43=function(){
+  try{
+    var uid=String(localStorage.getItem('uruway_auth_telegram_user_id')||sessionStorage.getItem('rw121_driver_actual_uid')||((window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initDataUnsafe&&window.Telegram.WebApp.initDataUnsafe.user&&window.Telegram.WebApp.initDataUnsafe.user.id)||'')).trim();
+    if(uid)localStorage.setItem('rw121_driver_ui_mode_'+uid,'client');
+  }catch(e){}
+  location.replace('index.html?v=31131&client=1');
+};
+</script>
 
 <!-- RUSWEO V101 HARDENING: FULL health authenticated; logo asset fixed -->
 <script id="RUSWEO_HEALTH_TRANSPORT_V58">
@@ -6798,7 +6809,7 @@ window.UruWayApp.handleNativeBack=function(){
     const general=r?money25(r.general_expenses_uyu):'—';
     box.innerHTML=
       '<div class="finance-v25">'+
-        '<div class="finance-summary-v25"><div class="title">💰 ФИНАНСЫ · RusWeo 4.0.1</div><div class="main">'+escHtml(top)+'</div><div class="sub">Сегодня: '+d.orders+' заказов · '+hours25(d.hours)+' · '+money25(d.gross+d.add)+' UYU доход · '+money25(d.net+d.add)+' UYU чистыми</div></div>'+
+        '<div class="finance-summary-v25"><div class="title">💰 ФИНАНСЫ · RusWeo 4.1.0</div><div class="main">'+escHtml(top)+'</div><div class="sub">Сегодня: '+d.orders+' заказов · '+hours25(d.hours)+' · '+money25(d.gross+d.add)+' UYU доход · '+money25(d.net+d.add)+' UYU чистыми</div></div>'+
         '<div class="finance-grid-v25">'+
           '<button class="finance-btn-v25" onclick="runDriverMonthReportV23()">📊 Отчёт месяца<span>12 месяцев · часы · стоимость часа · итог</span></button>'+
           '<button class="finance-btn-v25" onclick="openDriverGeneralExpenseV25()">🧾 Общие расходы<span>Налоги · фактуры · покупки · сервисы</span></button>'+
@@ -10260,7 +10271,7 @@ body .order-card.rw3-history-card .order-price{
   window.RusWeoV116HistoryFocusFix={oneTimeDeepLink:true,completedToHistory:true,manualTabWins:true,pollingKeepsTab:true};
 
   window.RusWeoV113TerminalEvAnalytics={
-    release:'4.0.1',webRevision:'31123',androidTargetCode:112,
+    release:'4.1.0',webRevision:'31128',androidTargetCode:112,
     terminalDriverOffsetMinutes:15,reminderRepeatMinutes:5,evSafeKm:150,
     standardAndCorporate:true,departureSnooze:true,transportDelayReason:true,
     chargeAccountingOnly:true,calendarShiftOnCharge:false,calendarReleaseOnFullClose:true,
@@ -10766,7 +10777,7 @@ body .rw-fix35-row-secondary{
 #driverPanel .driver-tabs{grid-template-columns:repeat(5,minmax(0,1fr))!important}
 #driverPanel .rw-external-orders-tab{font-size:10px!important;line-height:1.05!important}
 .rw-v120-external-card{background:#fff;border:1px solid #dfe8ee;border-radius:19px;padding:14px;margin:9px 0;box-shadow:0 4px 13px rgba(18,63,92,.045)}
-.rw-v120-external-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.rw-v120-external-top strong{font-size:17px;color:#123b5a}.rw-v120-external-status{border-radius:999px;padding:6px 9px;font-size:11px;font-weight:900;text-align:center}.rw-v120-external-status.offered{background:#eef6ff;color:#27679b}.rw-v120-external-status.accepted{background:#fff8e7;color:#8a5a0a}.rw-v120-external-status.active{background:#effaf5;color:#19724d}.rw-v120-external-status.done{background:#eaf8f1;color:#176844}.rw-v120-external-status.failed{background:#fff1f1;color:#9d3434}.rw-v120-external-route{font-weight:850;margin-top:9px;line-height:1.42}.rw-v120-external-driver,.rw-v120-external-meta,.rw-v120-external-finance{font-size:12px;color:#617b8d;margin-top:7px;line-height:1.5}.rw-v120-external-finance{padding:8px 10px;border-radius:11px;background:#f5f9fc;color:#385b71}
+.rw-v120-external-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.rw-v120-external-top strong{font-size:17px;color:#123b5a}.rw-v120-external-status{border-radius:999px;padding:6px 9px;font-size:11px;font-weight:900;text-align:center}.rw-v120-external-status.offered{background:#eef6ff;color:#27679b}.rw-v120-external-status.accepted{background:#fff8e7;color:#8a5a0a}.rw-v120-external-status.active{background:#effaf5;color:#19724d}.rw-v120-external-status.done{background:#eaf8f1;color:#176844}.rw-v120-external-status.failed{background:#fff1f1;color:#9d3434}.rw-v120-external-route{font-weight:850;margin-top:9px;line-height:1.42}.rw-v120-external-driver,.rw-v120-external-meta,.rw-v120-external-finance,.rw-v120-external-reason{font-size:12px;color:#617b8d;margin-top:7px;line-height:1.5}.rw-v120-external-reason{padding:8px 10px;border-radius:11px;background:#fff6f1;color:#8a4a2f;border:1px solid #f4d8cb}.rw-v120-external-finance{padding:8px 10px;border-radius:11px;background:#f5f9fc;color:#385b71}
 @media(max-width:430px){#driverPanel .driver-tab{font-size:10px!important;padding:5px 2px!important}.rw-v120-external-status{font-size:9.5px}}
 </style>
 </body>

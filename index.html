@@ -1634,7 +1634,7 @@ try{
               launchResolving=false;
               markSplashSeen();
               const android=!!(window.UruWayAndroid&&typeof window.UruWayAndroid.getPlatform==='function');
-              location.replace('driver_v4.html?v=31124&v120=1'+(android?'&platform=android':''));
+              location.replace('driver_v4.html?v=31125&v120=1'+(android?'&platform=android':''));
               return;
             }
             reveal();
@@ -1742,7 +1742,7 @@ try{
   if(isAndroid){document.body.classList.add('is-android');}
   window.openAndroidDriver=function(){
     let role='';try{role=String(localStorage.getItem('uruway_auth_role')||'')}catch(e){}
-    location.href=role==='driver_external'?'driver_v4.html?v=31124&v120=1&platform=android':'driver.html?v=31123&hf=1';
+    location.href=role==='driver_external'?'driver_v4.html?v=31125&v120=1&platform=android':'driver.html?v=31123&hf=1';
   };
   window.uruwayOpenExternal=function(url){
     try{
@@ -1813,7 +1813,7 @@ try{
       return;
     }
     if(role==='driver_external'){
-      location.replace('driver_v4.html?v=31124&v120=1&platform=android');
+      location.replace('driver_v4.html?v=31125&v120=1&platform=android');
       return;
     }
     if(role!=='client'){
@@ -1971,7 +1971,7 @@ try{
 </style>
 <script id="RUSWEO_INDEX_DIAGNOSTICS_V101">
 (function(){
-  const OP='maxriccomsk', REV='31123', BUILD='RUSWEO_4_0_1_V120_FIX3_LIVE_PILOT_CALENDAR_LOYALTY_20260928';
+  const OP='maxriccomsk', REV='31123', BUILD='RUSWEO_4_0_1_V120_FIX5_AVAILABILITY_RANGE_20260928';
   let last=null;
   function safe(v,n){return String(v==null?'':v).replace(/[\r\n]+/g,' ').slice(0,n||260)}
   function env(){let p='web';try{if(window.UruWayAndroid)p='android';else if(window.Telegram&&window.Telegram.WebApp)p='telegram'}catch(e){}return p}
@@ -2187,7 +2187,7 @@ try{
     try{const init=liveInitData()||savedInitData();if(init)sessionStorage.setItem('rw_tg_driver_init_data_v1',init)}catch(e){}
     try{tgDriver&&tgDriver.HapticFeedback&&tgDriver.HapticFeedback.impactOccurred('light')}catch(e){}
     let role='';try{role=String(sessionStorage.getItem('rw_tg_driver_role_v2')||'')}catch(e){}
-    location.href=role==='driver_external'?'driver_v4.html?v=31124&v120=1':'driver.html?v=31123&hf=1';
+    location.href=role==='driver_external'?'driver_v4.html?v=31125&v120=1':'driver.html?v=31123&hf=1';
   };
 
   // Start as early as possible; do not wait for a click or for the video to end.

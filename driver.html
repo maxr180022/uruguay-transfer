@@ -7,7 +7,7 @@
   content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 
 <title>RusWeo 4.1.0 — Личный кабинет</title>
-<meta name="rusweo-release" content="RusWeo 4.1.0 / V121 FIX8 / owner driver web 31145 / Android native code112">
+<meta name="rusweo-release" content="RusWeo 4.1.0 / V121 FIX9 / owner driver web 31149 / Android native code112">
 <meta name="rusweo-ui-policy" content="single-design-v3-driver-android-telegram">
 <meta name="rusweo-runtime-policy" content="driver-root-back-minimize-v2">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -1683,6 +1683,10 @@ let driverClass = 'standard';
 let driverTab = 'new';
 
 let driverOrders = [];
+let rwV123ExternalRoster = [];
+let rwV123BusinessApplications = [];
+let rwV123ExternalStatus = 'active';
+let rwV123ExternalDriverId = '';
 
 let currentChatOrder = null;
 
@@ -2312,6 +2316,8 @@ window.UruWayApp.onDriverOrders =
         Array.isArray(data.orders)
           ? data.orders
           : [];
+      rwV123ExternalRoster = Array.isArray(data.external_drivers) ? data.external_drivers : rwV123ExternalRoster;
+      rwV123BusinessApplications = Array.isArray(data.business_applications) ? data.business_applications : rwV123BusinessApplications;
 
       renderDriverOrders();
 
@@ -2509,6 +2515,14 @@ function rwV120RenderExternalMonitorCard(order){
   return '<article class="rw-v120-external-card" id="rw-order-'+rwV120ExternalMonitorIdSafe(String(order.id||''))+'"><div class="rw-v120-external-top"><strong>№'+escHtml(order.number||'')+'</strong><span class="rw-v120-external-status '+s.cls+'">'+escHtml(s.text)+'</span></div><div class="rw-v120-external-route">'+escHtml(order.date||'')+' · '+escHtml(order.time||'')+'<br>'+escHtml(order.route_text||'')+'</div><div class="rw-v120-external-driver"><b>Водитель:</b> '+escHtml(driverName)+(car?'<br><b>Автомобиль:</b> '+escHtml(car):'')+'</div><div class="rw-v120-external-meta">'+escHtml(order.service_name||'')+' · '+escHtml(String(order.passengers||0))+' чел. · '+escHtml(luggage)+(order.price?'<br><b>Стоимость:</b> '+escHtml(String(order.price)+' '+String(order.currency||'')):'')+'</div>'+reason+finance+'</article>';
 }
 
+function rwV123ExternalBucket(order){const st=String(order&&order.status||'');if(st==='completed'||st==='rejected_operator'||st.indexOf('cancelled_')===0)return 'completed';if(['confirmed','confirmed_corporate','driver_enroute','arrived_pickup','trip_started','stop_arrived','final_point_arrived','returning_home','client_completed'].indexOf(st)!==-1)return 'accepted';return 'active';}
+function rwV123BusinessBucket(a){const st=String(a&&a.status||'');if(['COMPLETED','DECLINED','CANCELLED'].indexOf(st)!==-1)return 'completed';if(st==='AGREED')return 'accepted';return 'active';}
+function rwV123Roster(){const map={};(Array.isArray(rwV123ExternalRoster)?rwV123ExternalRoster:[]).forEach(x=>{const id=String(x.driver_id||x.telegram_user_id||'');if(id)map[id]=x});return Object.values(map)}
+function rwV123SetExternalStatus(x){rwV123ExternalStatus=String(x||'active');rwV123ExternalDriverId='';renderDriverOrders()}
+function rwV123SetExternalDriver(id){rwV123ExternalDriverId=String(id||'');renderDriverOrders()}
+function rwV123RenderBusinessOwnerCard(a){const route=(Array.isArray(a.route_points)?a.route_points:[]).filter(Boolean).join(' → ');return '<article class="rw-v120-external-card"><div class="rw-v120-external-top"><strong>'+escHtml(a.number||'')+' · BUSINESS</strong><span class="rw-v120-external-status '+(rwV123BusinessBucket(a)==='completed'?'done':rwV123BusinessBucket(a)==='accepted'?'accepted':'offered')+'">'+escHtml(a.status||'')+'</span></div><div class="rw-v120-external-route">'+escHtml(a.date||'')+' · '+escHtml(a.time||'')+'<br>'+escHtml(route||'—')+'</div><div class="rw-v120-external-driver"><b>Водитель:</b> Антон · BUSINESS</div><div class="rw-v120-external-meta">'+escHtml(a.service_title||'')+(a.price_text?'<br><b>Стоимость:</b> '+escHtml(a.price_text):'')+(Number(a.duration_hours||0)>0?'<br><b>Занятость:</b> '+escHtml(String(a.duration_hours))+' ч':'')+'</div></article>'}
+function rwV123RenderExternalFilters(){const roster=rwV123Roster();if(rwV123ExternalDriverId&&!roster.some(x=>String(x.driver_id||x.telegram_user_id||'')===rwV123ExternalDriverId))rwV123ExternalDriverId='';const statusNames={active:'Активные',accepted:'Принятые',completed:'Завершённые'};return '<div class="rw-v123-owner-filter"><div class="rw-v123-filter-status">'+Object.keys(statusNames).map(k=>'<button type="button" class="'+(rwV123ExternalStatus===k?'active':'')+'" onclick="rwV123SetExternalStatus(\''+k+'\')">'+statusNames[k]+'</button>').join('')+'</div><div class="rw-v123-filter-caption">Выберите водителя</div><div class="rw-v123-filter-drivers">'+roster.map(d=>{const id=String(d.driver_id||d.telegram_user_id||''),name=String(d.name||'Водитель');return '<button type="button" class="'+(rwV123ExternalDriverId===id?'active':'')+'" onclick="rwV123SetExternalDriver(\''+escHtml(id)+'\')">'+escHtml(name)+'</button>'}).join('')+'</div></div>'}
+
 function renderDriverOrders(){
 
   const box =
@@ -2520,15 +2534,26 @@ function renderDriverOrders(){
   }
 
   if(driverTab === 'external'){
-    const externalOrders=filteredOrders();
-    const renderedExternal=externalOrders.map(function(order){
-      try{return rwV120RenderExternalMonitorCard(order);}
-      catch(error){
-        const num=String(order&&order.number||order&&order.id||'');
-        return '<article class="rw-v120-external-card"><div class="rw-v120-external-top"><strong>№'+escHtml(num)+'</strong><span class="rw-v120-external-status failed">Ошибка карточки</span></div><div class="driver-error">Не удалось отобразить эту заявку. Остальные заказы продолжают работать.</div></article>';
-      }
-    });
-    box.innerHTML=renderedExternal.length?renderedExternal.join(''):'<div class="driver-empty">Заказов других водителей пока нет.</div>';
+    // FIX9 compatibility: the legacy OWNER renderer is also executed in isolation
+    // by recovery/Max-Trust harnesses. If the new filter layer is unavailable,
+    // preserve the pre-FIX9 behaviour instead of throwing.
+    if(typeof rwV123RenderExternalFilters !== 'function' || typeof rwV123Roster !== 'function'){
+      const legacyExternal=filteredOrders().map(function(order){
+        try{return rwV120RenderExternalMonitorCard(order);}catch(error){
+          const num=String(order&&order.number||order&&order.id||'');
+          return '<article class="rw-v120-external-card"><div class="rw-v120-external-top"><strong>№'+escHtml(num)+'</strong><span class="rw-v120-external-status failed">Ошибка карточки</span></div><div class="driver-error">Не удалось отобразить эту заявку. Остальные заказы продолжают работать.</div></article>';
+        }
+      });
+      box.innerHTML=legacyExternal.length?legacyExternal.join(''):'<div class="driver-empty">Заказов других водителей сейчас нет.</div>';
+      return;
+    }
+    const filters=rwV123RenderExternalFilters();
+    if(!rwV123ExternalDriverId){box.innerHTML=filters+'<div class="driver-empty">Выберите водителя.</div>';return;}
+    const roster=rwV123Roster(),chosen=roster.find(x=>String(x.driver_id||x.telegram_user_id||'')===rwV123ExternalDriverId)||null;
+    let renderedExternal=[];
+    if(chosen&&String(chosen.scope||'standard')==='business'){renderedExternal=(Array.isArray(rwV123BusinessApplications)?rwV123BusinessApplications:[]).filter(a=>rwV123BusinessBucket(a)===rwV123ExternalStatus).map(rwV123RenderBusinessOwnerCard);}
+    else{renderedExternal=filteredOrders().filter(function(order){const d=order.external_driver||{},id=String(d.driver_id||d.telegram_user_id||'');return id===rwV123ExternalDriverId&&rwV123ExternalBucket(order)===rwV123ExternalStatus;}).map(function(order){try{return rwV120RenderExternalMonitorCard(order);}catch(error){const num=String(order&&order.number||order&&order.id||'');return '<article class="rw-v120-external-card"><div class="rw-v120-external-top"><strong>№'+escHtml(num)+'</strong><span class="rw-v120-external-status failed">Ошибка карточки</span></div><div class="driver-error">Не удалось отобразить эту заявку. Остальные заказы продолжают работать.</div></article>';}});}
+    box.innerHTML=filters+(renderedExternal.length?renderedExternal.join(''):'<div class="driver-empty">У этого водителя заказов в выбранном разделе нет.</div>');
     return;
   }
 
@@ -10780,6 +10805,7 @@ body .rw-fix35-row-secondary{
 .rw-v120-external-card{background:#fff;border:1px solid #dfe8ee;border-radius:19px;padding:14px;margin:9px 0;box-shadow:0 4px 13px rgba(18,63,92,.045)}
 .rw-v120-external-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.rw-v120-external-top strong{font-size:17px;color:#123b5a}.rw-v120-external-status{border-radius:999px;padding:6px 9px;font-size:11px;font-weight:900;text-align:center}.rw-v120-external-status.offered{background:#eef6ff;color:#27679b}.rw-v120-external-status.accepted{background:#fff8e7;color:#8a5a0a}.rw-v120-external-status.active{background:#effaf5;color:#19724d}.rw-v120-external-status.done{background:#eaf8f1;color:#176844}.rw-v120-external-status.failed{background:#fff1f1;color:#9d3434}.rw-v120-external-route{font-weight:850;margin-top:9px;line-height:1.42}.rw-v120-external-driver,.rw-v120-external-meta,.rw-v120-external-finance,.rw-v120-external-reason{font-size:12px;color:#617b8d;margin-top:7px;line-height:1.5}.rw-v120-external-reason{padding:8px 10px;border-radius:11px;background:#fff6f1;color:#8a4a2f;border:1px solid #f4d8cb}.rw-v120-external-finance{padding:8px 10px;border-radius:11px;background:#f5f9fc;color:#385b71}
 @media(max-width:430px){#driverPanel .driver-tab{font-size:10px!important;padding:5px 2px!important}.rw-v120-external-status{font-size:9.5px}}
+.rw-v123-owner-filter{margin:8px 0 12px;padding:10px;border:1px solid #dbe9fa;border-radius:17px;background:#fff}.rw-v123-filter-status,.rw-v123-filter-drivers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.rw-v123-filter-drivers{grid-template-columns:repeat(2,minmax(0,1fr))}.rw-v123-owner-filter button{min-height:39px;border:1px solid #198ce9;border-radius:12px;background:#fff;color:#1675bd;font-weight:950;font-size:10.5px}.rw-v123-owner-filter button.active{border:0;background:linear-gradient(100deg,#0a8df5,#5b46ef 55%,#f30884);color:#fff}.rw-v123-filter-caption{margin:10px 2px 6px;color:#5f7894;font-size:10px;font-weight:900}@media(max-width:360px){.rw-v123-filter-status,.rw-v123-filter-drivers{grid-template-columns:1fr 1fr}.rw-v123-filter-status button:last-child{grid-column:1/-1}}
 </style>
 </body>
 </html>

@@ -7,7 +7,7 @@
   content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 
 <title>RusWeo 4.1.0 — Личный кабинет</title>
-<meta name="rusweo-release" content="RusWeo 4.1.0 / V121 FIX9 / owner driver web 31149 / Android native code112">
+<meta name="rusweo-release" content="RusWeo 4.1.0 / V121 FIX13 / owner driver web 31160 / Android native code112">
 <meta name="rusweo-ui-policy" content="single-design-v3-driver-android-telegram">
 <meta name="rusweo-runtime-policy" content="driver-root-back-minimize-v2">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -2083,7 +2083,7 @@ function startDriverOperatorBookingV72(){
     operator_app_session:rwDriverAppSessionV72()
   };
   const frame=document.getElementById('bookingFrame');
-  frame.src='booking.html?vehicle_class=standard&operator_booking=1&v=31143';
+  frame.src='booking.html?vehicle_class=standard&operator_booking=1&v=31157';
   closeDriverOperatorBookingV72();
   openScreen('booking');
 }
@@ -2102,7 +2102,7 @@ function startDriverOperatorUnlinkedBookingFix38(){
     operator_app_session:rwDriverAppSessionV72()
   };
   const frame=document.getElementById('bookingFrame');
-  frame.src='booking.html?vehicle_class=standard&operator_booking=1&client_claim=1&v=31143';
+  frame.src='booking.html?vehicle_class=standard&operator_booking=1&client_claim=1&v=31157';
   closeDriverOperatorBookingV72();
   openScreen('booking');
 }
@@ -4653,7 +4653,7 @@ window.addEventListener(
     const qs =
       new URLSearchParams({
         vehicle_class:cls,
-        v:'31143',
+        v:'31157',
         app_session:String(
           localStorage.getItem(
             'uruway_auth_session'
@@ -6817,7 +6817,39 @@ window.logoutDriverV43=function(){
   function orderSnapshot25(o){return normalizedAccounting25(o);}
   function todayKey25(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
   function localDateKey25(v){if(!v)return '';const d=new Date(v);if(isNaN(d.getTime()))return '';return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
-  function daily25(){const key=todayKey25();const t={orders:0,hours:0,gross:0,net:0,add:0};completedOrders25().forEach(function(o){if(localDateKey25(o.final_closed_at)!==key)return;const a=orderSnapshot25(o);t.orders++;t.hours+=n25(a.work_hours);t.gross+=n25(a.trip_gross_uyu||a.total_income_uyu||a.revenue_uyu);t.net+=n25(a.trip_net_uyu||a.profit_uyu);t.add+=n25(a.additional_income_uyu||o.additional_income_total_uyu);});return t;}
+  // FIX13: the top daily finance line is an all-work summary. RusWeo
+  // orders keep their own counters, while Uber shifts/bonuses are added to
+  // hours, gross income and net income using the same server-returned records
+  // that feed the dedicated Uber card. No accounting formula is recomputed.
+  function daily25(){
+    const key=todayKey25();
+    const t={orders:0,hours:0,gross:0,net:0,add:0,uber_shifts:0,uber_hours:0,uber_gross:0,uber_net:0,uber_bonus:0};
+    completedOrders25().forEach(function(o){
+      if(localDateKey25(o.final_closed_at)!==key)return;
+      const a=orderSnapshot25(o);
+      t.orders++;
+      t.hours+=n25(a.work_hours);
+      t.gross+=n25(a.trip_gross_uyu||a.total_income_uyu||a.revenue_uyu);
+      t.net+=n25(a.trip_net_uyu||a.profit_uyu);
+      t.add+=n25(a.additional_income_uyu||o.additional_income_total_uyu);
+    });
+    const data=financeReportV25||{};
+    (Array.isArray(data.uber_shifts)?data.uber_shifts:[]).forEach(function(x){
+      if(localDateKey25(x&&x.start_at||x&&x.end_at||x&&x.created_at)!==key)return;
+      t.uber_shifts++;
+      t.uber_hours+=n25(x&&x.hours);
+      t.uber_gross+=n25(x&&x.income_uyu);
+      t.uber_net+=n25(x&&x.net_uyu);
+    });
+    (Array.isArray(data.uber_bonuses)?data.uber_bonuses:[]).forEach(function(x){
+      if(localDateKey25(x&&x.date||x&&x.created_at)!==key)return;
+      const bonus=n25(x&&x.amount_uyu);
+      t.uber_bonus+=bonus;
+      t.uber_gross+=bonus;
+      t.uber_net+=bonus;
+    });
+    return t;
+  }
 
   window.renderDriverFinanceV25=function(){
     const box=document.getElementById('driverOrders');if(!box)return;
@@ -6826,16 +6858,22 @@ window.logoutDriverV43=function(){
     const accepted=(Array.isArray(driverOrders)?driverOrders:[]).filter(function(o){return ['confirmed','confirmed_corporate','receipt_uploaded','driver_enroute','arrived_pickup','trip_started','stop_arrived','final_point_arrived','returning_home','client_completed'].indexOf(String(o&&o.status||''))!==-1;}).length;
     const fresh=(Array.isArray(driverOrders)?driverOrders:[]).filter(function(o){return String(o&&o.status||'')==='pending';}).length;
     const history=completedOrders25().length;
+    const monthHours=r?n25(r.total_work_hours!==undefined?r.total_work_hours:r.work_hours):0;
+    const monthIncome=r?n25(r.total_all_income_uyu!==undefined?r.total_all_income_uyu:r.total_income_uyu):0;
+    const monthNet=r?n25(r.total_all_net_uyu!==undefined?r.total_all_net_uyu:r.month_net_uyu):0;
     const top=r
-      ? (monthLabel25(r.month)+': '+String(r.orders||0)+' заказов · '+hours25(r.work_hours)+' · '+money25(r.total_income_uyu)+' UYU доход · '+money25(r.month_net_uyu)+' UYU чистыми')
+      ? (monthLabel25(r.month)+': '+String(r.orders||0)+' заказов · '+hours25(monthHours)+' · '+money25(monthIncome)+' UYU доход · '+money25(monthNet)+' UYU чистыми')
       : (financeLoadingV25?'Загружаю финансовую сводку…':'Финансовая сводка месяца');
     const tripNet=r?money25(r.trip_net_uyu):'—';
     const netHour=r?money25(r.net_per_hour_uyu):'—';
-    const actualHour=r?money25(r.actual_net_per_hour_uyu):'—';
+    const actualHour=r?money25(r.total_all_net_per_hour_uyu!==undefined?r.total_all_net_per_hour_uyu:r.actual_net_per_hour_uyu):'—';
     const general=r?money25(r.general_expenses_uyu):'—';
+    const todayHours=n25(d.hours)+n25(d.uber_hours);
+    const todayIncome=n25(d.gross)+n25(d.add)+n25(d.uber_gross);
+    const todayNet=n25(d.net)+n25(d.add)+n25(d.uber_net);
     box.innerHTML=
       '<div class="finance-v25">'+
-        '<div class="finance-summary-v25"><div class="title">💰 ФИНАНСЫ · RusWeo 4.1.0</div><div class="main">'+escHtml(top)+'</div><div class="sub">Сегодня: '+d.orders+' заказов · '+hours25(d.hours)+' · '+money25(d.gross+d.add)+' UYU доход · '+money25(d.net+d.add)+' UYU чистыми</div></div>'+
+        '<div class="finance-summary-v25"><div class="title">💰 ФИНАНСЫ · RusWeo 4.1.0</div><div class="main">'+escHtml(top)+'</div><div class="sub">Сегодня: '+d.orders+' заказов · '+hours25(todayHours)+' · '+money25(todayIncome)+' UYU доход · '+money25(todayNet)+' UYU чистыми</div></div>'+
         '<div class="finance-grid-v25">'+
           '<button class="finance-btn-v25" onclick="runDriverMonthReportV23()">📊 Отчёт месяца<span>12 месяцев · часы · стоимость часа · итог</span></button>'+
           '<button class="finance-btn-v25" onclick="openDriverGeneralExpenseV25()">🧾 Общие расходы<span>Налоги · фактуры · покупки · сервисы</span></button>'+
@@ -6848,7 +6886,7 @@ window.logoutDriverV43=function(){
           '<div class="finance-kpi-v25"><small>Чистыми за поездки</small><strong>'+tripNet+' UYU</strong></div>'+
           '<div class="finance-kpi-v25"><small>Чистый доход/час по заказам</small><strong>'+netHour+' UYU/ч</strong></div>'+
           '<div class="finance-kpi-v25"><small>Общие расходы</small><strong>−'+general+' UYU</strong></div>'+
-          '<div class="finance-kpi-v25"><small>Итоговый чистый доход/час за месяц</small><strong>'+actualHour+' UYU/ч</strong></div>'+
+          '<div class="finance-kpi-v25"><small>Общий чистый доход/час за месяц</small><strong>'+actualHour+' UYU/ч</strong></div>'+
         '</div></div>'+
         '<div class="finance-card-v25"><h3>Счётчики заказов</h3><div class="finance-kpis-v25">'+
           '<div class="finance-kpi-v25"><small>Новые</small><strong>'+fresh+'</strong></div><div class="finance-kpi-v25"><small>Принятые / в работе</small><strong>'+accepted+'</strong></div><div class="finance-kpi-v25"><small>Завершённые</small><strong>'+history+'</strong></div><div class="finance-kpi-v25"><small>Версия</small><strong>4.0.0</strong></div>'+
@@ -6868,12 +6906,12 @@ window.logoutDriverV43=function(){
     const body=document.getElementById('driverReportBodyV23');const summary=document.getElementById('driverReportSummaryV23');if(summary)summary.textContent=monthLabel25(financeMonthV25);if(!body)return;
     const prev=shiftMonth25(financeMonthV25,-1),next=shiftMonth25(financeMonthV25,1),cur=monthKey25();const ip=Array.isArray(data.ip_expenses)?data.ip_expenses:[];const standalone=Array.isArray(data.standalone_additional_incomes)?data.standalone_additional_incomes:[];
     body.innerHTML=
-      '<div class="finance-summary-v25"><div class="title">📊 '+escHtml(monthLabel25(financeMonthV25))+'</div><div class="main">'+escHtml(String(r.orders||0))+' заказов · '+escHtml(hours25(r.work_hours))+' · '+escHtml(money25(r.total_income_uyu))+' UYU доход · '+escHtml(money25(r.month_net_uyu))+' UYU чистыми</div></div>'+
+      '<div class="finance-summary-v25"><div class="title">📊 '+escHtml(monthLabel25(financeMonthV25))+'</div><div class="main">'+escHtml(String(r.orders||0))+' заказов · '+escHtml(hours25(r.total_work_hours!==undefined?r.total_work_hours:r.work_hours))+' · '+escHtml(money25(r.total_all_income_uyu!==undefined?r.total_all_income_uyu:r.total_income_uyu))+' UYU доход · '+escHtml(money25(r.total_all_net_uyu!==undefined?r.total_all_net_uyu:r.month_net_uyu))+' UYU чистыми</div></div>'+
       '<div class="driver-report-nav-v24"><button onclick="runDriverMonthReportV23(\''+prev+'\')">◀</button><strong>'+escHtml(monthLabel25(financeMonthV25))+'</strong><button '+(next>cur?'disabled':'')+' onclick="runDriverMonthReportV23(\''+next+'\')">▶</button></div>'+
       '<div class="driver-report-grid-v23">'+
         '<div class="driver-report-cell-v23"><small>Заказов</small><strong>'+escHtml(String(r.orders||0))+'</strong></div>'+
-        '<div class="driver-report-cell-v23"><small>Отработано</small><strong>'+escHtml(hours25(r.work_hours))+'</strong></div>'+
-        '<div class="driver-report-cell-v23"><small>Пробег</small><strong>'+escHtml(money25(r.work_km))+' км</strong></div>'+
+        '<div class="driver-report-cell-v23"><small>Отработано RusWeo</small><strong>'+escHtml(hours25(r.work_hours))+'</strong></div>'+
+        '<div class="driver-report-cell-v23"><small>Пробег RusWeo</small><strong>'+escHtml(money25(r.work_km))+' км</strong></div>'+
         '<div class="driver-report-cell-v23"><small>Тарифы</small><strong>'+escHtml(money25(r.base_revenue_uyu))+' UYU</strong></div>'+
         '<div class="driver-report-cell-v23"><small>Доп. часы</small><strong>+'+escHtml(money25(r.extra_hours_uyu))+' UYU</strong></div>'+
         '<div class="driver-report-cell-v23"><small>Чаевые</small><strong>+'+escHtml(money25(r.tips_uyu))+' UYU</strong></div>'+
@@ -6885,9 +6923,9 @@ window.logoutDriverV43=function(){
         '<div class="driver-report-cell-v23"><small>Доп. доход</small><strong>+'+escHtml(money25(r.additional_income_uyu))+' UYU</strong></div>'+
         '<div class="driver-report-cell-v23"><small>Из них без поездки</small><strong>+'+escHtml(money25(r.standalone_additional_income_uyu))+' UYU</strong></div>'+
         '<div class="driver-report-cell-v23"><small>Общие расходы</small><strong>−'+escHtml(money25(r.general_expenses_uyu))+' UYU</strong></div>'+
-        '<div class="driver-report-cell-v23"><small>Итоговый чистый доход/час за месяц</small><strong>'+escHtml(money25(r.actual_net_per_hour_uyu))+' UYU/ч</strong></div>'+
-        '<div class="driver-report-cell-v23 driver-accounting-highlight-v24"><small>Общий доход</small><strong>'+escHtml(money25(r.total_income_uyu))+' UYU</strong></div>'+
-        '<div class="driver-report-cell-v23 driver-accounting-highlight-v24"><small>Чистый итог</small><strong>'+escHtml(money25(r.month_net_uyu))+' UYU</strong></div>'+
+        '<div class="driver-report-cell-v23"><small>Чистый доход/час RusWeo</small><strong>'+escHtml(money25(r.actual_net_per_hour_uyu))+' UYU/ч</strong></div>'+
+        '<div class="driver-report-cell-v23 driver-accounting-highlight-v24"><small>Доход RusWeo</small><strong>'+escHtml(money25(r.total_income_uyu))+' UYU</strong></div>'+
+        '<div class="driver-report-cell-v23 driver-accounting-highlight-v24"><small>Чистый итог RusWeo</small><strong>'+escHtml(money25(r.month_net_uyu))+' UYU</strong></div>'+
         '<div class="driver-report-cell-v23 driver-accounting-highlight-v24"><small>На новую машину за месяц</small><strong>$'+escHtml(money25(r.new_car_reserve_usd))+'</strong></div>'+
         '<div class="driver-report-cell-v23 driver-accounting-highlight-v24"><small>Накоплено к этому месяцу</small><strong>$'+escHtml(money25(r.new_car_reserve_cumulative_usd))+'</strong></div>'+
       '</div>'+
@@ -8685,7 +8723,8 @@ body .rw116-odo-cell strong{width:100%;margin-top:3px;color:#111827;font-size:cl
           currentScreen==='driverPanel'&&
           document.visibilityState!=='hidden'
         ){
-          loadDriverOrders(true);
+          if(typeof window.rwV121Fix10OwnerPollTick==='function')window.rwV121Fix10OwnerPollTick();
+          else loadDriverOrders(true);
         }
       },6000);
     };
@@ -8814,7 +8853,7 @@ body .rw116-odo-cell strong{width:100%;margin-top:3px;color:#111827;font-size:cl
   };
   window.cancelUberV69=function(){const a=active();if(!a)return;if(!confirm('Отменить ошибочно начатую смену Uber? Она не попадёт в статистику.'))return;call('uber_cancel',{shift_id:String(a.id||''),month:String(a.month||monthKey())})};
   function calendarHtml(r){r=r||{};const month=String(r.month||monthKey()),m=month.match(/^(\d{4})-(\d{2})$/);if(!m)return '';const year=Number(m[1]),mon=Number(m[2]),days=new Date(year,mon,0).getDate(),first=(new Date(year,mon-1,1).getDay()+6)%7,map={};(Array.isArray(r.work_calendar_days)?r.work_calendar_days:[]).forEach(d=>map[String(d.date||'')]=d);let cells='';for(let i=0;i<first;i++)cells+='<div class="rw-workcal-v69-day empty"></div>';for(let day=1;day<=days;day++){const key=month+'-'+String(day).padStart(2,'0'),d=map[key]||{},th=n(d.transfer_hours),uh=n(d.uber_hours),cls=th>0&&uh>0?'both':(th>0?'transfer':(uh>0?'uber':''));cells+='<div class="rw-workcal-v69-day '+cls+'"><div class="d">'+day+'</div>'+(th>0?'<div class="t">🚘 '+e(hours(th))+'</div>':'')+(uh>0?'<div class="t">🚕 '+e(hours(uh))+'</div>':'')+'</div>'}return '<div class="finance-card-v25 rw-workcal-v69"><h3>📅 Рабочий календарь</h3><div class="rw-workcal-v69-head"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div><div class="rw-workcal-v69-grid">'+cells+'</div><div class="rw-workcal-v69-legend">🚘 RusWeo · 🚕 Uber · календарь показывает фактическую работу. Uber не блокирует свободное время для заявок.</div></div>'}
-  function cards(data){const r=data&&data.report?data.report:{};return '<div id="rwUberFinanceV69" class="finance-card-v25 rw-uber-v69-card"><h3>🚕 Uber</h3><div class="finance-kpis-v25"><div class="finance-kpi-v25 rw-uber-v69-main"><small>Заработано Uber</small><strong>'+e(money(r.uber_income_uyu))+' UYU</strong></div><div class="finance-kpi-v25"><small>Бонусы Uber</small><strong>'+e(money(r.uber_bonus_uyu))+' UYU</strong></div><div class="finance-kpi-v25 rw-uber-v69-main"><small>Отработано Uber</small><strong>'+e(hours(r.uber_hours))+'</strong></div><div class="finance-kpi-v25"><small>Пробег Uber</small><strong>'+e(money(r.uber_km))+' км</strong></div><div class="finance-kpi-v25"><small>Резерв авто</small><strong>−'+e(money(r.uber_km_cost_uyu))+' UYU</strong></div><div class="finance-kpi-v25"><small>После резерва авто</small><strong>'+e(money(r.uber_net_uyu))+' UYU</strong></div><div class="finance-kpi-v25"><small>Uber доход/час</small><strong>'+e(money(r.uber_income_per_hour_uyu))+' UYU/ч</strong></div></div><div class="rw-uber-v69-note">Смен: '+e(String(r.uber_shifts||0))+' · стоимость 1 км: '+e(money(r.vehicle_cost_per_km_uyu))+' UYU. Та же стоимость, что в поездках.</div></div><div id="rwAllWorkFinanceV69" class="finance-card-v25"><h3>📊 Вся работа за месяц</h3><div class="finance-kpis-v25"><div class="finance-kpi-v25"><small>Общие часы</small><strong>'+e(hours(r.total_work_hours))+'</strong></div><div class="finance-kpi-v25"><small>Общий пробег</small><strong>'+e(money(r.total_work_km))+' км</strong></div><div class="finance-kpi-v25"><small>Весь доход</small><strong>'+e(money(r.total_all_income_uyu))+' UYU</strong></div><div class="finance-kpi-v25"><small>Общий чистый итог</small><strong>'+e(money(r.total_all_net_uyu))+' UYU</strong></div><div class="finance-kpi-v25"><small>Общий чистый доход/час</small><strong>'+e(money(r.total_all_net_per_hour_uyu))+' UYU/ч</strong></div><button type="button" class="finance-kpi-v25 rw-new-car-reserve-v116" onclick="openNewCarReserveHistoryV116()" title="Открыть помесячную историю накоплений. Резерв уже учтён в себестоимости 12,616 UYU/км и повторно из чистого итога не вычитается."><small>На новую машину за месяц</small><strong>$'+e(money(r.new_car_reserve_usd))+'</strong><span class="rw-new-car-open-v116">История накоплений ›</span></button></div><div class="rw-uber-v69-note rw-new-car-note-v116">Накопление только на новую машину: '+e(money(r.total_work_km))+' км × '+e(money(r.new_car_reserve_per_km_uyu))+' UYU/км · курс '+e(money(r.new_car_reserve_usd_rate))+' UYU/USD. Новый месяц начинается с 0; прошлые месяцы сохраняются в истории.</div></div>'+calendarHtml(r)}
+  function cards(data){const r=data&&data.report?data.report:{};return '<div id="rwUberFinanceV69" class="finance-card-v25 rw-uber-v69-card"><h3>🚕 Uber</h3><div class="finance-kpis-v25"><div class="finance-kpi-v25 rw-uber-v69-main"><small>Uber грязными</small><strong>'+e(money(r.uber_income_uyu))+' UYU</strong></div><div class="finance-kpi-v25"><small>Бонусы Uber</small><strong>'+e(money(r.uber_bonus_uyu))+' UYU</strong></div><div class="finance-kpi-v25 rw-uber-v69-main"><small>Отработано Uber</small><strong>'+e(hours(r.uber_hours))+'</strong></div><div class="finance-kpi-v25"><small>Пробег Uber</small><strong>'+e(money(r.uber_km))+' км</strong></div><div class="finance-kpi-v25"><small>Резерв авто</small><strong>−'+e(money(r.uber_km_cost_uyu))+' UYU</strong></div><div class="finance-kpi-v25"><small>Uber чистыми</small><strong>'+e(money(r.uber_net_uyu))+' UYU</strong></div><div class="finance-kpi-v25"><small>Uber грязными/час</small><strong>'+e(money(r.uber_income_per_hour_uyu))+' UYU/ч</strong></div><div class="finance-kpi-v25"><small>Uber чистыми/час</small><strong>'+e(money(r.uber_net_per_hour_uyu))+' UYU/ч</strong></div></div><div class="rw-uber-v69-note">Смен: '+e(String(r.uber_shifts||0))+' · стоимость 1 км: '+e(money(r.vehicle_cost_per_km_uyu))+' UYU. Та же стоимость, что в поездках.</div></div><div id="rwAllWorkFinanceV69" class="finance-card-v25"><h3>📊 Вся работа за месяц</h3><div class="finance-kpis-v25"><div class="finance-kpi-v25"><small>Общие часы</small><strong>'+e(hours(r.total_work_hours))+'</strong></div><div class="finance-kpi-v25"><small>Общий пробег</small><strong>'+e(money(r.total_work_km))+' км</strong></div><div class="finance-kpi-v25"><small>Весь доход</small><strong>'+e(money(r.total_all_income_uyu))+' UYU</strong></div><div class="finance-kpi-v25"><small>Общий чистый итог</small><strong>'+e(money(r.total_all_net_uyu))+' UYU</strong></div><div class="finance-kpi-v25"><small>Общий чистый доход/час</small><strong>'+e(money(r.total_all_net_per_hour_uyu))+' UYU/ч</strong></div><button type="button" class="finance-kpi-v25 rw-new-car-reserve-v116" onclick="openNewCarReserveHistoryV116()" title="Открыть помесячную историю накоплений. Резерв уже учтён в себестоимости 12,616 UYU/км и повторно из чистого итога не вычитается."><small>На новую машину за месяц</small><strong>$'+e(money(r.new_car_reserve_usd))+'</strong><span class="rw-new-car-open-v116">История накоплений ›</span></button></div><div class="rw-uber-v69-note rw-new-car-note-v116">Накопление только на новую машину: '+e(money(r.total_work_km))+' км × '+e(money(r.new_car_reserve_per_km_uyu))+' UYU/км · курс '+e(money(r.new_car_reserve_usd_rate))+' UYU/USD. Новый месяц начинается с 0; прошлые месяцы сохраняются в истории.</div></div>'+calendarHtml(r)}
   function augmentFinance(){const root=document.querySelector('.finance-v25');if(!root)return;const grid=root.querySelector('.finance-grid-v25');if(grid&&!document.getElementById('rwUberFinanceButtonV69')){const b=document.createElement('button');b.id='rwUberFinanceButtonV69';b.className='finance-btn-v25 rw-uber-v69-btn';b.setAttribute('onclick','openUberV69()');b.innerHTML='<strong class="rw-uber-v112-title">🚕 Uber</strong><span>Выйти на линию · одометр · заработок · бонусы</span>';grid.insertBefore(b,grid.firstChild)}if(!lastData||!lastData.report)return;['rwUberFinanceV69','rwAllWorkFinanceV69','rwWorkCalendarCardV69'].forEach(id=>{const x=document.getElementById(id);if(x)x.remove()});const h=document.createElement('div');h.innerHTML=cards(lastData);const nodes=Array.from(h.children);if(nodes[2])nodes[2].id='rwWorkCalendarCardV69';if(grid){let ref=grid.nextSibling;nodes.forEach(node=>root.insertBefore(node,ref))}}
   function augmentReport(){if(!lastData||!lastData.report)return;const body=document.getElementById('driverReportBodyV23');if(!body)return;const old=document.getElementById('rwUberReportExtraV69');if(old)old.remove();const x=document.createElement('div');x.id='rwUberReportExtraV69';x.innerHTML=cards(lastData);body.appendChild(x)}
   const baseMonth=window.UruWayApp&&window.UruWayApp.onDriverMonthReportV23;if(typeof baseMonth==='function'){window.UruWayApp.onDriverMonthReportV23=function(raw){const d=parse(raw);if(d&&d.ok===true&&d.report){lastData=d;uberBusy=false}const r=baseMonth.call(this,raw);setTimeout(()=>{augmentFinance();augmentReport();const o=document.getElementById('driverUberOverlayV69');if(o&&o.classList.contains('open'))renderUber()},0);return r}}
@@ -9546,7 +9585,7 @@ document.addEventListener('DOMContentLoaded',function(){
       vehicle_class:'standard',
       edit_id:id,
       edit_role:'driver',
-      v:'31143',
+      v:'31157',
       _:String(Date.now())
     });
     var appSession=window.rwBookingEditContextV97.operator_app_session;
@@ -10807,6 +10846,129 @@ body .rw-fix35-row-secondary{
 @media(max-width:430px){#driverPanel .driver-tab{font-size:10px!important;padding:5px 2px!important}.rw-v120-external-status{font-size:9.5px}}
 .rw-v123-owner-filter{margin:8px 0 12px;padding:10px;border:1px solid #dbe9fa;border-radius:17px;background:#fff}.rw-v123-filter-status,.rw-v123-filter-drivers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.rw-v123-filter-drivers{grid-template-columns:repeat(2,minmax(0,1fr))}.rw-v123-owner-filter button{min-height:39px;border:1px solid #198ce9;border-radius:12px;background:#fff;color:#1675bd;font-weight:950;font-size:10.5px}.rw-v123-owner-filter button.active{border:0;background:linear-gradient(100deg,#0a8df5,#5b46ef 55%,#f30884);color:#fff}.rw-v123-filter-caption{margin:10px 2px 6px;color:#5f7894;font-size:10px;font-weight:900}@media(max-width:360px){.rw-v123-filter-status,.rw-v123-filter-drivers{grid-template-columns:1fr 1fr}.rw-v123-filter-status button:last-child{grid-column:1/-1}}
 </style>
+
+
+<!-- RUSWEO V121 FIX11 — OWNER LIFECYCLE TRANSPORT RECOVERY + COMPACT ODOMETER -->
+<style id="RUSWEO_V121_FIX11_OWNER_UI_STYLE">
+.rw-fix11-price-odo-row{display:flex;align-items:stretch;gap:8px;margin:8px 0 4px;min-width:0}
+.rw-fix11-price-odo-row>.order-price{margin:0!important;flex:1 1 auto;min-width:0;display:flex;align-items:center}
+.rw-fix11-odo-chip{flex:0 0 auto;min-width:112px;max-width:44%;padding:6px 10px;border:1px solid #d9e6f1;border-radius:11px;background:linear-gradient(105deg,#f2f8ff,#fff6fb);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#244c77;line-height:1.05}
+.rw-fix11-odo-chip span{font-size:9px;font-weight:900;color:#6b7d92}.rw-fix11-odo-chip strong{margin-top:3px;font-size:12px;font-weight:1000;color:#17375d;white-space:nowrap}
+.rw-fix11-history-odo{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin:7px 0 3px}
+.rw-fix11-history-odo .rw-fix11-odo-metric{min-width:0;min-height:40px;padding:5px 4px;border:1px solid #d9e6f1;border-radius:11px;background:linear-gradient(105deg,#f4f9ff,#fff7fb);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.rw-fix11-history-odo span{font-size:9px;font-weight:900;color:#6b7d92;line-height:1.05}.rw-fix11-history-odo strong{margin-top:3px;font-size:10.5px;font-weight:1000;color:#17375d;line-height:1.08;white-space:nowrap}
+@media(max-width:360px){.rw-fix11-price-odo-row{gap:5px}.rw-fix11-odo-chip{min-width:103px;padding:5px 6px}.rw-fix11-history-odo{gap:4px}.rw-fix11-history-odo .rw-fix11-odo-metric{padding:4px 2px}.rw-fix11-history-odo strong{font-size:9.8px}}
+</style>
+<script id="RUSWEO_V121_FIX11_OWNER_UI_AND_RECOVERY">
+(function(){
+  'use strict';
+  if(window.__RUSWEO_V121_FIX11_OWNER_PATCH__)return;
+  window.__RUSWEO_V121_FIX11_OWNER_PATCH__=true;
+
+  function parse(raw){if(raw&&typeof raw==='object')return raw;try{return JSON.parse(String(raw||''))}catch(_){return null}}
+  function lifecycleApplied(action,status){
+    const s=String(status||''),map={
+      confirm:['confirmed','confirmed_corporate','driver_enroute','arrived_pickup','trip_started','stop_arrived','final_point_arrived','returning_home','client_completed','completed'],
+      reject:['rejected_operator'],start_order:['driver_enroute','arrived_pickup','trip_started','stop_arrived','final_point_arrived','returning_home','client_completed','completed'],
+      arrived_a:['arrived_pickup','trip_started','stop_arrived','final_point_arrived','returning_home','client_completed','completed'],
+      start_trip:['trip_started','stop_arrived','final_point_arrived','returning_home','client_completed','completed'],
+      arrive_point:['stop_arrived','final_point_arrived','returning_home','client_completed','completed'],
+      continue:['trip_started','stop_arrived','final_point_arrived','returning_home','client_completed','completed'],
+      finish_client:['final_point_arrived','returning_home','client_completed','completed'],depart_home:['returning_home','completed'],return_home:['completed'],cancel:['cancelled_admin']
+    };
+    return !!(map[String(action||'')]&&map[String(action||'')].indexOf(s)!==-1);
+  }
+  function networkish(data){const e=String(data&&(data.error||data.detail||data.message)||'').toLowerCase();return !!(data&&data.ok===false&&/network_error|empty_response|bad_json|timeout|timed out|url_error|server_error|temporar/.test(e))}
+  const pending=Object.create(null),recovering=Object.create(null);
+  const originalDriverAction=window.driverAction;
+  if(typeof originalDriverAction==='function'){
+    window.driverAction=function(orderId,action,payload){
+      const id=String(orderId||''),a=String(action||'');
+      if(id&&['confirm','reject','start_order','arrived_a','start_trip','arrive_point','continue','finish_client','depart_home','return_home','cancel'].indexOf(a)!==-1){pending[id]={id:id,action:a,at:Date.now()};}
+      return originalDriverAction.apply(this,arguments);
+    };
+    try{driverAction=window.driverAction}catch(_){ }
+  }
+  function newestPending(){let found=null;Object.keys(pending).forEach(function(k){const p=pending[k];if(p&&Date.now()-Number(p.at||0)<90000&&(!found||p.at>found.at))found=p});return found}
+  function clearRecovery(id){delete recovering[id];delete pending[id]}
+  function deliverSuccess(base,p,order){clearRecovery(p.id);return base.call(window.UruWayApp,{ok:true,action:p.action,recovered_response:true,message:'Статус подтверждён сервером.',order:order})}
+  function deliverOriginal(base,p,raw){clearRecovery(p.id);return base.call(window.UruWayApp,raw)}
+  function requestOrder(p,base,raw,attempt){
+    if(!p||!p.id)return deliverOriginal(base,p||{id:''},raw);
+    recovering[p.id]={p:p,base:base,raw:raw,attempt:Number(attempt||1)};
+    try{
+      if(window.UruWayAndroid&&typeof window.UruWayAndroid.loadDriverOrder==='function'){window.UruWayAndroid.loadDriverOrder(p.id);return}
+    }catch(_){ }
+    deliverOriginal(base,p,raw);
+  }
+  const baseOrder=window.UruWayApp&&window.UruWayApp.onDriverOrder;
+  window.UruWayApp=window.UruWayApp||{};
+  window.UruWayApp.onDriverOrder=function(raw){
+    const data=parse(raw),order=data&&data.order;
+    let id=String(order&&order.id||data&&data.id||'');
+    if(!id){const keys=Object.keys(recovering);if(keys.length===1)id=keys[0];}
+    const r=id&&recovering[id]?recovering[id]:null;
+    if(r){
+      if(data&&data.ok===true&&order&&lifecycleApplied(r.p.action,order.status)){return deliverSuccess(r.base,r.p,order)}
+      const attempt=Number(r.attempt||1);
+      if(attempt<3){delete recovering[id];setTimeout(function(){requestOrder(r.p,r.base,r.raw,attempt+1)},attempt===1?700:1400);return}
+      return deliverOriginal(r.base,r.p,r.raw);
+    }
+    if(typeof baseOrder==='function')return baseOrder.apply(this,arguments);
+  };
+  const baseAction=window.UruWayApp&&window.UruWayApp.onDriverAction;
+  if(typeof baseAction==='function'){
+    window.UruWayApp.onDriverAction=function(raw){
+      const data=parse(raw);
+      if(data&&data.ok===true&&data.order){const id=String(data.order.id||'');if(id)clearRecovery(id);return baseAction.apply(this,arguments)}
+      const p=newestPending();
+      if(p&&networkish(data)&&window.UruWayAndroid&&typeof window.UruWayAndroid.loadDriverOrder==='function'){
+        if(recovering[p.id])return;
+        setTimeout(function(){requestOrder(p,baseAction,raw,1)},320);
+        return;
+      }
+      if(p&&data&&data.ok===false)clearRecovery(p.id);
+      return baseAction.apply(this,arguments);
+    };
+  }
+
+  const priorRender=window.renderOrderCard;
+  if(typeof priorRender==='function'){
+    window.renderOrderCard=function(order){
+      const raw=priorRender.apply(this,arguments);if(typeof raw!=='string'||!order)return raw;
+      const tab=typeof driverTab!=='undefined'?String(driverTab||''):'';
+      if(tab!=='accepted'&&tab!=='history')return raw;
+      const h=document.createElement('div');h.innerHTML=raw;const card=h.firstElementChild;if(!card)return raw;
+      const oldOdo=card.querySelector('.rw116-odo-grid');
+      const section=oldOdo?oldOdo.closest('.order-section-v23'):null;
+      const delay=section?section.querySelector('.rw116-delay-inline'):null;if(delay)delay.remove();
+      if(section)section.remove();
+      const start=Number(order.odometer_start_km||0),end=Number(order.odometer_end_km||0);let total=Number(order.actual_work_km||0);if(!(total>0)&&start>0&&end>=start)total=end-start;
+      const price=card.querySelector('.order-price');
+      let acceptedWrap=null;
+      if(tab==='accepted'&&start>0){
+        acceptedWrap=document.createElement('div');acceptedWrap.className='rw-fix11-price-odo-row';
+        const chip=document.createElement('div');chip.className='rw-fix11-odo-chip';chip.innerHTML='<span>Начало пробега</span><strong>'+String(start)+' км</strong>';
+        if(price&&price.parentNode){price.parentNode.insertBefore(acceptedWrap,price);acceptedWrap.appendChild(price);acceptedWrap.appendChild(chip)}else{card.appendChild(chip)}
+      }
+      if(delay){
+        if(acceptedWrap)acceptedWrap.insertAdjacentElement('afterend',delay);
+        else if(price)price.insertAdjacentElement('afterend',delay);
+        else card.appendChild(delay);
+      }
+      if(tab==='history'&&String(order.status||'')==='completed'){
+        const metrics=document.createElement('div');metrics.className='rw-fix11-history-odo';
+        metrics.innerHTML='<div class="rw-fix11-odo-metric"><span>Начало</span><strong>'+(start>0?String(start)+' км':'—')+'</strong></div><div class="rw-fix11-odo-metric"><span>Конец</span><strong>'+(end>0?String(end)+' км':'—')+'</strong></div><div class="rw-fix11-odo-metric"><span>Итого</span><strong>'+(total>=0&&start>0&&end>0?String(total)+' км':'—')+'</strong></div>';
+        if(price&&price.parentNode)price.insertAdjacentElement('afterend',metrics);else card.appendChild(metrics);
+      }
+      return card.outerHTML;
+    };
+    try{renderOrderCard=window.renderOrderCard}catch(_){ }
+  }
+  window.RusWeoV121Fix11={installed:true,networkRecovery:'android_lifecycle_readback_3x',acceptedOdometer:'start_only_compact',historyOdometer:'start_end_total'};
+})();
+</script>
+
 </body>
 </html>
 
@@ -10891,7 +11053,7 @@ body .rw-fix35-row-secondary{
       const out=baseSwitch.apply(this,arguments);
       setTimeout(function(){
         if(String(tab||'')==='finance'){
-          requestFinance(true);
+          lastFinanceRequestAt=Date.now();
           startFinanceHeartbeat();
         }else stopFinanceHeartbeat();
       },0);
@@ -11245,5 +11407,42 @@ body .rw3-history-card .rw-fix34-history-row .rw-fix34-tip{
     standardActionGeometryInheritedFromFix34:true,
     navigationChooserRetained:true
   };
+})();
+</script>
+
+<script id="RUSWEO_V121_FIX10_PERFORMANCE_POLLING">
+(function(){
+  'use strict';
+  if(window.__RUSWEO_V121_FIX10_PERF_POLL__)return;
+  window.__RUSWEO_V121_FIX10_PERF_POLL__=true;
+  let lastSignature='',pollBusy=false,failures=0,lastFullRequestAt=0;
+  function parse(raw){try{return typeof raw==='string'?JSON.parse(raw):raw}catch(_){return null}}
+  function visible(){try{return currentScreen==='driverPanel'&&document.visibilityState!=='hidden'}catch(_){return false}}
+  function requestFull(){
+    const now=Date.now();if(now-lastFullRequestAt<10000)return;lastFullRequestAt=now;
+    try{if(typeof window.loadDriverOrders==='function')window.loadDriverOrders(true);else if(typeof loadDriverOrders==='function')loadDriverOrders(true)}catch(_){}
+  }
+  const prev=window.UruWayApp&&window.UruWayApp.onDriverOrders;
+  if(typeof prev==='function'){
+    window.UruWayApp.onDriverOrders=function(raw){
+      const data=parse(raw);if(data&&data.ok===true&&data.data_signature!==undefined)lastSignature=String(data.data_signature||'0');
+      return prev.apply(this,arguments);
+    };
+  }
+  window.rwV121Fix10OwnerPollTick=async function(){
+    if(!visible()||pollBusy)return;pollBusy=true;
+    try{
+      if(typeof rwOperatorApiV72!=='function')throw new Error('signature_api_unavailable');
+      const data=await rwOperatorApiV72('owner_orders_signature_v121fix10',{});
+      if(!data||data.ok!==true)throw new Error(String(data&&data.error||'signature_failed'));
+      const sig=String(data.signature||'0');failures=0;
+      if(!lastSignature){lastSignature=sig;return;}
+      if(sig!==lastSignature)requestFull();
+    }catch(_){
+      failures++;
+      if(failures>=3){failures=0;requestFull();}
+    }finally{pollBusy=false;}
+  };
+  window.RusWeoV121Fix10Performance={installed:true,ownerPolling:'signature_then_full_on_change',interval_ms:6000};
 })();
 </script>

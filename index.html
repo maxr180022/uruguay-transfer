@@ -6,7 +6,7 @@
 <title>RusWeo</title>
 <!-- RUSWEO_V119_FIX3_DRIVER_OFFER_REMINDER_PUBLIC_NAME -->
 <!-- RUSWEO_V117_UBER_BONUS_ODOMETER_PARTNER -->
-<meta name="rusweo-release" content="RusWeo 4.1.0 / V121 FIX9 / web 31146">
+<meta name="rusweo-release" content="RusWeo 4.1.0 / V121 FIX13 / web 31161">
 <!-- RUSWEO_V116_FIX39_UI_SOURCE_ANALYTICS_E2E -->
 <!-- RUSWEO_V117_CLIENT_ORDER_LINK_ANALYTICS -->
 <!-- RUSWEO_V117_DIRECTIONAL_TERMINAL_TARIFFS -->
@@ -1444,11 +1444,17 @@ async function loadTelegramOrdersV105(force){
   }
 }
 function tg105FmtNewsTime(v){try{const d=new Date(v);return d.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit'})+' · '+d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}catch(e){return 'сегодня'}}
+function rwV121Fix10NewsFetch_(){
+  const now=Date.now(),cache=window.__RW_FIX10_NEWS_CACHE__;
+  if(cache&&Array.isArray(cache.items)&&now-Number(cache.at||0)<60000)return Promise.resolve({items:cache.items});
+  if(window.__RW_FIX10_NEWS_PROMISE__)return window.__RW_FIX10_NEWS_PROMISE__;
+  window.__RW_FIX10_NEWS_PROMISE__=fetch(NEWS_API_V105+'?limit=3&_='+now,{method:'GET',cache:'no-store',credentials:'omit'}).then(function(r){if(!r.ok)throw new Error('HTTP');return r.json()}).then(function(d){const items=d&&Array.isArray(d.items)?d.items:[];window.__RW_FIX10_NEWS_CACHE__={at:Date.now(),items:items};return {items:items};}).finally(function(){window.__RW_FIX10_NEWS_PROMISE__=null});
+  return window.__RW_FIX10_NEWS_PROMISE__;
+}
 async function loadTelegramNewsV105(){
   const box=document.getElementById('tg105NewsList');if(!box)return;
   try{
-    const r=await fetch(NEWS_API_V105+'?limit=2',{method:'GET',cache:'no-store',credentials:'omit'}); if(!r.ok)throw new Error('HTTP');
-    const d=await r.json(),items=(d&&Array.isArray(d.items)?d.items:[]).slice(0,2); if(!items.length)throw new Error('empty');
+    const d=await rwV121Fix10NewsFetch_(),items=(d&&Array.isArray(d.items)?d.items:[]).slice(0,2); if(!items.length)throw new Error('empty');
     box.innerHTML=items.map((n,i)=>'<div class="tg105-news-item" role="button" tabindex="0" onclick="window.location.href=\'guide.html#news\'"><div class="tg105-news-thumb">'+(i===0?'🇺🇾':'🚌')+'</div><div><div class="tg105-news-title">'+tg105Esc((n.emoji||'')+' '+(n.headline||'Новость'))+'</div><div class="tg105-news-time">'+tg105Esc(tg105FmtNewsTime(n.publishedAt||n.savedAt))+'</div></div><div class="tg105-news-arrow">›</div></div>').join('');
   }catch(e){try{window.RusWeo&&window.RusWeo.guard&&window.RusWeo.guard.reportFinal(e,{stage:'news',action:'load_legacy_home_news',friendly:'Не удалось загрузить новости после автоматической повторной попытки',attempt:2}).catch(()=>{})}catch(_){}box.innerHTML='<div class="tg105-news-item"><div class="tg105-news-thumb">🇺🇾</div><div><div class="tg105-news-title">Последние новости Уругвая</div><div class="tg105-news-time">Открыть ленту</div></div><div class="tg105-news-arrow">›</div></div>'}
 }
@@ -1577,7 +1583,7 @@ function openBooking(){
   const pageParams=new URLSearchParams(location.search);
   const corporate=(pageParams.get('mode')==='corporate');
   const testOrder=(pageParams.get('test_order')==='1');
-  const bookingParams=new URLSearchParams({embedded:'1',modal:'1',vehicle_class:'standard',v:'31143',_:String(Date.now())});
+  const bookingParams=new URLSearchParams({embedded:'1',modal:'1',vehicle_class:'standard',v:'31157',_:String(Date.now())});
   if(corporate)bookingParams.set('mode','corporate');
   if(testOrder)bookingParams.set('test_order','1');
   const initData=String(tg&&tg.initData||'').trim();
@@ -1612,7 +1618,7 @@ function openBookingEditV97(id){
   const modal=document.getElementById('booking');
   const f=document.getElementById('bookingFrame');
   if(!modal||!f)return;
-  const bookingParams=new URLSearchParams({embedded:'1',modal:'1',vehicle_class:'standard',edit_id:id,edit_role:'client',v:'31143',_:String(Date.now())});
+  const bookingParams=new URLSearchParams({embedded:'1',modal:'1',vehicle_class:'standard',edit_id:id,edit_role:'client',v:'31157',_:String(Date.now())});
   const initData=String(tg&&tg.initData||'').trim();
   if(initData)bookingParams.set('init_data',initData);
   try{
@@ -1712,7 +1718,7 @@ try{
               finished=true;
               launchResolving=false;
               markSplashSeen();
-              location.replace('driver.html?v=31149&hf=1');
+              location.replace('driver.html?v=31160&hf=1');
               return;
             }
             if(String(role)==='driver_external'){
@@ -1828,7 +1834,7 @@ try{
   if(isAndroid){document.body.classList.add('is-android');}
   window.openAndroidDriver=function(){
     let role='';try{role=String(localStorage.getItem('uruway_auth_role')||'')}catch(e){}
-    location.href=role==='driver_external'?'driver_v4.html?v=31137&v121=1&platform=android':'driver.html?v=31149&hf=1';
+    location.href=role==='driver_external'?'driver_v4.html?v=31137&v121=1&platform=android':'driver.html?v=31160&hf=1';
   };
   window.uruwayOpenExternal=function(url){
     try{
@@ -1905,7 +1911,7 @@ try{
         try{setTimeout(()=>window.rw2LoadOrders&&window.rw2LoadOrders(true),80)}catch(e){}
         return;
       }
-      location.replace(role==='driver_external'?'driver_v4.html?v=31137&v121=1&platform=android':'driver.html?v=31149&hf=1');
+      location.replace(role==='driver_external'?'driver_v4.html?v=31137&v121=1&platform=android':'driver.html?v=31160&hf=1');
       return;
     }
     if(role!=='client'){
@@ -2183,8 +2189,8 @@ try{
   window.rw2OpenNews=function(i){const n=rw2NewsCache[Number(i)];if(!n)return;document.getElementById('rw2NewsModalTitle').textContent=String(n.headline||'Новость');document.getElementById('rw2NewsModalTime').textContent='сегодня · '+newsTime(n.publishedAt||n.savedAt);document.getElementById('rw2NewsModalBody').textContent=newsBody(n);const source=document.getElementById('rw2NewsSource');const url=String(n.sourceUrl||'');source.hidden=!url;source.onclick=()=>{if(!url)return;try{if(tg2&&typeof tg2.openLink==='function'){tg2.openLink(url);return}}catch(e){}window.open(url,'_blank','noopener')};const m=document.getElementById('rw2NewsModal');m.classList.add('open');m.setAttribute('aria-hidden','false')};
   window.rw2CloseNews=function(){const m=document.getElementById('rw2NewsModal');m.classList.remove('open');m.setAttribute('aria-hidden','true')};
   window.rw2NewsBackdrop=function(e){if(e&&e.target&&e.target.id==='rw2NewsModal')rw2CloseNews()};
-  async function loadNews(){const box=document.getElementById('rw2NewsList');if(!box)return;try{const r=await fetch(newsApi+'?limit=3&_='+Date.now(),{cache:'no-store',credentials:'omit'});if(!r.ok)throw new Error();const d=await r.json(),it=(d&&Array.isArray(d.items)?d.items:[]).slice(0,3);if(!it.length)throw new Error();rw2NewsCache=it;box.innerHTML=it.map((n,i)=>'<div class="rw2-news-item" role="button" tabindex="0" data-news-index="'+i+'"><div class="rw2-news-thumb">'+esc(n.emoji||(i===0?'🇺🇾':i===1?'🚌':'📰'))+'</div><div><div class="rw2-news-title">'+esc(n.headline||'Новость')+'</div><div class="rw2-news-time">сегодня · '+esc(newsTime(n.publishedAt||n.savedAt))+'</div></div><div class="rw2-news-arrow">›</div></div>').join('');box.querySelectorAll('.rw2-news-item').forEach(x=>{const open=()=>rw2OpenNews(x.dataset.newsIndex);x.addEventListener('click',open);x.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}})})}catch(e){try{window.RusWeo&&window.RusWeo.guard&&window.RusWeo.guard.reportFinal(e,{stage:'news',action:'load_home_news',friendly:'Не удалось загрузить новости после автоматической повторной попытки',attempt:2}).catch(()=>{})}catch(_){}rw2NewsCache=[];box.innerHTML='<div class="rw2-news-item" onclick="rw31Navigate(\'news\')"><div class="rw2-news-thumb">🇺🇾</div><div><div class="rw2-news-title">Последние новости Уругвая</div><div class="rw2-news-time">Открыть ленту</div></div><div class="rw2-news-arrow">›</div></div>'}}
-  document.addEventListener('DOMContentLoaded',()=>{loadNews();setInterval(loadNews,5*60*1000);window.rw2LoadOrders(true)});
+  async function loadNews(){const box=document.getElementById('rw2NewsList');if(!box)return;try{const d=await rwV121Fix10NewsFetch_(),it=(d&&Array.isArray(d.items)?d.items:[]).slice(0,3);if(!it.length)throw new Error();rw2NewsCache=it;box.innerHTML=it.map((n,i)=>'<div class="rw2-news-item" role="button" tabindex="0" data-news-index="'+i+'"><div class="rw2-news-thumb">'+esc(n.emoji||(i===0?'🇺🇾':i===1?'🚌':'📰'))+'</div><div><div class="rw2-news-title">'+esc(n.headline||'Новость')+'</div><div class="rw2-news-time">сегодня · '+esc(newsTime(n.publishedAt||n.savedAt))+'</div></div><div class="rw2-news-arrow">›</div></div>').join('');box.querySelectorAll('.rw2-news-item').forEach(x=>{const open=()=>rw2OpenNews(x.dataset.newsIndex);x.addEventListener('click',open);x.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}})})}catch(e){try{window.RusWeo&&window.RusWeo.guard&&window.RusWeo.guard.reportFinal(e,{stage:'news',action:'load_home_news',friendly:'Не удалось загрузить новости после автоматической повторной попытки',attempt:2}).catch(()=>{})}catch(_){}rw2NewsCache=[];box.innerHTML='<div class="rw2-news-item" onclick="rw31Navigate(\'news\')"><div class="rw2-news-thumb">🇺🇾</div><div><div class="rw2-news-title">Последние новости Уругвая</div><div class="rw2-news-time">Открыть ленту</div></div><div class="rw2-news-arrow">›</div></div>'}}
+  document.addEventListener('DOMContentLoaded',()=>{loadNews();setInterval(loadNews,5*60*1000)});
   // RUSWEO 3.0 FIX2: no Android-only 3s polling; account navigation never reloads data.
 })();
 </script>
@@ -2227,6 +2233,8 @@ try{
   }
 
   async function preflight(){
+    if(preflightPromise)return preflightPromise;
+    preflightPromise=(async function(){
     const isAndroid=!!(window.UruWayAndroid&&typeof window.UruWayAndroid.getPlatform==='function');
     if(isAndroid){
       try{
@@ -2248,8 +2256,6 @@ try{
       rememberActual('client','');return 'client';
     }
 
-    if(preflightPromise)return preflightPromise;
-    preflightPromise=(async function(){
       const init=await waitInitData(1800);if(!init){rememberActual('client','');return 'client'}
       try{sessionStorage.setItem('rw_tg_driver_init_data_v1',init)}catch(e){}
       try{
@@ -2271,7 +2277,7 @@ try{
     const role=actualDriverRole||String(sessionStorage.getItem('rw121_driver_actual_role')||''),uid=actualDriverUid||String(sessionStorage.getItem('rw121_driver_actual_uid')||'');
     if(role!=='driver_standard'&&role!=='driver_external'&&role!=='driver')return;
     writeMode(uid,'driver');
-    location.href=role==='driver_external'?'driver_v4.html?v=31137&v121=1':'driver.html?v=31149&hf=1';
+    location.href=role==='driver_external'?'driver_v4.html?v=31137&v121=1':'driver.html?v=31160&hf=1';
   };
   window.rw28OpenDriver=window.rw121SwitchToDriverMode;
   preflight().then(function(){showDriverSwitch()}).catch(function(){});
@@ -2965,6 +2971,7 @@ window.addEventListener('load',function(){try{const q=new URLSearchParams(locati
     setActive(account?'account':'home');
     setHomeStatic(!account);
     window.scrollTo(0,0);
+    if(account){try{setTimeout(function(){window.rw2LoadOrders&&window.rw2LoadOrders(false)},0)}catch(e){}}
 
     /* Navigation is UI-only. Orders are loaded once at boot and refreshed only
        by explicit data actions, exactly the same in Telegram and Android. */
@@ -3082,7 +3089,7 @@ window.addEventListener('load',function(){try{const q=new URLSearchParams(locati
    fit behind a short branded splash. Internal navigation does not replay it. */
 </script>
 
-<!-- RUSWEO V121 FIX9 DRIVER CACHE BUMP: driver.html?v=31149&hf=1 -->
+<!-- RUSWEO V121 FIX13 OWNER FINANCE CACHE BUMP: driver.html?v=31160&hf=1 -->
 
 <style id="RUSWEO_PARTNER_CONFIRMED_V85_STYLE">
 .rw85-partner-confirm{display:none;position:fixed;inset:0;z-index:2147483550;background:rgba(4,18,39,.55);padding:calc(16px + env(safe-area-inset-top)) 14px calc(16px + env(safe-area-inset-bottom));align-items:flex-end;justify-content:center}
@@ -3165,9 +3172,9 @@ const RW122_BIZ_BOOTSTRAP=[
 {id:'airport_mvd',title:'Порт / аэропорт ↔ Монтевидео',pricing_type:'fixed',price:100,currency:'USD',enabled:true},
 {id:'mvd_pde',title:'Монтевидео ↔ Пунта-дель-Эсте',pricing_type:'fixed',price:300,currency:'USD',enabled:true},
 {id:'long_distance',title:'Другие города / дальние расстояния',pricing_type:'per_km',price:50,currency:'UYU',unit:'км',enabled:true},
+{id:'excursions',title:'Экскурсии',pricing_type:'per_hour',price:50,currency:'USD',unit:'час',enabled:true},
 {id:'moving',title:'Перевозка вещей / переезд',pricing_type:'per_hour',price:50,currency:'USD',unit:'час',enabled:true},
 {id:'animals',title:'Перевозка животных',pricing_type:'request',price:0,currency:'USD',enabled:true,note:'По запросу доступна клетка Skudo 4'},
-{id:'excursions',title:'Экскурсии / индивидуальные маршруты',pricing_type:'per_hour',price:50,currency:'USD',unit:'час',enabled:true},
 {id:'individual',title:'Индивидуальный расчёт',pricing_type:'request',price:0,currency:'USD',enabled:true,note:'Водитель рассчитает стоимость и свяжется с вами'}];
 let rw122BizCatalog=[],rw122BizServiceId='',rw122BizBusy=false,rw122BizToken='',rw122BizPoints=['','','',''],rw122BizCatalogLoaded=false;
 function rw122Esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}

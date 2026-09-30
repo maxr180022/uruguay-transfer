@@ -7,7 +7,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="rusweo-release" content="RusWeo 4.1.0 / V121 FIX6 / booking web 31138">
+<meta name="rusweo-release" content="RusWeo 4.1.0 / V121 FIX8 / booking web 31143">
 <title>RusWeo</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="rusweo-platform.js?v=31128"></script>
@@ -1066,6 +1066,10 @@ html.rw2-modal-booking main.wrap{
 .rw114-terms a:active{opacity:.72}.rw114-terms-error{border-color:#ef9aa5!important;background:#fff5f6!important;box-shadow:0 0 0 2px rgba(220,53,69,.06)}
 html.rw97-edit-mode #rw114TermsAcceptance{display:none!important}
 </style>
+
+<style id="rusweo-122-driver-choice-css">
+.rw122-driver-choice{display:none;margin-top:10px;border:1px solid #dce6f4;border-radius:16px;background:linear-gradient(145deg,#fff,#f7faff);padding:11px}.rw122-driver-choice.show{display:block}.rw122-driver-choice h4{margin:0 0 4px;font-size:12px;color:#18385e}.rw122-driver-choice p{margin:0 0 9px;font-size:10px;color:#6b7f99;line-height:1.35}.rw122-driver-actions{display:flex;gap:7px;flex-wrap:wrap}.rw122-driver-actions button{border:1px solid #d6e2f3;background:#fff;color:#34516f;border-radius:12px;min-height:39px;padding:0 11px;font-weight:900;font-size:11px}.rw122-driver-actions button.primary,.rw122-driver-actions button.active{border:0;background:linear-gradient(100deg,#0a8df5,#5b46ef 55%,#f30884);color:#fff}.rw122-driver-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:8px}.rw122-driver-list button{min-height:42px;border:1px solid #dbe5f3;border-radius:12px;background:#fff;color:#234360;font-weight:900}.rw122-driver-result{display:none;margin-top:8px;padding:9px 10px;border-radius:11px;font-size:10.5px;line-height:1.4;background:#eef6ff;color:#28517e}.rw122-driver-result.show{display:block}.rw122-driver-result.busy{background:#fff5ed;color:#92520f}.rw122-driver-next{display:flex;gap:7px;margin-top:8px;flex-wrap:wrap}.rw122-driver-next button{min-height:38px;border:0;border-radius:11px;padding:0 10px;font-weight:900;font-size:10px}.rw122-driver-next .time{background:linear-gradient(100deg,#0a8df5,#5b46ef);color:#fff}.rw122-driver-next .any{background:#eef2f7;color:#40556f}@media(max-width:360px){.rw122-driver-list{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 <main class="wrap">
@@ -1122,7 +1126,7 @@ html.rw97-edit-mode #rw114TermsAcceptance{display:none!important}
       <div class="step-card-head"><span class="step-icon">📅</span><div><b>Дата и время</b><small>Выберите удобные дату и время. Система проверит доступность.</small></div></div>
       <div class="grid2"><div class="field"><label>Дата <span class="req">*</span></label><input id="date" type="date"></div><div class="field"><label>Время <span class="req">*</span></label><input id="time" type="time"></div></div>
       <div class="field hidden" id="hoursWrap"><label>Количество часов</label><select id="hours"></select><div class="hint" id="hourlyKmHint">3 часа = 30 км с клиентом. Сверх включённого пробега — 40 UYU/км. Зона почасового тарифа: Монтевидео и до 10 км за городской чертой; дальше применяется межгородская тарифная сетка.</div></div>
-      <div class="hint">Оформить заявку можно не раньше чем через 2 часа. Доступность выбранного времени проверяется автоматически.</div><div class="status rw77-calendar-status" id="availabilityBox">⏳ Выберите дату и время, затем дождитесь проверки доступности.</div>
+      <div class="hint">Оформить заявку можно не раньше чем через 2 часа. Доступность выбранного времени проверяется автоматически.</div><div class="status rw77-calendar-status" id="availabilityBox">⏳ Выберите дату и время, затем дождитесь проверки доступности.</div><div class="rw122-driver-choice" id="rw122DriverChoice"><h4>Хотите выбрать конкретного водителя?</h4><p id="rw122DriverChoiceText">Показываем только имена. Автомобиль отображается только после назначения.</p><div class="rw122-driver-actions" id="rw122DriverChoiceActions"><button type="button" onclick="rw122ChooseAnyDriver()">Не важно</button><button class="primary" type="button" onclick="rw122ShowDriverList()">Выбрать водителя</button></div><div class="rw122-driver-list" id="rw122DriverList" hidden></div><div class="rw122-driver-result" id="rw122DriverResult"></div></div>
     </div>
     <div class="wizard-actions"><button class="wizard-back" type="button" onclick="prevBookingStep()">← Назад</button><button class="wizard-next" type="button" onclick="nextBookingStep()">Продолжить <span>→</span></button></div>
   </div>
@@ -2707,6 +2711,21 @@ function rwAvailabilitySignatureV77(){
   });
   return parts.join('|');
 }
+
+let rw122DriverDecision='',rw122PreferredDriverId='',rw122PreferredDriverName='',rw122DriverOptions=[],rw122GlobalNext=null,rw122DriverLoadSeq=0;
+function rw122ResetDriverChoice(){rw122DriverDecision='';rw122PreferredDriverId='';rw122PreferredDriverName='';rw122DriverOptions=[];rw122GlobalNext=null;const w=$('rw122DriverChoice');if(w)w.classList.remove('show');const l=$('rw122DriverList');if(l){l.hidden=true;l.innerHTML=''}const r=$('rw122DriverResult');if(r){r.className='rw122-driver-result';r.innerHTML=''}}
+function rw122AvailabilityParams(action){let u=BACKEND_URL+'?action='+encodeURIComponent(action)+'&service='+encodeURIComponent(selected&&selected.id||'')+'&date='+encodeURIComponent($('date').value)+'&time='+encodeURIComponent($('time').value)+'&hours='+encodeURIComponent($('hours').value||3)+'&passengers='+encodeURIComponent($('passengers').value||1)+'&bags_l='+encodeURIComponent($('bagsL').value||0)+'&bags_m='+encodeURIComponent($('bagsM').value||0)+'&bags='+encodeURIComponent(Number($('bagsL').value||0)+Number($('bagsM').value||0))+rwCalendarAvailabilityQueryV18();return u}
+function rw122SetDriverChoiceMessage(html,busy){const r=$('rw122DriverResult');if(!r)return;r.innerHTML=html||'';r.className='rw122-driver-result'+(html?' show':'')+(busy?' busy':'')}
+function rw122ApplyNextSlot(next){const m=String(next||'').match(/^(\d{2})\.(\d{2})\.(\d{4}) (\d{2}):(\d{2})$/);if(!m)return;$('date').value=m[3]+'-'+m[2]+'-'+m[1];$('time').value=m[4]+':'+m[5];rw122ResetDriverChoice();rwAvailabilityQueueV77(0)}
+async function rw122LoadDriverOptions(baseAvailable){
+  if(!selected||selected.id==='corporate'||!$('date').value||!$('time').value){rw122ResetDriverChoice();return}
+  const seq=++rw122DriverLoadSeq;try{const data=await jsonp(rw122AvailabilityParams('v122_standard_driver_options'),{timeout:10000,retries:0});if(seq!==rw122DriverLoadSeq)return;if(!data||!data.ok)return;const w=$('rw122DriverChoice');if(!w)return;rw122DriverOptions=Array.isArray(data.drivers)?data.drivers:[];rw122GlobalNext=data.next_global||null;w.classList.add('show');const h=w.querySelector('h4'),t=$('rw122DriverChoiceText'),a=$('rw122DriverChoiceActions'),l=$('rw122DriverList');if(data.all_busy){rw122DriverDecision='';rw122PreferredDriverId='';rw122PreferredDriverName='';if(h)h.textContent='На выбранное время все водители заняты';if(t)t.textContent=data.next_global?('Ближайший водитель освободится: '+data.next_global.next):'Выберите другое время.';if(a)a.innerHTML=data.next_global?'<button class="primary" type="button" onclick="rw122ApplyNextSlot(\''+String(data.next_global.next).replace(/'/g,'')+'\')">Выбрать '+String(data.next_global.next).replace(/</g,'&lt;')+'</button>':'';if(l){l.hidden=true;l.innerHTML=''}rw122SetDriverChoiceMessage('',false);return}if(h)h.textContent='Хотите выбрать конкретного водителя?';if(t)t.textContent='Только имена — автомобиль заранее не показывается.';if(a)a.innerHTML='<button type="button" onclick="rw122ChooseAnyDriver()">Не важно</button><button class="primary" type="button" onclick="rw122ShowDriverList()">Выбрать водителя</button>';if(l){l.hidden=true;l.innerHTML=''}rw122SetDriverChoiceMessage('',false);if(!baseAvailable){rw122DriverDecision='';}}
+  catch(e){/* base availability remains authoritative; driver chooser may be retried on next live check */}
+}
+function rw122ChooseAnyDriver(){rw122DriverDecision='any';rw122PreferredDriverId='';rw122PreferredDriverName='';const l=$('rw122DriverList');if(l)l.hidden=true;rw122SetDriverChoiceMessage('✓ Заказ будет распределён по обычной очереди свободных водителей.',false);if(rwAvailabilityStateV77.status==='unavailable')rwAvailabilityQueueV77(0)}
+function rw122ShowDriverList(){const l=$('rw122DriverList');if(!l)return;l.hidden=false;l.innerHTML=rw122DriverOptions.map(d=>'<button type="button" onclick="rw122CheckDriver(\''+String(d.driver_id).replace(/'/g,'')+'\')">'+String(d.name||'Водитель').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))+'</button>').join('');rw122SetDriverChoiceMessage('',false)}
+async function rw122CheckDriver(id){rw122DriverDecision='checking';rw122PreferredDriverId='';rw122PreferredDriverName='';rw122SetDriverChoiceMessage('⏳ Проверяем календарь водителя…',false);try{const r=await jsonp(rw122AvailabilityParams('v122_standard_driver_check')+'&driver_id='+encodeURIComponent(id),{timeout:10000,retries:0});if(!r||!r.ok)throw new Error('Не удалось проверить водителя');const name=String(r.driver&&r.driver.name||'Водитель');if(r.available){rw122DriverDecision='preferred';rw122PreferredDriverId=String(r.driver.driver_id||id);rw122PreferredDriverName=name;const l=$('rw122DriverList');if(l)l.hidden=true;rw122SetDriverChoiceMessage('✓ '+name+' свободен на выбранное время. Заказ первым уйдёт ему.',false);rwAvailabilityQueueV77(0)}else{rw122DriverDecision='';const next=String(r.next||'');rw122SetDriverChoiceMessage('<b>'+name+' занят.</b>'+(next?' Ближайшее свободное время: <b>'+next+'</b>.':' Выберите другое время.')+(next?'<div class="rw122-driver-next"><button class="time" type="button" onclick="rw122ApplyNextSlot(\''+next.replace(/'/g,'')+'\')">Выбрать это время</button><button class="any" type="button" onclick="rw122ChooseAnyDriver()">Продолжить с другим водителем</button></div>':''),true)}}catch(e){rw122DriverDecision='';rw122SetDriverChoiceMessage('Не удалось проверить календарь выбранного водителя. Попробуйте ещё раз.',true)}}
+
 function rwAvailabilityPaintV77(status,message){
   const b=$('availabilityBox');if(!b)return;
   b.className='status rw77-calendar-status';
@@ -2723,6 +2742,7 @@ function rwAvailabilityQueueV77(delay){
     return;
   }
   const sig=rwAvailabilitySignatureV77();
+  if(rwAvailabilityStateV77.signature&&rwAvailabilityStateV77.signature!==sig)rw122ResetDriverChoice();
   rwAvailabilityStateV77.status='pending';rwAvailabilityStateV77.signature=sig;rwAvailabilityStateV77.message='Пожалуйста, подождите — проверяем возможность оформления заявки.';rwAvailabilityStateV77.checkedAt=0;
   const requestId=++rwAvailabilityStateV77.requestId;
   rwAvailabilityPaintV77('pending','⏳ Пожалуйста, подождите — проверяем возможность оформления заявки…');
@@ -2733,7 +2753,7 @@ $('date').onchange=scheduleAvailability;$('time').onchange=scheduleAvailability;
 function rwRequireAvailabilityV77(){
   const sig=rwAvailabilitySignatureV77();
   const fresh=Date.now()-Number(rwAvailabilityStateV77.checkedAt||0)<=45000;
-  if(rwAvailabilityStateV77.status==='available'&&rwAvailabilityStateV77.signature===sig&&fresh)return true;
+  if(rwAvailabilityStateV77.status==='available'&&rwAvailabilityStateV77.signature===sig&&fresh){if(selected&&selected.id!=='corporate'&&rw122DriverDecision!=='any'&&rw122DriverDecision!=='preferred')throw new Error('Выберите: конкретный водитель или «Не важно».');return true;}
   if(rwAvailabilityStateV77.status==='unavailable'&&rwAvailabilityStateV77.signature===sig&&fresh)throw new Error(rwAvailabilityStateV77.message||'Выбранное время недоступно.');
   if(rwAvailabilityStateV77.status==='error'&&rwAvailabilityStateV77.signature===sig){rwAvailabilityQueueV77(0);throw new Error('Не удалось подтвердить доступность. Повторяем проверку — пожалуйста, подождите.');}
   if(!(rwAvailabilityStateV77.status==='pending'&&rwAvailabilityStateV77.signature===sig))rwAvailabilityQueueV77(0);
@@ -2871,6 +2891,8 @@ async function checkAvailability(requestId){
       '&bags_l='+encodeURIComponent($('bagsL').value||0)+
       '&bags_m='+encodeURIComponent($('bagsM').value||0)+
       '&bags='+encodeURIComponent(Number($('bagsL').value||0)+Number($('bagsM').value||0))+
+      '&preferred_driver_id='+encodeURIComponent(rw122PreferredDriverId||'')+
+      '&preferred_driver_name='+encodeURIComponent(rw122PreferredDriverName||'')+
       rwCalendarAvailabilityQueryV18()
     );
 
@@ -2879,10 +2901,12 @@ async function checkAvailability(requestId){
       const msg='✅ Время свободно. Можно продолжать оформление.';
       rwAvailabilityStateV77.status='available';rwAvailabilityStateV77.signature=sig;rwAvailabilityStateV77.message=msg;rwAvailabilityStateV77.checkedAt=Date.now();
       rwAvailabilityPaintV77('available',msg);
+      rw122LoadDriverOptions(true);
     }else{
       const rawMsg=String(r&&r.message||'Выбранное время недоступно.');const baseMsg=rwOperatorContextV72()?rawMsg:rwClientAvailabilityTextV114(rawMsg,'Выбранное время недоступно.');const msg=baseMsg+(r.next?' Ближайшее свободное: '+r.next:'');
       rwAvailabilityStateV77.status='unavailable';rwAvailabilityStateV77.signature=sig;rwAvailabilityStateV77.message=msg;rwAvailabilityStateV77.checkedAt=Date.now();
       rwAvailabilityPaintV77('unavailable',msg);
+      rw122LoadDriverOptions(false);
     }
     return r;
   }catch(e){
@@ -2994,7 +3018,7 @@ $('submit').onclick=async()=>{
     btn.disabled=true;btn.textContent='Отправляем заявку…';
     let basePrice=selected.manual?'':(selected.id==='grid_one'?(rwGridQuote?(rwGridQuote.client_price_usd||rwGridQuote.price_usd):''):(selected.id==='hourly'?600*Number($('hours').value||3):selected.p));
     let currency=selected.id==='hourly'?'UYU':(selected.id==='grid_one'?'USD':(selected.c||''));
-    let data={service:selected.id,service_name:selected.n,date:$('date').value,time:$('time').value,hours:$('hours').value||3,...route,...rw104AdminPricingPayloadV104(),passengers:$('passengers').value,bags_l:$('bagsL').value,bags_m:$('bagsM').value,bags:String(Number($('bagsL').value||0)+Number($('bagsM').value||0)),booster:$('booster').value,final_payment:$('finalPayment').value,telegram:$('telegram').value.trim(),phone:$('phone').value.trim(),whatsapp:$('whatsapp').value.trim(),telegram_user_id:p.id,telegram_first_name:p.first,telegram_last_name:p.last,telegram_username:p.username,corporate_passenger_name:$('corpPassenger').value.trim(),comment:$('orderComment').value.trim()||$('corpComment').value.trim(),price:String(basePrice),currency,source:(isAndroid?'android':'telegram_mini_app'),request_token:rt,vehicle_class:'standard',terms_accepted:(operatorCtxPreV114?'0':'1'),terms_version:RW_TERMS_VERSION_V114,terms_document:RW_TERMS_DOCUMENT_V114,app_session:(isAndroid?String(params.get('app_session')||localStorage.getItem('uruway_auth_session')||''):''),init_data:(isAndroid?'':telegramInitData()),test_mode_v121:(manualTestModeV121?'1':'0')};
+    let data={service:selected.id,service_name:selected.n,date:$('date').value,time:$('time').value,hours:$('hours').value||3,...route,...rw104AdminPricingPayloadV104(),passengers:$('passengers').value,bags_l:$('bagsL').value,bags_m:$('bagsM').value,bags:String(Number($('bagsL').value||0)+Number($('bagsM').value||0)),booster:$('booster').value,final_payment:$('finalPayment').value,telegram:$('telegram').value.trim(),phone:$('phone').value.trim(),whatsapp:$('whatsapp').value.trim(),telegram_user_id:p.id,telegram_first_name:p.first,telegram_last_name:p.last,telegram_username:p.username,corporate_passenger_name:$('corpPassenger').value.trim(),comment:$('orderComment').value.trim()||$('corpComment').value.trim(),price:String(basePrice),currency,source:(isAndroid?'android':'telegram_mini_app'),request_token:rt,vehicle_class:'standard',terms_accepted:(operatorCtxPreV114?'0':'1'),terms_version:RW_TERMS_VERSION_V114,terms_document:RW_TERMS_DOCUMENT_V114,app_session:(isAndroid?String(params.get('app_session')||localStorage.getItem('uruway_auth_session')||''):''),init_data:(isAndroid?'':telegramInitData()),test_mode_v121:(manualTestModeV121?'1':'0'),preferred_driver_id:rw122PreferredDriverId||'',preferred_driver_name:rw122PreferredDriverName||''};
     const operatorCtx=rwOperatorContextV72();
     if(operatorCtx){if(operatorCtx.claim_mode_fix38===true){data.operator_unlinked_client_fix38='1';data.operator_for_client='0';data.operator_client='';data.source='driver_operator_claim';}else{data.operator_for_client='1';data.operator_client=String(operatorCtx.target_input||(operatorCtx.target_user&&operatorCtx.target_user.id)||'');data.source='driver_operator';}data.operator_app_session=String(operatorCtx.operator_app_session||'');data.operator_init_data=String(operatorCtx.operator_init_data||'');data.app_session='';data.init_data='';}
     let form=document.createElement('form');form.method='POST';form.action=BACKEND_URL;form.target='booking_sink';form.style.display='none';
@@ -3539,7 +3563,7 @@ html.rw97-edit-mode:not(.rw104-driver-edit) #servicePicker .service-picker-chev{
     const p=profile();
     let basePrice=selected.manual?'':(selected.id==='grid_one'?(rwGridQuote?(rwGridQuote.client_price_usd||rwGridQuote.price_usd):''):(selected.id==='hourly'?600*Number($('hours').value||3):selected.p));
     let currency=selected.id==='hourly'?'UYU':(selected.id==='grid_one'?'USD':(selected.c||''));
-    return {service:selected.id,service_name:selected.n,date:$('date').value,time:$('time').value,hours:$('hours').value||3,...route,...rw104AdminPricingPayloadV104(),passengers:$('passengers').value,bags_l:$('bagsL').value,bags_m:$('bagsM').value,bags:String(Number($('bagsL').value||0)+Number($('bagsM').value||0)),booster:$('booster').value,final_payment:$('finalPayment').value,telegram:$('telegram').value.trim(),phone:$('phone').value.trim(),whatsapp:$('whatsapp').value.trim(),telegram_user_id:p.id,telegram_first_name:p.first,telegram_last_name:p.last,telegram_username:p.username,corporate_passenger_name:$('corpPassenger').value.trim(),comment:$('orderComment').value.trim()||$('corpComment').value.trim(),price:String(basePrice),currency,vehicle_class:'standard'};
+    return {service:selected.id,service_name:selected.n,date:$('date').value,time:$('time').value,hours:$('hours').value||3,...route,...rw104AdminPricingPayloadV104(),passengers:$('passengers').value,bags_l:$('bagsL').value,bags_m:$('bagsM').value,bags:String(Number($('bagsL').value||0)+Number($('bagsM').value||0)),booster:$('booster').value,final_payment:$('finalPayment').value,telegram:$('telegram').value.trim(),phone:$('phone').value.trim(),whatsapp:$('whatsapp').value.trim(),telegram_user_id:p.id,telegram_first_name:p.first,telegram_last_name:p.last,telegram_username:p.username,corporate_passenger_name:$('corpPassenger').value.trim(),comment:$('orderComment').value.trim()||$('corpComment').value.trim(),price:String(basePrice),currency,vehicle_class:'standard',preferred_driver_id:rw122PreferredDriverId||'',preferred_driver_name:rw122PreferredDriverName||''};
   }
 
   function editTimeChanged(){

@@ -7,12 +7,12 @@
   content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 
 <title>RusWeo 4.1.0 — Личный кабинет</title>
-<meta name="rusweo-release" content="RusWeo 4.1.0 / V121 FIX4 / owner driver web 31133 / Android native code112">
+<meta name="rusweo-release" content="RusWeo 4.1.0 / V121 FIX8 / owner driver web 31145 / Android native code112">
 <meta name="rusweo-ui-policy" content="single-design-v3-driver-android-telegram">
 <meta name="rusweo-runtime-policy" content="driver-root-back-minimize-v2">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="rusweo-platform.js?v=31128"></script>
-<script src="rusweo-auth.js?v=31128"></script>
+<script src="rusweo-platform.js?v=31138"></script>
+<script src="rusweo-auth.js?v=31138"></script>
 <!-- RusWeo 3.1.42 / V115 · explicit final-point wait + return-home departure lifecycle -->
 
 <!-- RUSWEO_V119_FIX3_DRIVER_OFFER_REMINDER_PUBLIC_NAME -->
@@ -1749,6 +1749,7 @@ function openBooking(type){
   frame.src =
     'booking.html?vehicle_class=' +
     encodeURIComponent(type) +
+    '&v=31138' +
     (androidSession
       ? '&app_session=' + encodeURIComponent(androidSession)
       : '') +
@@ -1926,7 +1927,7 @@ function rwFinanceBuildOkV95(data){
   // V120: V4 uses the same proven V95 finance contract. Build identity
   // must not be treated as an API capability gate, otherwise every newer V4 build
   // backend produces a false "V95+ not active" popup after a successful call.
-  return build.indexOf('RUSWEO_4_1_0_V121_')===0 || build.indexOf('RUSWEO_4_0_1_V120_')===0 || build.indexOf('RUSWEO_4_0_V119_')===0 || build.indexOf('RUSWEO_3_1_V95_')===0 || build==='RUSWEO_3_1_V97_ORDER_EDIT_20260916' || build==='RUSWEO_3_1_V99_DIAGNOSTICS_E2E_20260916' || build==='RUSWEO_3_1_V100_ROLE_ISOLATION_20260916' || build==='RUSWEO_3_1_V103_CORPORATE_CALENDAR_20260916' || build==='RUSWEO_3_1_V104_LOYALTY_PRICE_REMINDER_20260918' || build==='RUSWEO_3_1_V105_FINAL_PRICE_20260918' || build==='RUSWEO_3_1_V106_POINT_ETA_REMINDER_20260918' || build==='RUSWEO_3_1_V107_DRIVER_UI_SAFETY_20260919' || build==='RUSWEO_3_1_V108_HISTORY_ACTION_ROW_20260919' || build==='RUSWEO_3_1_V109_DRIVER_FINANCE_ALIGNMENT_20260919' || build==='RUSWEO_3_1_V110_DRIVER_HOME_COMPACT_20260919' || build==='RUSWEO_3_1_V111_MONEY_INPUT_TRANSPORT_20260919' || build==='RUSWEO_3_1_V112_ANDROID_NOTIFICATION_FINANCE_ALIGNMENT_20260919' || build==='RUSWEO_3_1_V113_TERMINAL_EV_ANALYTICS_20260921' || build==='RUSWEO_3_1_V114_LEGAL_TERMS_UI_20260922' || build==='RUSWEO_3_1_V115_HOME_DEPARTURE_LIFECYCLE_20260922' || build==='RUSWEO_3_1_V116_RETURN_HOME_ETA_20260923' || build==='RUSWEO_3_1_V116_FIX36_MONITORING_E2E_20260927' || build==='RUSWEO_3_1_V116_FIX37_CLIENT_PHONE_LOOKUP_20260927' || build==='RUSWEO_3_1_V116_FIX38_CLIENT_ORDER_CONFIRM_LINK_20260927' || build==='RUSWEO_3_1_V116_FIX39_UI_SOURCE_ANALYTICS_E2E_20260927' || build==='RUSWEO_3_1_V117_CLIENT_ORDER_LINK_ANALYTICS_20260927' || build==='RUSWEO_3_1_V117_TERMINAL_DROPOFF_DAY_BREAK_20260927' || build==='RUSWEO_4_0_V119_DRIVER_FOUNDATION_PHASE1_20260928' || build==='RUSWEO_4_0_V119_FIX3_DRIVER_OFFER_REMINDER_PUBLIC_NAME_20260928';
+  return build.indexOf('RUSWEO_4_1_0_V121_')===0 || build.indexOf('RUSWEO_4_0_1_V120_')===0 || build.indexOf('RUSWEO_4_0_V119_')===0 || build.indexOf('RUSWEO_3_1_V118_')===0 || build.indexOf('RUSWEO_3_1_V95_')===0 || build==='RUSWEO_3_1_V97_ORDER_EDIT_20260916' || build==='RUSWEO_3_1_V99_DIAGNOSTICS_E2E_20260916' || build==='RUSWEO_3_1_V100_ROLE_ISOLATION_20260916' || build==='RUSWEO_3_1_V103_CORPORATE_CALENDAR_20260916' || build==='RUSWEO_3_1_V104_LOYALTY_PRICE_REMINDER_20260918' || build==='RUSWEO_3_1_V105_FINAL_PRICE_20260918' || build==='RUSWEO_3_1_V106_POINT_ETA_REMINDER_20260918' || build==='RUSWEO_3_1_V107_DRIVER_UI_SAFETY_20260919' || build==='RUSWEO_3_1_V108_HISTORY_ACTION_ROW_20260919' || build==='RUSWEO_3_1_V109_DRIVER_FINANCE_ALIGNMENT_20260919' || build==='RUSWEO_3_1_V110_DRIVER_HOME_COMPACT_20260919' || build==='RUSWEO_3_1_V111_MONEY_INPUT_TRANSPORT_20260919' || build==='RUSWEO_3_1_V112_ANDROID_NOTIFICATION_FINANCE_ALIGNMENT_20260919' || build==='RUSWEO_3_1_V113_TERMINAL_EV_ANALYTICS_20260921' || build==='RUSWEO_3_1_V114_LEGAL_TERMS_UI_20260922' || build==='RUSWEO_3_1_V115_HOME_DEPARTURE_LIFECYCLE_20260922' || build==='RUSWEO_3_1_V116_RETURN_HOME_ETA_20260923' || build==='RUSWEO_3_1_V116_FIX36_MONITORING_E2E_20260927' || build==='RUSWEO_3_1_V116_FIX37_CLIENT_PHONE_LOOKUP_20260927' || build==='RUSWEO_3_1_V116_FIX38_CLIENT_ORDER_CONFIRM_LINK_20260927' || build==='RUSWEO_3_1_V116_FIX39_UI_SOURCE_ANALYTICS_E2E_20260927' || build==='RUSWEO_3_1_V117_CLIENT_ORDER_LINK_ANALYTICS_20260927' || build==='RUSWEO_3_1_V117_TERMINAL_DROPOFF_DAY_BREAK_20260927' || build==='RUSWEO_4_0_V119_DRIVER_FOUNDATION_PHASE1_20260928' || build==='RUSWEO_4_0_V119_FIX3_DRIVER_OFFER_REMINDER_PUBLIC_NAME_20260928';
 }
 
 async function rwFinanceReadV95(month){
@@ -2078,7 +2079,7 @@ function startDriverOperatorBookingV72(){
     operator_app_session:rwDriverAppSessionV72()
   };
   const frame=document.getElementById('bookingFrame');
-  frame.src='booking.html?vehicle_class=standard&operator_booking=1&v=31128';
+  frame.src='booking.html?vehicle_class=standard&operator_booking=1&v=31143';
   closeDriverOperatorBookingV72();
   openScreen('booking');
 }
@@ -2097,7 +2098,7 @@ function startDriverOperatorUnlinkedBookingFix38(){
     operator_app_session:rwDriverAppSessionV72()
   };
   const frame=document.getElementById('bookingFrame');
-  frame.src='booking.html?vehicle_class=standard&operator_booking=1&client_claim=1&v=31128';
+  frame.src='booking.html?vehicle_class=standard&operator_booking=1&client_claim=1&v=31143';
   closeDriverOperatorBookingV72();
   openScreen('booking');
 }
@@ -4627,7 +4628,7 @@ window.addEventListener(
     const qs =
       new URLSearchParams({
         vehicle_class:cls,
-        v:'31122',
+        v:'31143',
         app_session:String(
           localStorage.getItem(
             'uruway_auth_session'
@@ -5857,7 +5858,7 @@ window.logoutDriverV43=function(){
     var uid=String(localStorage.getItem('uruway_auth_telegram_user_id')||sessionStorage.getItem('rw121_driver_actual_uid')||((window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initDataUnsafe&&window.Telegram.WebApp.initDataUnsafe.user&&window.Telegram.WebApp.initDataUnsafe.user.id)||'')).trim();
     if(uid)localStorage.setItem('rw121_driver_ui_mode_'+uid,'client');
   }catch(e){}
-  location.replace('index.html?v=31131&client=1');
+  location.replace('index.html?v=31134&client=1');
 };
 </script>
 
@@ -9520,7 +9521,7 @@ document.addEventListener('DOMContentLoaded',function(){
       vehicle_class:'standard',
       edit_id:id,
       edit_role:'driver',
-      v:'31122',
+      v:'31143',
       _:String(Date.now())
     });
     var appSession=window.rwBookingEditContextV97.operator_app_session;
